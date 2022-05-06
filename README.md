@@ -1,19 +1,18 @@
-# EmuDeck
+# stEmu
+This project is based on [EmuDeck](https://github.com/dragoonDorise/EmuDeck)
 
-<img src="https://www.emudeck.com/img/hero.png">
+# <img src="replace_me.png">
 
-EmuDeck is a collection of scripts that allows you to autoconfigure your Steam Deck, it creates your roms directory structure and downloads all of the needed Emulators for you along with the best configurations for each of them. EmuDeck works great with [Steam Rom Manager](https://github.com/SteamGridDB/steam-rom-manager) or with [EmulationStation DE](https://es-de.org)
+stEmu is a collection of scripts for Windows that automatically downloads, installs, and configures popular emulators for painless integration within the Steam library wether you use it exclusively on the desktop or prefer Big Picture Mode. It creates your roms directory structure and downloads all of the needed Emulators for you along with the recommended configurations for each of them. stEmu uses [Steam Rom Manager](https://github.com/SteamGridDB/steam-rom-manager) for this integration but is configured "out of the box" to work with [EmulationStation] (https://emulationstation.org/) as well.
 
-** If you are a dev please read till the bottom **
-
-There are two ways of using EmuDeck:
+There are two ways of using stEmu:
 
 ## Using Steam Rom Manager
 
 <img src="https://www.emudeck.com/img/ss1.png">
 
 This option gives you all your games presented with their box arts as if they were a regular Steam Game.
-EmuDeck has preloaded configurations for Steam Rom Manager for the following systems:
+stEmu has preloaded configurations for Steam Rom Manager for the following systems:
 
 | System                    | Emulator                             | Roms format                                                          |
 | ------------------------- | ------------------------------------ | -------------------------------------------------------------------- |
@@ -57,7 +56,7 @@ EmuDeck has preloaded configurations for Steam Rom Manager for the following sys
 
 <img src="https://es-de.org/____impro/1/onewebmedia/ES-DE_logo.png?etag=%226071-6041244a%22&sourceContentType=image%2Fpng&ignoreAspectRatio&resize=240%2B168">
 
-EmuDeck configures EmulationStation DE to use the same rom folders that EmuDeck creates for you and it even downloads all the emulators and cores the ES-DE needs, all configurations that EmuDeck installs are carried over when using EmulationStation DE. For a comprehensive list of all the systems that ESDE supports go to [ES-DE](https://es-de.org)
+stEmu configures EmulationStation to use the same rom folders that stEmu creates for you and it even downloads all the emulators and cores that EmulationStation needs. All configurations that stEmu installs are carried over when using EmulationStation. For a comprehensive list of all the systems that EmulationStation supports go to [EmulationStation](https://emulationstation.org/)
 
 # Hotkeys
 
@@ -77,12 +76,6 @@ We try to use the same hotkeys for every emulator but some of them has its own d
 
 \* You need to activate Steam Input to get those hotkeys to work https://www.emudeck.com/#steam_input
 
-# Developers, developers, developers.
+# Want to contribute?
 
-If you wanna help us improve EmuDeck we are open to accept your PR! Just keep in mind this simple guide:
-
-- Think EmuDeck is for everybody, tech savvy and regular users, so everything has to be properly explained, use Easy mode for unattended automatic stuff.
-- User input is non recommended, everything should be done with no mouse or keyboard input. If input is a must then you have to code your feature only on expert mode.
-- Things using sudo are a big no no, there are exceptions but always try to find a way of prevent using sudo.
-- Every Emulator added has to be included on this readme file, have a SRM profile and follow the AmberElec hotkey mapping ( just check the previous table)
-- Always do your PR to the dev branch.
+Feel free to submit Pull Requests. stEmu follows the same philosophy as EmuDeck; therefore, you should keep in mind that this is developed to be very hands off for end users.
