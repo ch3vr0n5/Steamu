@@ -1,5 +1,10 @@
 ## Windows Powershell Script
 
+## Overrides
+
+# Turn off download progress bar otherwise downloads take SIGNIFICANTLY longer
+$ProgressPreference = 'SilentlyContinue'
+
 ## Parameters
 param (
 	[Parameter()]
@@ -7,76 +12,99 @@ param (
 )
 
 ## Variables
+$architecture = 'x86_64'
+
+if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture.Contains("64") -eq $false) {
+	$architecture = 'x86'
+}
+
 $gitUrl = "https://github.com/ch3vr0n5/stEmu.git"
 $gitBranches = @('dev','beta','main')
+
 $pathAppData = $env:LOCALAPPDATA
 $pathHome = $env:USERPROFILE
 $pathStemu = "$pathAppData\Stemu"
-$pathLog = "$pathStemu\Logs"
+$pathLogs = "$pathStemu\Logs"
 $pathEmulation = "$pathHome\Emulation"
+$pathDownloads = "$pathStemu\Downloads"
+$pathApps = "$pathStemu\Apps"
+$pathEmulators = "$pathStemu\Emulators"
+
 $stringOutput = ""
 
-$fileLog = "$pathStemu\Logs\stemu_log.txt"
+$fileLogName = 'stemu_log.txt'
+$fileLog = "$pathLogs\$fileLogName"
+[switch]$fileLogHome = $false
+
+# Dependency URLs
+$retroarchVersion = '1.10.3'
+$retroarchUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch.7z"
+$retroarchCoresUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch_cores.7z"
+
+$srmVersion = '2.3.30'
+$srmUrl = "https://github.com/SteamGridDB/steam-rom-manager/releases/download/v$srmVersion/Steam-ROM-Manager-portable-$srmVersion.exe"
+
+$directoryStemu = @(
+		'Logs'
+	,	'Downloads'
+	,	'Tools'
+	,	'Emulators'
+	,	'Apps'
+	)
 
 $directoryEmulation = @(
-	'bios'
-,	'configs'
-,	'roms'
-,	'saves'
-,	'states'
-)
+		'bios'
+	,	'configs'
+	,	'roms'
+	,	'saves'
+	,	'states'
+	)
 
 $directoryRoms = @(
-'3do'
-,'amiga'
-,'amstradcpc'
-,'apple2'
-,'art'
-,'atari2600'
-,'atari5200'
-,'atari7800'
-,'atari800'
-,'atarijaguar'
-,'atarijaguarcd'
-,'atarist'
-,'atarifalcon'
-,'atarixe'
-,'c64'
-,'colecovision'
-,'amstradcpc'
-,'fba'
-,'gamegear'
-,'gb'
-,'gba'
-,'gbc'
-,'gc'
-,'intellivision'
-,'macintosh'
-,'mame'
-,'mastersystem'
-,'megadrive'
-,'n64'
-,'neogeo'
-,'nes'
-,'ngp'
-,'ngpc'
-,'pc'
-,'pcengine'
-,'ports'
-,'psx'
-,'scummvm'
-,'sega32x'
-,'segacd'
-,'snes'
-,'zmachine'
-,'zxspectrum'
-)
-
-$architecture = 64
-
-if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture.Contains("64") -eq $false) {
-	$architecture = 32
-}
+	'3do'
+	,'amiga'
+	,'amstradcpc'
+	,'apple2'
+	,'art'
+	,'atari2600'
+	,'atari5200'
+	,'atari7800'
+	,'atari800'
+	,'atarijaguar'
+	,'atarijaguarcd'
+	,'atarist'
+	,'atarifalcon'
+	,'atarixe'
+	,'c64'
+	,'colecovision'
+	,'amstradcpc'
+	,'fba'
+	,'gamegear'
+	,'gb'
+	,'gba'
+	,'gbc'
+	,'gc'
+	,'intellivision'
+	,'macintosh'
+	,'mame'
+	,'mastersystem'
+	,'megadrive'
+	,'n64'
+	,'neogeo'
+	,'nes'
+	,'ngp'
+	,'ngpc'
+	,'pc'
+	,'pcengine'
+	,'ports'
+	,'psx'
+	,'scummvm'
+	,'sega32x'
+	,'segacd'
+	,'snes'
+	,'zmachine'
+	,'zxspectrum'
+	)
 
 ## Functions
 
@@ -101,67 +129,102 @@ function logWrite ($stringMessageArg)
 {
 	$timeStamp = (Get-Date).toString("yyyy/MM/dd HH:mm:ss")
 	$stringLogMessage = "$timeStamp $stringMessageArg"
-	Add-content $fileLog -value $stringLogMessage
+	IF ($logFileHome -eq $false) {
+			Add-content $fileLog -value $stringLogMessage
+		}
+		Else {
+			Add-content "$pathHome\$fileLogName" -value $stringLogMessage
+		}
+
+}
+function DownloadFile($url, $targetFile)
+#https://stackoverflow.com/a/21422517 -- replaces regular invoke-webrequest progress tracking since it severly reduces download speed
+{
+   $uri = New-Object "System.Uri" "$url"
+   $request = [System.Net.HttpWebRequest]::Create($uri)
+   $request.set_Timeout(15000) #15 second timeout
+   $response = $request.GetResponse()
+   $totalLength = [System.Math]::Floor($response.get_ContentLength()/1024)
+   $responseStream = $response.GetResponseStream()
+   $targetStream = New-Object -TypeName System.IO.FileStream -ArgumentList $targetFile, Create
+   $buffer = new-object byte[] 10KB
+   $count = $responseStream.Read($buffer,0,$buffer.length)
+   $downloadedBytes = $count
+   while ($count -gt 0)
+   {
+       $targetStream.Write($buffer, 0, $count)
+       $count = $responseStream.Read($buffer,0,$buffer.length)
+       $downloadedBytes = $downloadedBytes + $count
+       Write-Progress -activity "Downloading file '$($url.split('/') | Select -Last 1)'" -status "Downloaded ($([System.Math]::Floor($downloadedBytes/1024))K of $($totalLength)K): " -PercentComplete ((([System.Math]::Floor($downloadedBytes/1024)) / $totalLength)  * 100)
+   }
+   Write-Progress -activity "Finished downloading file '$($url.split('/') | Select -Last 1)'"
+   $targetStream.Flush()
+   $targetStream.Close()
+   $targetStream.Dispose()
+   $responseStream.Dispose()
 }
 
-## Set up stemu directory structure
 
-# Stemu Log FIle
+## Stemu Log FIle
+
 if (Test-Path -path $fileLog -PathType Leaf) {
-		#Clear-Content -path $fileLog
-		$stringOutput = "$fileLog Cleared Log File"
-		logWrite $stringOutput
-		Write-Host $stringOutput
-	}
-	else {
-		New-Item -path $fileLog -ItemType "file"
-		$stringOutput = "$fileLog Created Log File"
-		logWrite $stringOutput
-		Write-Host $stringOutput
-	}
+	#Clear-Content -path $fileLog
+	$stringOutput = "$fileLog Cleared Log File"
+	logWrite $stringOutput
+	Write-Host $stringOutput
+}
+else {
+	New-Item -path "$pathHome\stemu_log.txt" -ItemType "file"
+	$stringOutput = "$fileLog Created Log File"
+	$fileLogHome = $true
+	logWrite $stringOutput
+	Write-Host $stringOutput
+}
+
+## Set up Stemu directory structure
 
 $stringOutput = "Creating $pathStemu directory structure"
 logWrite $stringOutput
 Write-Host $stringOutput
 
-# FOllowing is likely redundant since above should create file and directorys
-# Stemu directory
-if (Test-Path -path $pathStemu) {
-		$stringOutput = "$pathStemu directory already exists"
-		logWrite $stringOutput
-		Write-Host $stringOutput
-	}
-	else {
-		New-Item -ItemType "directory" -Path $pathStemu
+# %LOCALAPPDATA%\Stemu directory
+IF (Test-Path -path $pathStemu) {
+	$stringOutput = "$pathStemu directory already exists"
+	logWrite $stringOutput
+	Write-Host $stringOutput
+}
+else {
+	New-Item -path $pathStemu -ItemType "directory"
 
-		$stringOutput = "$pathStemu directory created"
-		logWrite $stringOutput
-		Write-Host $stringOutput
-	}
+	$stringOutput = "$pathStemu directory created"
+	logWrite $stringOutput
+	Write-Host $stringOutput
+}
 
-# Stemu Log Directory
-if (Test-Path -path $pathLog) {
-		$stringOutput = "$pathLog directory already exists"
-		logWrite $stringOutput
-		Write-Host $stringOutput
-	}
-	else {
-		New-Item -ItemType "directory" -Path $pathLog
+# %LOCALAPPDATA%\Stemu sub-directories
+ForEach ($sub in $directoryStemu) {
+	IF (Test-Path -path "$pathStemu\$sub") {
+			$stringOutput = "$pathStemu\$sub directory already exists"
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+		else {
+			New-Item -path "$pathStemu\$sub" -ItemType "directory"
 
-		$stringOutput = "$pathLog directory created"
-		logWrite $stringOutput
-		Write-Host $stringOutput
-	}
+			$stringOutput = "$pathStemu\$sub directory created"
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+}
 
-## Set Branch
-
-if ( $gitBranches -contains $branch ) {
-
-	}
-	else {
-		Write-Host "Valid branch: $branch"
-	}
-
+# move log file if necessary
+If ($fileLogHome -eq $true) {
+	Move-Item -path "$pathHome\$fileLogName" -Destination $fileLog -force
+	$fileLogHome = $false
+	$stringOutput = "Moved log file $pathHome\$fileLogName to $fileLog"
+	logWrite $stringOutput
+	Write-Host $stringOutput
+}
 
 ## Set up emulation directory structure
 $stringOutput = 'Creating emulation directory structure'
@@ -213,6 +276,103 @@ ForEach ($rom in $directoryRoms) {
 			Write-Host $stringOutput
 		}
 }
+
+## Set Branch
+
+if ( !$gitBranches -contains $branch ) {
+	$stringOutput = "Invalid branch $branch. Valid parameters include: $gitBranches"
+	logWrite $stringOutput
+	Write-Host $stringOutput
+}
+else {
+	$stringOutput = "Valid branch: $branch"
+	logWrite $stringOutput
+	Write-Host $stringOutput
+}
+
+## Download required files
+
+	if (test-path -path $pathDownloads) {
+		#$stringOutput = 'Downloading 7z...'
+		#logWrite $stringOutput
+		#Write-Host $stringOutput
+		#downloadFile $7zUrl "$pathDownloads\7z.zip"
+
+		stringOutput = 'Downloading RetroArch...'
+		ogWrite $stringOutput
+		rite-Host $stringOutput
+		ownloadFile $retroarchUrl "$pathDownloads\retroarch.7z"
+		
+		$stringOutput = 'Downloading RetroArch Cores...'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+		downloadFile $retroarchCoresUrl "$pathDownloads\retroarch_cores.7z"
+		
+		$stringOutput = 'Downloading Steam Rom Manager...'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+		downloadFile $srmUrl "$pathDownloads\steam_rom_manager.exe"
+
+		$stringOutput = 'Downloads complete'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+	} Else {
+		$stringOutput = "Unable to continue. $pathDownloads does not exist! Press any key to exit."
+		logWrite $stringOutput
+		#Write-Host $stringOutput
+		inputPause $stringOutput
+		exit
+	}
+
+## Install all-the-things
+
+	# install 7z powershell module
+	$stringOutput = 'Installing 7z Powershell Module'
+	logWrite $stringOutput
+	Write-Host $stringOutput
+	
+	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+	Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+	Set-PSRepository -Name 'PSGallery' -SourceLocation "https://www.powershellgallery.com/api/v2" -InstallationPolicy Trusted
+	Install-Module -Name 7Zip4PowerShell -Force
+
+
+	If(test-path -path $pathApps) {
+			# Extract Retroarch
+			$stringOutput = "Extracting Retroarch to $pathEmulators"
+			logWrite $stringOutput
+			Write-Host $stringOutput
+			Expand-7zip -ArchiveFileName "$pathDownloads\retroarch.7z" -TargetPath $pathEmulators
+
+			If ($architecture -eq "x86_64") {
+				Rename-Item "$pathEmulators\RetroArch-Win64" "$pathEmulators\RetroArch"
+			} else {
+				Rename-Item "$pathEmulators\RetroArch-Win32" "$pathEmulators\RetroArch"
+			}
+
+			$stringOutput = 'Extracting Retroarch Cores'
+			logWrite $stringOutput
+			Write-Host $stringOutput
+			Expand-7zip -ArchiveFileName "$pathDownloads\retroarch_cores.7z" -TargetPath "$pathEmulators\RetroArch"
+
+			$stringOutput = 'Extracting Steam Rom Manager'
+			logWrite $stringOutput
+			Write-Host $stringOutput
+
+			<#
+			$stringOutput = 'Extracting EmulationStation'
+			logWrite $stringOutput
+			Write-Host $stringOutput
+			#>
+		}
+		else {
+			$stringOutput = "Unable to continue. $pathApps does not exist! Press any key to exit."
+			logWrite $stringOutput
+			#Write-Host $stringOutput
+			inputPause $stringOutput
+			exit
+		}
+
 
 <#
 $NONE='\033[00m'
