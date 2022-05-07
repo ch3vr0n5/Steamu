@@ -1,15 +1,17 @@
 ## Windows Powershell Script
 
-## Overrides
-
-# Turn off download progress bar otherwise downloads take SIGNIFICANTLY longer
-$ProgressPreference = 'SilentlyContinue'
+## TODO work on advanced install with options for replacing existing configs with defaults, path choices, etc.
 
 ## Parameters
 param (
 	[Parameter()]
 	[string]$branch = "main"
 )
+
+## Overrides
+
+# Turn off download progress bar otherwise downloads take SIGNIFICANTLY longer
+$ProgressPreference = 'SilentlyContinue'
 
 ## Variables
 $architecture = 'x86_64'
@@ -18,17 +20,24 @@ if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture.Contains("64") -eq $fal
 	$architecture = 'x86'
 }
 
+$test = $branch.ToString()
+
 $gitUrl = "https://github.com/ch3vr0n5/stEmu.git"
 $gitBranches = @('dev','beta','main')
+$gitDownloadUrl = "https://github.com/ch3vr0n5/stEmu/archive/refs/heads/$branch.zip"
+$fileStemuZip = 'stemu.zip'
 
-$pathAppData = $env:LOCALAPPDATA
+$pathLocalAppData = $env:LOCALAPPDATA
+$pathRoamingAppData = $env:APPDATA
 $pathHome = $env:USERPROFILE
-$pathStemu = "$pathAppData\Stemu"
+$pathStemu = "$pathLocalAppData\Stemu"
 $pathLogs = "$pathStemu\Logs"
 $pathEmulation = "$pathHome\Emulation"
 $pathDownloads = "$pathStemu\Downloads"
 $pathApps = "$pathStemu\Apps"
 $pathEmulators = "$pathStemu\Emulators"
+$pathTools = "$pathStemu\Tools"
+$pathSrmData = "$pathApps\SteamRomManager\userData"
 
 $stringOutput = ""
 
@@ -40,16 +49,45 @@ $fileLog = "$pathLogs\$fileLogName"
 $retroarchVersion = '1.10.3'
 $retroarchUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch.7z"
 $retroarchCoresUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch_cores.7z"
+$fileRetroarchZip = 'retroarch.7z'
+$fileRetroarchCoresZip = 'retroarch_cores.7z'
 
 $srmVersion = '2.3.30'
 $srmUrl = "https://github.com/SteamGridDB/steam-rom-manager/releases/download/v$srmVersion/Steam-ROM-Manager-portable-$srmVersion.exe"
+$fileSrm = 'steam_rom_manager.exe'
 
+$esUrl = 'https://emulationstation.org/downloads/releases/emulationstation_win32_latest.zip'
+$fileEsZip = 'emulationstation.zip'
+
+If ($architecture -eq 'x86_64') {
+	$peazipUrl = 'https://github.com/peazip/PeaZip/releases/download/8.6.0/peazip_portable-8.6.0.WIN64.zip'
+	$peazipFolder = 'peazip_portable-8.6.0.WIN64'
+} else {
+	$peazipUrl = 'https://github.com/peazip/PeaZip/releases/download/8.6.0/peazip_portable-8.6.0.WINDOWS.zip'
+	$peazipFolder = 'peazip_portable-8.6.0.WINDOWS'
+}
+$filePeazip = 'pzip.zip'
+$exePeazip = "$pathTools\Peazip\Peazip.exe"
+
+$7zipUrl = 'https://www.7-zip.org/a/7za920.zip'
+$7zipZip = '7zip.zip'
+
+
+
+
+# directories
 $directoryStemu = @(
 		'Logs'
 	,	'Downloads'
 	,	'Tools'
 	,	'Emulators'
 	,	'Apps'
+	)
+
+$directoryApps = @(
+		'SteamRomManager'
+	,	'EmulationStation'
+
 	)
 
 $directoryEmulation = @(
@@ -138,7 +176,7 @@ function logWrite ($stringMessageArg)
 
 }
 function DownloadFile($url, $targetFile)
-#https://stackoverflow.com/a/21422517 -- replaces regular invoke-webrequest progress tracking since it severly reduces download speed
+# https://stackoverflow.com/a/21422517 -- replaces regular invoke-webrequest progress tracking since it severly reduces download speed
 {
    $uri = New-Object "System.Uri" "$url"
    $request = [System.Net.HttpWebRequest]::Create($uri)
@@ -155,15 +193,22 @@ function DownloadFile($url, $targetFile)
        $targetStream.Write($buffer, 0, $count)
        $count = $responseStream.Read($buffer,0,$buffer.length)
        $downloadedBytes = $downloadedBytes + $count
-       Write-Progress -activity "Downloading file '$($url.split('/') | Select -Last 1)'" -status "Downloaded ($([System.Math]::Floor($downloadedBytes/1024))K of $($totalLength)K): " -PercentComplete ((([System.Math]::Floor($downloadedBytes/1024)) / $totalLength)  * 100)
+       Write-Progress -activity "Downloading file '$($url.split('/') | Select-Object -Last 1)'" -status "Downloaded ($([System.Math]::Floor($downloadedBytes/1024))K of $($totalLength)K): " -PercentComplete ((([System.Math]::Floor($downloadedBytes/1024)) / $totalLength)  * 100)
    }
-   Write-Progress -activity "Finished downloading file '$($url.split('/') | Select -Last 1)'"
+   Write-Progress -activity "Finished downloading file '$($url.split('/') | Select-Object -Last 1)'"
    $targetStream.Flush()
    $targetStream.Close()
    $targetStream.Dispose()
    $responseStream.Dispose()
 }
 
+function shortcutCreate([string]$SourceExe, [string]$DestinationPath){
+# https://stackoverflow.com/a/9701907
+	$WshShell = New-Object -comObject WScript.Shell
+	$Shortcut = $WshShell.CreateShortcut($DestinationPath)
+	$Shortcut.TargetPath = $SourceExe
+	$Shortcut.Save()
+}
 
 ## Stemu Log FIle
 
@@ -212,6 +257,22 @@ ForEach ($sub in $directoryStemu) {
 			New-Item -path "$pathStemu\$sub" -ItemType "directory"
 
 			$stringOutput = "$pathStemu\$sub directory created"
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+}
+
+# %LOCALAPPDATA%\Stemu\Apps sub-directories
+ForEach ($sub in $directoryApps) {
+	IF (Test-Path -path "$pathApps\$sub") {
+			$stringOutput = "$pathApps\$sub directory already exists"
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+		else {
+			New-Item -path "$pathApps\$sub" -ItemType "directory"
+
+			$stringOutput = "$pathApps\$sub directory created"
 			logWrite $stringOutput
 			Write-Host $stringOutput
 		}
@@ -293,25 +354,50 @@ else {
 ## Download required files
 
 	if (test-path -path $pathDownloads) {
-		#$stringOutput = 'Downloading 7z...'
-		#logWrite $stringOutput
-		#Write-Host $stringOutput
-		#downloadFile $7zUrl "$pathDownloads\7z.zip"
+		# Download Pzip
+		<#
+		$stringOutput = 'Downloading Peazip...'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+		downloadFile $pzUrl "$pathDownloads\pzip.zip"
+		#>
 
-		stringOutput = 'Downloading RetroArch...'
-		ogWrite $stringOutput
-		rite-Host $stringOutput
-		ownloadFile $retroarchUrl "$pathDownloads\retroarch.7z"
+		<# Y U NO DOWNLOAD #>
+		# Download Stemu from Github
+		$stringOutput = 'Downloading Stemu files...'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+		Invoke-WebRequest -Uri $gitDownloadUrl -OutFile "$pathDownloads\$fileStemuZip"
+		#Write-Host = $response
+		#downloadFile $gitDownloadUrl "$pathDownloads\$fileStemuZip"
+		#>
+
+		# Download Retroarch
+		$stringOutput = 'Downloading RetroArch...'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+		Invoke-WebRequest -Uri $retroarchUrl -Outfile "$pathDownloads\$fileRetroarchZip"
+		#downloadFile $retroarchUrl "$pathDownloads\$fileRetroarchZip"
 		
 		$stringOutput = 'Downloading RetroArch Cores...'
 		logWrite $stringOutput
 		Write-Host $stringOutput
-		downloadFile $retroarchCoresUrl "$pathDownloads\retroarch_cores.7z"
+		Invoke-WebRequest -Uri $retroarchCoresUrl -Outfile "$pathDownloads\$fileRetroarchCoresZip"
+		#downloadFile $retroarchCoresUrl "$pathDownloads\$fileRetroarchCoresZip"
 		
+		# Download Steam Rom Manager
 		$stringOutput = 'Downloading Steam Rom Manager...'
 		logWrite $stringOutput
 		Write-Host $stringOutput
-		downloadFile $srmUrl "$pathDownloads\steam_rom_manager.exe"
+		Invoke-WebRequest -Uri $srmUrl -Outfile "$pathDownloads\$fileSrm"
+		#downloadFile $srmUrl "$pathDownloads\$fileSrm"
+
+		# Download Emulation Station
+		$stringOutput = 'Downloading EmulationStation...'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+		Invoke-WebRequest -Uri $EsUrl -Outfile "$pathDownloads\$fileEsZip"
+		#downloadFile $EsUrl "$pathDownloads\$fileEsZip"
 
 		$stringOutput = 'Downloads complete'
 		logWrite $stringOutput
@@ -324,6 +410,8 @@ else {
 		exit
 	}
 
+## TODO backup any existing configs
+
 ## Install all-the-things
 
 	# install 7z powershell module
@@ -331,39 +419,95 @@ else {
 	logWrite $stringOutput
 	Write-Host $stringOutput
 	
-	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-	Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-	Set-PSRepository -Name 'PSGallery' -SourceLocation "https://www.powershellgallery.com/api/v2" -InstallationPolicy Trusted
-	Install-Module -Name 7Zip4PowerShell -Force
+	if (Get-Module -ListAvailable -Name '7Zip4PowerShell') {
+		$stringOutput = '7z Powershell Module exists. Skipping.'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+	} else {
+		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+		Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser
+		Set-PSRepository -Name 'PSGallery' -SourceLocation "https://www.powershellgallery.com/api/v2" -InstallationPolicy Trusted
+		Install-Module -Name 7Zip4PowerShell -Force -Scope CurrentUser
+	}
 
 
-	If(test-path -path $pathApps) {
+	
+	<#
+	If(Test-Path -Path $pathTools) {
+		# Extract Peazip
+		
+		$stringOutput = "Extracting Peazip to $pathTools"
+		logWrite $stringOutput
+		Write-Host $stringOutput
+		Expand-Archive -Path "$pathDownloads\$filePeazip" -DestinationPath "$pathTools"
+
+		Copy-Item -path "$pathTools\$peazipFolder" -Destination "$pathTools\Peazip"
+		Remove-Item -path "$pathTools\$peazipFolder" 
+		
+
+		# Extract 7zip
+	}
+	#>
+
+	$stringOutput = "Extracting Stemu to $pathStemu"
+	logWrite $stringOutput
+	Write-Host $stringOutput
+	IF (Test-Path -Path "$pathDownloads\$fileStemuZip" -PathType Leaf) {
+		Expand-7Zip -ArchiveFileName "$pathDownloads\$fileStemuZip" -TargetPath $pathStemu
+		Remove-Item -Path "$pathDownloads\$fileStemuZip" -Force
+
+		Copy-Item -Path "$pathStemu\stEmu-$branch\*" -Destination $pathStemu -Recurse -Force
+		Remove-Item -Path "$pathStemu\stEmu-$branch" -Recurse -Force
+	} else {
+		$stringOutput = "Archive does not exist! $pathDownloads\$fileStemuZip"
+		logWrite $stringOutput
+		Write-Host $stringOutput
+	}
+
+	If (Test-Path -Path $pathEmulators) {
 			# Extract Retroarch
 			$stringOutput = "Extracting Retroarch to $pathEmulators"
 			logWrite $stringOutput
 			Write-Host $stringOutput
-			Expand-7zip -ArchiveFileName "$pathDownloads\retroarch.7z" -TargetPath $pathEmulators
-
-			If ($architecture -eq "x86_64") {
-				Rename-Item "$pathEmulators\RetroArch-Win64" "$pathEmulators\RetroArch"
+			If(Test-Path -Path "$pathDownloads\$fileRetroarchZip" -PathType Leaf) {
+				Expand-7Zip -ArchiveFileName "$pathDownloads\$fileRetroarchZip" -TargetPath $pathEmulators
+				Remove-Item -Path "$pathDownloads\$fileRetroarchZip" -Force
 			} else {
-				Rename-Item "$pathEmulators\RetroArch-Win32" "$pathEmulators\RetroArch"
+				$stringOutput = "Archive does not exist! $pathDownloads\$fileRetroarchZip"
+				logWrite $stringOutput
+				Write-Host $stringOutput
 			}
 
-			$stringOutput = 'Extracting Retroarch Cores'
+			$stringOutput = "Extracting Retroarch Cores to $pathEmulators"
 			logWrite $stringOutput
 			Write-Host $stringOutput
-			Expand-7zip -ArchiveFileName "$pathDownloads\retroarch_cores.7z" -TargetPath "$pathEmulators\RetroArch"
+			Expand-7Zip -ArchiveFileName "$pathDownloads\$fileRetroarchCoresZip" -TargetPath $pathEmulators
+			Remove-Item -Path "$pathDownloads\$fileRetroarchCoresZip" -Force
 
-			$stringOutput = 'Extracting Steam Rom Manager'
+			If ($architecture -eq "x86_64") {
+				Copy-Item "$pathEmulators\RetroArch-Win64" "$pathEmulators\RetroArch" -Force -Recurse
+				Remove-Item -Path "$pathEmulators\RetroArch-Win64" -Recurse
+			} else {
+				Copy-Item "$pathEmulators\RetroArch-Win32" "$pathEmulators\RetroArch" -Force -Recurse
+				Remove-Item -Path "$pathEmulators\RetroArch-Win32" -Recurse
+			}
+	}
+
+	If(test-path -path $pathApps) {
+
+			# Extract Steam Rom Manager
+			$stringOutput = 'Moving Steam Rom Manager'
 			logWrite $stringOutput
 			Write-Host $stringOutput
+			Move-Item -Path "$pathDownloads\$fileSrm" -Destination "$pathApps\SteamRomManager\$fileSrm" -Force
+			#Remove-Item -Path "$pathDownloads\$fileSrm"
 
-			<#
+			# Extract EmulationStation
 			$stringOutput = 'Extracting EmulationStation'
 			logWrite $stringOutput
 			Write-Host $stringOutput
-			#>
+			Expand-7zip -ArchiveFileName "$pathDownloads\$fileEsZip" -TargetPath "$pathApps\EmulationStation"
+			Remove-Item -Path "$pathDownloads\$fileEsZip"
 		}
 		else {
 			$stringOutput = "Unable to continue. $pathApps does not exist! Press any key to exit."
@@ -373,125 +517,19 @@ else {
 			exit
 		}
 
+		$stringOutput = 'Extraction complete'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+
+## TODO use shortcutCreate to make shortcuts on Desktop
+
+## TODO if existing configs exit, replace, else, copy new configs
+
+## TODO if existing controller configs exist, replace, else, copy new configs
 
 <#
-$NONE='\033[00m'
-$RED='\033[01;31m'
-$GREEN='\033[01;32m'
-$YELLOW='\033[01;33m'
-$PURPLE='\033[01;35m'
-$CYAN='\033[01;36m'
-$WHITE='\033[01;37m'
-$BOLD='\033[1m'
-$UNDERLINE='\033[4m'
-$BLINK='\x1b[5m'
-
-if [ ! -z "$devMode" ]; then
-	if [ "$devMode" == "BETA" ]; then
-		$branch="beta"
-	fi
-	if [ "$devMode" == "DEV" ]; then	
-		$branch="dev"
-	else
-		$branch="main"
-
-#Clean up from previous installations
-rm ~/emudeck.log &>> /dev/null
-rm -rf ~/dragoonDoriseTools
-mkdir -p ~/emudeck
-#Creating log file
-echo "" > ~/emudeck/emudeck.log
-
-#Mark as second time so we can detect previous users
-FOLDER=~/.var/app/io.github.shiiion.primehack/config_bak
-if [ -d "$FOLDER" ]; then
-	echo "" > ~/emudeck/.finished
-fi
-sleep 1
-SECONDTIME=~/emudeck/.finished
-
-#Exper mode off by default
-expert=false
-
-#Update all systems by default
-doUpdateRA=true
-doUpdateDolphin=true
-doUpdatePCSX2=true
-doUpdateRPCS3=true
-doUpdateYuzu=true
-doUpdateCitra=true
-doUpdateDuck=true
-doUpdateCemu=true
-doUpdateRyujinx=true
-doUpdatePrimeHacks=true
-doUpdatePPSSPP=true
-doUpdateXemu=true
-doUpdateSRM=true
-#doUpdateMelon=true
-
-#Install all systems by default
-doInstallSRM=true
-doInstallESDE=true
-doInstallRA=false
-doInstallDolphin=false
-doInstallPCSX2=false
-doInstallRPCS3=false
-doInstallYuzu=false
-doInstallCitra=false
-doInstallDuck=false
-doInstallCemu=false
-doInstallPrimeHacks=false
-doInstallPPSSPP=false
-doInstallXemu=false
-#doInstallMelon=false
-doInstallCHD=false
-doInstallPowertools=false
-installString='Installing'
-
-#Default RetroArch configuration 
-RABezels=true
-RAautoSave=false
-SNESAR=43
-
-#Default widescreen
-duckWide=true
-DolphinWide=true
-DreamcastWide=true
-
-#Default installation folders
-emulationPath=~/Emulation/
-romsPath=~/Emulation/roms/
-toolsPath=~/Emulation/tools/
-biosPath=~/Emulation/bios/
-savesPath=~/Emulation/saves/
-clear
-echo -ne "${BOLD}Downloading files...${NONE}"
-sleep 5
-
-#We create all the needed folders for installation
-mkdir -p dragoonDoriseTools
-mkdir -p dragoonDoriseTools/EmuDeck
-cd dragoonDoriseTools
 
 
-
-git clone https://github.com/dragoonDorise/EmuDeck.git ~/dragoonDoriseTools/EmuDeck &>> ~/emudeck/emudeck.log
-if [ ! -z "$devMode" ]; then
-	cd ~/dragoonDoriseTools/EmuDeck
-	git checkout $branch
-fi
-
-FOLDER=~/dragoonDoriseTools/EmuDeck
-if [ -d "$FOLDER" ]; then
-	echo -e "${GREEN}OK!${NONE}"
-else
-	echo -e ""
-	echo -e "${RED}We couldn't download the needed files, exiting in a few seconds${NONE}"
-	echo -e "Please close this window and try again in a few minutes"
-	sleep 999999
-	exit
-fi
-clear
 cat ~/dragoonDoriseTools/EmuDeck/logo.ans
 version=$(cat ~/dragoonDoriseTools/EmuDeck/version.md)
 echo -e "${BOLD}EmuDeck ${version}${NONE}"
@@ -519,484 +557,6 @@ fi
 #Storage Selection
 #
 
-text="Do you want to install your roms on your SD Card or on your Internal Storage?"
-zenity --question \
-		 --title="EmuDeck" \
-		 --width=250 \
-		 --ok-label="SD Card" \
-		 --cancel-label="Internal Storage" \
-		 --text="${text}" &>> /dev/null
-ans=$?
-if [ $ans -eq 0 ]; then
-	echo "Storage: SD" &>> ~/emudeck/emudeck.log
-	destination="SD"
-	echo "" > ~/emudeck/.SD
-else
-	echo "Storage: INTERNAL" &>> ~/emudeck/emudeck.log
-	destination="INTERNAL"
-fi
-
-#
-#SD Card detection
-#
-
-if [ $destination == "SD" ]; then
-	#check dev to see if sd card is inserted and has a partition	
-	if [ -b "/dev/mmcblk0p1" ]; then	
-		#test if card is writable and linkable
-		sdCardFull="$(findmnt -n --raw --evaluate --output=target -S /dev/mmcblk0p1)"
-		echo "SD Card found; installing to $sdCardFull">> ~/emudeck/emudeck.log
-		touch $sdCardFull/testwrite
-		if [ ! -f  $sdCardFull/testwrite ]; then
-				text="`printf "<b>SD Card not writable</b>\nMake sure your SD Card is writable"`"
-				zenity --error \
-				--title="SDCard Error" \
-				--width=400 \
-				--text="${text}" &>> /dev/null
-				exit
-		else
-			echo "SD Card writable" &>> ~/emudeck/emudeck.log
-		fi
-		ln -s $sdCardFull/testwrite $sdCardFull/testwrite.link
-		if [ ! -f  $sdCardFull/testwrite.link ]; then
-				text="`printf "<b>Your SD Card is not compatible with EmuDeck.</b>\nMake sure to use a supported filesystem like EXT4. Formatting your SD Card from SteamUI will fix this.\n\n Go back to Gaming Mode, Settings, System and select Format SD Card there. This will delete all your SD contents."`"
-				zenity --error \
-				--title="SDCard Error" \
-				--width=400 \
-				--text="${text}" &>> /dev/null
-				rm -f "$sdCardFull/testwrite"
-				exit
-		else
-			echo "Symlink creation succeeded" &>> ~/emudeck/emudeck.log
-		fi
-		rm -f "$sdCardFull/testwrite" "$sdCardFull/testwrite.link"
-	else
-		text="`printf "<b>SD Card not detected</b>\nMake sure your SD Card is inserted and start again the installation"`"
-		zenity --error \
-				--title="SDCard Error" \
-				--width=400 \
-				--text="${text}" &>> /dev/null
-		exit
-	fi
-	
-	#New paths for SD cards
-	emulationPath="${sdCardFull}/Emulation/"
-	romsPath="${sdCardFull}/Emulation/roms/"
-	toolsPath="${sdCardFull}/Emulation/tools/"
-	biosPath="${sdCardFull}/Emulation/bios/"
-	savesPath="${sdCardFull}/Emulation/saves/"
-	ESDEscrapData="${sdCardFull}/Emulation/tools/downloaded_media"
-
-fi
-
-mkdir -p "$emulationPath"
-mkdir -p "$toolsPath"
-mkdir -p "$savesPath"
-
-#Cleanup for old users
-find "$romsPath" -name "readme.md" -type f -delete &>> ~/emudeck/emudeck.log
-
-
-#
-# Start of Expert mode configuration
-# The idea is that Easy mode is unatended, so everything that's out
-# out of the ordinary has to had its flag enabled/disabled on Expert mode
-#	
-
-if [ $expert == true ]; then
-
-
-	#CHDMAN	
-	text="`printf "Do you want to install our tool to convert iso, gdi and cue to CHD format?\n\n The CHD format allows to have one single file insted of multiple and the final file takes up to 50%% less space"`"
-	zenity --question \
-			 --title="EmuDeck" \
-			 --width=250 \
-			 --ok-label="Yes" \
-			 --cancel-label="No" \
-			 --text="${text}" &>> /dev/null
-	ans=$?
-	if [ $ans -eq 0 ]; then
-		doInstallCHD=true
-	else
-		doInstallCHD=false
-	fi	
-	
-	#Powertools
-	text=""
-	text="`printf "Do you want to install Powertools? This can improve Emulators like Yuzu or Dolphin. You will need to create a password for your deck linux desktop user"`"
-	zenity --question \
-			 --title="EmuDeck" \
-			 --width=250 \
-			 --ok-label="Yes" \
-			 --cancel-label="No" \
-			 --text="${text}" &>> /dev/null
-	ans=$?
-	if [ $ans -eq 0 ]; then
-		doInstallPowertools=true
-		
-	else
-		doInstallPowertools=false
-	fi	
-
-	#SRM Update selector	
-	text="Do you want to update Steam Rom Manager?"
-	zenity --question \
-			 --title="EmuDeck" \
-			 --width=250 \
-			 --ok-label="Yes" \
-			 --cancel-label="No" \
-			 --text="${text}" &>> /dev/null
-	ans=$?
-	if [ $ans -eq 0 ]; then
-		doInstallSRM=true
-	else
-		doInstallSRM=false
-	fi	
-		
-	#ESDE Install selector	
-	text="Do you want to install <span weight=\"bold\" foreground=\"red\">EmulationStation DE</span> and all of its RetroArch cores?"
-	zenity --question \
-			 --title="EmuDeck" \
-			 --width=250 \
-			 --ok-label="Yes" \
-			 --cancel-label="No" \
-			 --text="${text}" &>> /dev/null
-	ans=$?	
-
-	if [ $ans -eq 0 ]; then
-		doInstallESDE=true
-	else
-		doInstallESDE=false
-	fi
-	clear
-	#Emulator selector
-	text="`printf "What emulators do you want to install?"`"
-	emusToInstall=$(zenity --list \
-				--title="EmuDeck" \
-				--height=500 \
-				--width=250 \
-				--ok-label="OK" \
-				--cancel-label="Exit" \
-				--text="${text}" \
-				--checklist \
-				--column="" \
-				--column="Emulator" \
-				1 "RetroArch"\
-				2 "PrimeHack" \
-				3 "PCSX2" \
-				4 "RPCS3" \
-				5 "Citra" \
-				6 "Dolphin" \
-				7 "Duckstation" \
-				8 "PPSSPP" \
-				9 "Yuzu" \
-				10 "Cemu" \
-				11 "Xemu")
-	clear
-	ans=$?	
-	if [ $ans -eq 0 ]; then
-		
-		if [[ "$emusToInstall" == *"RetroArch"* ]]; then
-			doInstallRA=true
-		fi
-		if [[ "$emusToInstall" == *"PrimeHack"* ]]; then
-			doInstallPrimeHacks=true
-		fi
-		if [[ "$emusToInstall" == *"PCSX2"* ]]; then
-			doInstallPCSX2=true
-		fi
-		if [[ "$emusToInstall" == *"RPCS3"* ]]; then
-			doInstallRPCS3=true
-		fi
-		if [[ "$emusToInstall" == *"Citra"* ]]; then
-			doInstallCitra=true
-		fi
-		if [[ "$emusToInstall" == *"Dolphin"* ]]; then
-			doInstallDolphin=true
-		fi
-		if [[ "$emusToInstall" == *"Duckstation"* ]]; then
-			doInstallDuck=true
-		fi
-		if [[ "$emusToInstall" == *"PPSSPP"* ]]; then
-			doInstallPPSSPP=true
-		fi
-		if [[ "$emusToInstall" == *"Yuzu"* ]]; then
-			doInstallYuzu=true
-		fi
-		if [[ "$emusToInstall" == *"Cemu"* ]]; then
-			doInstallCemu=true
-		fi
-		if [[ "$emusToInstall" == *"Xemu"* ]]; then
-			doInstallXemu=true
-		fi
-		#if [[ "$emusToInstall" == *"MelonDS"* ]]; then
-		#	doInstallMelon=true
-		#fi
-		
-		
-	else
-		exit
-	fi
-	
-	#We force new Cemu install if we detect an older version exists
-	DIR=$romsPath/wiiu/roms/
-	if [ -d "$DIR" ]; then	
-		doInstallCemu=true	
-	fi
-
-	FILE=~/emudeck/.custom
-	if [ -f "$FILE" ]; then
-		
-		text="Do you want to use your previous RetroArch customization?"
-		zenity --question \
-				 --title="EmuDeck" \
-				 --width=250 \
-				 --ok-label="Yes" \
-				 --cancel-label="No" \
-				 --text="${text}" &>> /dev/null
-		ans=$?
-		if [ $ans -eq 0 ]; then
-			echo "CustomRemain: Yes" &>> ~/emudeck/emudeck.log
-			
-			#We set the flas if we have created the .files before.
-			#if .file exists then the flag is true for that particular question
-			FILEBEZELS=~/emudeck/.bezels		
-			FILESAVE=~/emudeck/.autosave
-			
-			if [ -f "$FILEBEZELS" ]; then
-				RABezels=true
-			else
-				RABezels=false
-			fi
-			
-			if [ -f "$FILESAVE" ]; then
-				RAautoSave=true
-			else
-				RAautoSave=false
-			fi
-						
-		else
-			echo "CustomRemain: No" &>> ~/emudeck/emudeck.log
-			#We reset everything
-			rm ~/emudeck/.custom &>> /dev/null
-			rm ~/emudeck/.bezels &>> /dev/null
-			rm ~/emudeck/.autosave &>> /dev/null			
-		fi
-	fi
-	
-	CUSTOM=~/emudeck/.custom
-	
-	FILEBEZELS=~/emudeck/.bezels
-	if [ ! -f "$CUSTOM" ] && [ ! -f "$FILEBEZELS" ]; then
-		
-		text="Do you want to use Bezels (Overlays) on RetroArch systems?"
-		zenity --question \
-				 --title="EmuDeck" \
-				 --width=250 \
-				 --ok-label="Yes" \
-				 --cancel-label="No" \
-				 --text="${text}" &>> /dev/null
-		ans=$?
-		if [ $ans -eq 0 ]; then
-			echo "Overlays: Yes" &>> ~/emudeck/emudeck.log
-			RABezels=true
-			echo "" > ~/emudeck/.bezels
-		else
-			echo "Overlays: No" &>> ~/emudeck/emudeck.log
-			RABezels=false
-		fi
-		
-	fi
-	FILESAVE=~/emudeck/.autosave
-	if [ ! -f "$CUSTOM" ] && [ ! -f "$FILESAVE" ]; then	
-		raConfigFile=~/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg
-		text="Do you want to use auto save and auto load for RetroArch systems?"
-		zenity --question \
-				 --title="EmuDeck" \
-				 --width=250 \
-				 --ok-label="Yes" \
-				 --cancel-label="No" \
-				 --text="${text}" &>> /dev/null
-		ans=$?
-		if [ $ans -eq 0 ]; then
-			echo "AutoSaveLoad: Yes" &>> ~/emudeck/emudeck.log
-			RAautoSave=true
-			echo "" > ~/emudeck/.autosave
-		else
-			echo "AutoSaveLoad: No" &>> ~/emudeck/emudeck.log
-			RAautoSave=false
-		fi
-	fi
-	
-	#SNES Aspect Ratio	
-	text="`printf "What SNES Aspect ratio do you want to use?\n\n<b>4:3</b> Classic CRT TV\n\n<b>8:7</b> Real SNES Internal resolution"`"
-	zenity --question \
-			 --title="EmuDeck" \
-			 --width=250 \
-			 --ok-label="4:3" \
-			 --cancel-label="8:7" \
-			 --text="${text}" &>> /dev/null
-	ans=$?
-	if [ $ans -eq 0 ]; then
-		SNESAR=43		
-	else
-		SNESAR=87		
-	fi	
-			
-	#Emulators screenHacks
-	text="`printf "We use 16:9 widescreen hacks on some emulators, if you want them to have the original 4:3 aspect ratio please select them on the following list"`"
-	wideToInstall=$(zenity --list \
-				--title="EmuDeck" \
-				--height=500 \
-				--width=250 \
-				--ok-label="OK" \
-				--cancel-label="Exit" \
-				--text="${text}" \
-				--checklist \
-				--column="" \
-				--column="Emulator" \
-				1 "Dolphin" \
-				2 "Duckstation" \
-				3 "Dreamcast")
-	clear
-	ans=$?	
-	if [ $ans -eq 0 ]; then
-		
-		if [[ "$wideToInstall" == *"Duckstation"* ]]; then
-			duckWide=false
-		fi
-		if [[ "$wideToInstall" == *"Dolphin"* ]]; then
-			DolphinWide=false
-		fi
-		if [[ "$wideToInstall" == *"Dreamcast"* ]]; then
-			DreamcastWide=false
-		fi		
-		
-	else		
-		exit		
-	fi			
-	
-	#We mark we've made a custom configuration for future updates
-	echo "" > ~/emudeck/.custom
-	
-	
-	# Configuration that only appplies to previous users
-	if [ -f "$SECONDTIME" ]; then
-		#We make sure all the emus can write its saves outside its own folders.
-		#flatpak override net.pcsx2.PCSX2 --filesystem=host --user
-		#flatpak override io.github.shiiion.primehack --filesystem=host --user
-		flatpak override net.rpcs3.RPCS3 --filesystem=host --user
-		#flatpak override org.citra_emu.citra --filesystem=host --user
-		#flatpak override org.DolphinEmu.dolphin-emu --filesystem=host --user
-		#flatpak override org.duckstation.DuckStation --filesystem=host --user
-		#flatpak override org.libretro.RetroArch --filesystem=host --user
-		#flatpak override org.ppsspp.PPSSPP --filesystem=host --user
-		#flatpak override org.yuzu_emu.yuzu --filesystem=host --user
-		#flatpak override app.xemu.xemu --filesystem=host --user
-		
-		installString='Updating'
-			
-		text="`printf "<b>EmuDeck will overwrite the following Emulators configurations</b> \nWhich systems do you want me to keep its current configuration <b>untouched</b>?\nWe recomend to keep all of them unchecked so everything gets updated so any possible bug can be fixed.\n If you want to mantain any custom configuration on some emulator select its name on this list"`"
-		emusToReset=$(zenity --list \
-							--title="EmuDeck" \
-							--height=500 \
-							--width=250 \
-							--ok-label="OK" \
-							--cancel-label="Exit" \
-							--text="${text}" \
-							--checklist \
-							--column="" \
-							--column="Emulator" \
-							1 "RetroArch"\
-							2 "PrimeHack" \
-							3 "PCSX2" \
-							4 "RPCS3" \
-							5 "Citra" \
-							6 "Dolphin" \
-							7 "Duckstation" \
-							8 "PPSSPP" \
-							9 "Yuzu" \
-							10 "Cemu" \
-							11 "Xemu" \
-							12 "SRM")
-		clear
-		cat ~/dragoonDoriseTools/EmuDeck/logo.ans
-		echo -e "${BOLD}EmuDeck ${version}${NONE}"
-		ans=$?
-		if [ $ans -eq 0 ]; then
-			
-			if [[ "$emusToReset" == *"RetroArch"* ]]; then
-				doUpdateRA=false
-			fi
-			if [[ "$emusToReset" == *"PrimeHack"* ]]; then
-				doUpdatePrimeHacks=false
-			fi
-			if [[ "$emusToReset" == *"PCSX2"* ]]; then
-				doUpdatePCSX2=false
-			fi
-			if [[ "$emusToReset" == *"RPCS3"* ]]; then
-				doUpdateRPCS3=false
-			fi
-			if [[ "$emusToReset" == *"Citra"* ]]; then
-				doUpdateCitra=false
-			fi
-			if [[ "$emusToReset" == *"Dolphin"* ]]; then
-				doUpdateDolphin=false
-			fi
-			if [[ "$emusToReset" == *"Duckstation"* ]]; then
-				doUpdateDuck=false
-			fi
-			if [[ "$emusToReset" == *"PPSSPP"* ]]; then
-				doUpdatePPSSPP=false
-			fi
-			if [[ "$emusToReset" == *"Yuzu"* ]]; then
-				doUpdateYuzu=false
-			fi
-			if [[ "$emusToReset" == *"Cemu"* ]]; then
-				doUpdateCemu=false
-			fi
-			if [[ "$emusToReset" == *"Xemu"* ]]; then
-				doUpdateXemu=false
-			fi
-			#if [[ "$emusToReset" == *"MelonDS"* ]]; then
-			#	doUpdateMelon=false
-			#fi
-			if [[ "$emusToReset" == *"SRM"* ]]; then
-				doUpdateSRM=false
-			fi
-			
-			
-		else
-			echo ""
-		fi
-		
-	fi
-	
-else
-
-	doInstallRA=true
-	doInstallDolphin=true
-	doInstallPCSX2=true
-	doInstallRPCS3=true
-	doInstallYuzu=true
-	doInstallCitra=true
-	doInstallDuck=true
-	doInstallCemu=true
-	doInstallPrimeHacks=true
-	doInstallPPSSPP=true
-	doInstallXemu=true
-	#doInstallMelon=true
-
-fi # end Expert if
-
-##
-##
-## End of configuration
-##	
-##
-	
-	
-	
 	
 ##
 ##
