@@ -20,7 +20,7 @@ if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture.Contains("64") -eq $fal
 	$architecture = 'x86'
 }
 
-$test = $branch.ToString()
+# $test = $branch.ToString()
 
 $gitUrl = "https://github.com/ch3vr0n5/stEmu.git"
 $gitBranches = @('dev','beta','main')
@@ -30,14 +30,19 @@ $fileStemuZip = 'stemu.zip'
 $pathLocalAppData = $env:LOCALAPPDATA
 $pathRoamingAppData = $env:APPDATA
 $pathHome = $env:USERPROFILE
+
 $pathStemu = "$pathLocalAppData\Stemu"
 $pathLogs = "$pathStemu\Logs"
-$pathEmulation = "$pathHome\Emulation"
 $pathDownloads = "$pathStemu\Downloads"
 $pathApps = "$pathStemu\Apps"
-$pathEmulators = "$pathStemu\Emulators"
-$pathTools = "$pathStemu\Tools"
 $pathSrmData = "$pathApps\SteamRomManager\userData"
+$pathEs = "$pathApps\EmulationStation"
+$pathEmulators = "$pathStemu\Emulators"
+$pathRetroarch = "$pathEmulators\RetroArch"
+$pathTools = "$pathStemu\Tools"
+
+$pathEmulation = "$pathHome\Emulation"
+$pathRoms = "$pathEmulation\Roms"
 
 $stringOutput = ""
 
@@ -56,7 +61,7 @@ $srmVersion = '2.3.30'
 $srmUrl = "https://github.com/SteamGridDB/steam-rom-manager/releases/download/v$srmVersion/Steam-ROM-Manager-portable-$srmVersion.exe"
 $fileSrm = 'steam_rom_manager.exe'
 
-$esUrl = 'https://emulationstation.org/downloads/releases/emulationstation_win32_latest.zip'
+$esUrl = 'https://gitlab.com/leonstyhre/emulationstation-de/-/package_files/36880305/download'
 $fileEsZip = 'emulationstation.zip'
 
 If ($architecture -eq 'x86_64') {
@@ -71,6 +76,8 @@ $exePeazip = "$pathTools\Peazip\Peazip.exe"
 
 $7zipUrl = 'https://www.7-zip.org/a/7za920.zip'
 $7zipZip = '7zip.zip'
+
+$downloadUrls = @($esUrl,$srmUrl,$retroarchUrl,$gitDownloadUrl)
 
 
 
@@ -219,11 +226,15 @@ if (Test-Path -path $fileLog -PathType Leaf) {
 	Write-Host $stringOutput
 }
 else {
-	New-Item -path "$pathHome\stemu_log.txt" -ItemType "file"
+	If (Test-Path -Path "$pathLogs\stemu_log.txt") {
+
+	} else {
+	New-Item -path "$pathLogs\stemu_log.txt" -ItemType "file"
 	$stringOutput = "$fileLog Created Log File"
-	$fileLogHome = $true
+
 	logWrite $stringOutput
 	Write-Host $stringOutput
+	}
 }
 
 ## Set up Stemu directory structure
@@ -282,6 +293,7 @@ ForEach ($sub in $directoryApps) {
 If ($fileLogHome -eq $true) {
 	Move-Item -path "$pathHome\$fileLogName" -Destination $fileLog -force
 	$fileLogHome = $false
+
 	$stringOutput = "Moved log file $pathHome\$fileLogName to $fileLog"
 	logWrite $stringOutput
 	Write-Host $stringOutput
@@ -354,6 +366,15 @@ else {
 ## Download required files
 
 	if (test-path -path $pathDownloads) {
+		<#
+		ForEach ($url in $downloadUrls) {
+			$stringOutput = "Downloading $url"
+			logWrite $stringOutput
+			Write-Host $stringOutput
+			Invoke-WebRequest -Uri $url -Outfile "$pathDownloads\$fileRetroarchZip"			
+		}
+		#>
+
 		# Download Pzip
 		<#
 		$stringOutput = 'Downloading Peazip...'
@@ -364,40 +385,69 @@ else {
 
 		<# Y U NO DOWNLOAD #>
 		# Download Stemu from Github
-		$stringOutput = 'Downloading Stemu files...'
-		logWrite $stringOutput
-		Write-Host $stringOutput
-		Invoke-WebRequest -Uri $gitDownloadUrl -OutFile "$pathDownloads\$fileStemuZip"
-		#Write-Host = $response
-		#downloadFile $gitDownloadUrl "$pathDownloads\$fileStemuZip"
-		#>
+		IF ((Test-Path -Path "$pathDownloads\$fileStemuZip" -PathType Leaf) -eq $false) {
+			$stringOutput = 'Downloading Stemu files...'
+			logWrite $stringOutput
+			Write-Host $stringOutput
 
-		# Download Retroarch
-		$stringOutput = 'Downloading RetroArch...'
-		logWrite $stringOutput
-		Write-Host $stringOutput
-		Invoke-WebRequest -Uri $retroarchUrl -Outfile "$pathDownloads\$fileRetroarchZip"
-		#downloadFile $retroarchUrl "$pathDownloads\$fileRetroarchZip"
+			Invoke-WebRequest -Uri $gitDownloadUrl -OutFile "$pathDownloads\$fileStemuZip"
+		} else {
+			$stringOutput = 'Stemu already exists. Skipping...'
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
 		
-		$stringOutput = 'Downloading RetroArch Cores...'
-		logWrite $stringOutput
-		Write-Host $stringOutput
-		Invoke-WebRequest -Uri $retroarchCoresUrl -Outfile "$pathDownloads\$fileRetroarchCoresZip"
-		#downloadFile $retroarchCoresUrl "$pathDownloads\$fileRetroarchCoresZip"
+		# Download Retroarch
+		IF ((Test-Path -Path "$pathDownloads\$fileRetroarchZip" -PathType Leaf) -eq $false) {
+			$stringOutput = 'Downloading Retroarch files...'
+			logWrite $stringOutput
+			Write-Host $stringOutput
+
+			Invoke-WebRequest -Uri $retroarchUrl -OutFile "$pathDownloads\$fileRetroarchZip"
+		} else {
+			$stringOutput = 'Retroarch already exists. Skipping...'
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+		
+		# Download Retroarch Cores
+		IF ((Test-Path -Path "$pathDownloads\$fileRetroarchCoresZip" -PathType Leaf) -eq $false) {
+			$stringOutput = 'Downloading RetroArch Cores...'
+			logWrite $stringOutput
+			Write-Host $stringOutput
+
+			Invoke-WebRequest -Uri $retroarchCoresUrl -OutFile "$pathDownloads\$fileRetroarchCoresZip"
+		} else {
+			$stringOutput = 'RetroArch Cores already exist. Skipping...'
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
 		
 		# Download Steam Rom Manager
-		$stringOutput = 'Downloading Steam Rom Manager...'
-		logWrite $stringOutput
-		Write-Host $stringOutput
-		Invoke-WebRequest -Uri $srmUrl -Outfile "$pathDownloads\$fileSrm"
-		#downloadFile $srmUrl "$pathDownloads\$fileSrm"
+		IF ((Test-Path -Path "$pathDownloads\$fileSrm" -PathType Leaf) -eq $false) {
+			$stringOutput = 'Downloading Steam Rom Manager...'
+			logWrite $stringOutput
+			Write-Host $stringOutput
+
+			Invoke-WebRequest -Uri $srmUrl -OutFile "$pathDownloads\$fileSrm"
+		} else {
+			$stringOutput = 'Steam Rom Manager already exists. Skipping...'
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
 
 		# Download Emulation Station
-		$stringOutput = 'Downloading EmulationStation...'
-		logWrite $stringOutput
-		Write-Host $stringOutput
-		Invoke-WebRequest -Uri $EsUrl -Outfile "$pathDownloads\$fileEsZip"
-		#downloadFile $EsUrl "$pathDownloads\$fileEsZip"
+		IF ((Test-Path -Path "$pathDownloads\$fileEsZip" -PathType Leaf) -eq $false) {
+			$stringOutput = 'Downloading EmulationStation...'
+			logWrite $stringOutput
+			Write-Host $stringOutput
+
+			Invoke-WebRequest -Uri $EsUrl -OutFile "$pathDownloads\$fileEsZip"
+		} else {
+			$stringOutput = 'EmulationStation already exists. Skipping...'
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
 
 		$stringOutput = 'Downloads complete'
 		logWrite $stringOutput
@@ -454,9 +504,9 @@ else {
 	Write-Host $stringOutput
 	IF (Test-Path -Path "$pathDownloads\$fileStemuZip" -PathType Leaf) {
 		Expand-7Zip -ArchiveFileName "$pathDownloads\$fileStemuZip" -TargetPath $pathStemu
-		Remove-Item -Path "$pathDownloads\$fileStemuZip" -Force
+		#Remove-Item -Path "$pathDownloads\$fileStemuZip" -Force
 
-		Copy-Item -Path "$pathStemu\stEmu-$branch\*" -Destination $pathStemu -Recurse -Force
+		Copy-Item -Path "$pathStemu\stEmu-$branch\*" -Destination "$pathStemu\" -Recurse -Force
 		Remove-Item -Path "$pathStemu\stEmu-$branch" -Recurse -Force
 	} else {
 		$stringOutput = "Archive does not exist! $pathDownloads\$fileStemuZip"
@@ -471,7 +521,7 @@ else {
 			Write-Host $stringOutput
 			If(Test-Path -Path "$pathDownloads\$fileRetroarchZip" -PathType Leaf) {
 				Expand-7Zip -ArchiveFileName "$pathDownloads\$fileRetroarchZip" -TargetPath $pathEmulators
-				Remove-Item -Path "$pathDownloads\$fileRetroarchZip" -Force
+				#Remove-Item -Path "$pathDownloads\$fileRetroarchZip" -Force
 			} else {
 				$stringOutput = "Archive does not exist! $pathDownloads\$fileRetroarchZip"
 				logWrite $stringOutput
@@ -482,14 +532,22 @@ else {
 			logWrite $stringOutput
 			Write-Host $stringOutput
 			Expand-7Zip -ArchiveFileName "$pathDownloads\$fileRetroarchCoresZip" -TargetPath $pathEmulators
-			Remove-Item -Path "$pathDownloads\$fileRetroarchCoresZip" -Force
+			#Remove-Item -Path "$pathDownloads\$fileRetroarchCoresZip" -Force
 
+			IF (Test-Path -path "$pathEmulators\RetroArch"){
+				Remove-Item -Path "$pathEmulators\RetroArch" -Recurse -Force
+			}
 			If ($architecture -eq "x86_64") {
-				Copy-Item "$pathEmulators\RetroArch-Win64" "$pathEmulators\RetroArch" -Force -Recurse
-				Remove-Item -Path "$pathEmulators\RetroArch-Win64" -Recurse
-			} else {
-				Copy-Item "$pathEmulators\RetroArch-Win32" "$pathEmulators\RetroArch" -Force -Recurse
-				Remove-Item -Path "$pathEmulators\RetroArch-Win32" -Recurse
+				Rename-Item -Path "$pathEmulators\RetroArch-Win64" -NewName 'RetroArch'
+				$stringOutput = "Renamed $pathEmulators\RetroArch-Win64 to $pathEmulators\RetroArch"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+
+			} else { 
+				Rename-Item -Path "$pathEmulators\RetroArch-Win32" -NewName 'RetroArch'
+				$stringOutput = "Renamed $pathEmulators\RetroArch-Win32 to $pathEmulators\RetroArch"
+				logWrite $stringOutput
+				Write-Host $stringOutput
 			}
 	}
 
@@ -506,8 +564,25 @@ else {
 			$stringOutput = 'Extracting EmulationStation'
 			logWrite $stringOutput
 			Write-Host $stringOutput
-			Expand-7zip -ArchiveFileName "$pathDownloads\$fileEsZip" -TargetPath "$pathApps\EmulationStation"
-			Remove-Item -Path "$pathDownloads\$fileEsZip"
+			#Expand-Archive -Path "$pathDownloads\$fileEsZip" -Destination "$pathApps"
+			#Remove-Item -Path "$pathDownloads\$fileEsZip"
+			Expand-7Zip -ArchiveFileName "$pathDownloads\$fileEsZip" -TargetPath $pathApps
+
+			If (Test-Path -Path "$pathApps\EmulationStation") {
+				Remove-Item -Path "$pathApps\EmulationStation" -Recurse -Force
+			}  
+			If (Test-Path -Path "$pathApps\EmulationStation-DE") {
+				Rename-Item -Path "$pathApps\EmulationStation-DE" -NewName 'EmulationStation'
+				$stringOutput = "Renamed $pathEmulators\EmulationStation-DE to $pathEmulators\EmulationStation"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+			} else {
+				$stringOutput = 'Unable to place EmulationStation. Folder EmulationStation-DE does not exist!'
+				logWrite $stringOutput
+				Write-Host $stringOutput
+			}
+			
+			
 		}
 		else {
 			$stringOutput = "Unable to continue. $pathApps does not exist! Press any key to exit."
@@ -520,6 +595,67 @@ else {
 		$stringOutput = 'Extraction complete'
 		logWrite $stringOutput
 		Write-Host $stringOutput
+
+## Set up symlinks
+
+		# retroarch roms, saves and states
+
+		$junctionsRetroarch = @('roms','saves','states')
+		$pathSymlink = ''
+
+		ForEach ($junction in $junctionsRetroarch) {
+			$pathSymlink = "$pathRetroarch\$junction"
+			If (Test-Path -Path $pathSymlink) {
+				Remove-Item -Path $pathSymlink -Recurse -Force
+			}
+			
+			If ((Test-Path $pathSymlink) -And ((Get-Item -Path $Target -Force).LinkType -eq "Junction")) {
+				$stringOutput = "$pathSymlink is an existing junction. Skipping..."
+				logWrite $stringOutput
+				Write-Host $stringOutput
+			} else {
+				New-Item -ItemType Junction -Path $pathSymlink -Target $pathEmulation\$junction
+				$stringOutput = "Junction created at $pathSymlink"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+			}
+		}
+
+		# emulation station roms and emulators
+
+		$junctionsEs = @('ROMs','Emulators')
+
+		ForEach ($junction in $junctionsEs) {
+			$pathSymlink = "$pathEs\$junction"
+			If (Test-Path -Path $pathSymlink) {
+				Remove-Item -Path $pathSymlink -Recurse -Force
+			}
+	
+			If ((Test-Path $pathSymlink) -And ((Get-Item -Path $Target -Force).LinkType -eq "Junction")) {
+				$stringOutput = "$pathSymlink is an existing junction. Skipping..."
+				logWrite $stringOutput
+				Write-Host $stringOutput
+			} else {
+				If ($junction.ToString() -eq 'ROMs') {$pathJunctionSource = $pathRoms} else {$pathJunctionSource = $pathEmulators}
+				New-Item -ItemType Junction -Path $pathSymlink -Target $pathJunctionSource
+				$stringOutput = "Junction created at $pathSymlink"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+			}
+		}
+
+## set config options
+
+		# retroarch config
+
+
+
+
+		$stringOutput = 'All Done =)'
+		logWrite $stringOutput
+		inputPause $stringOutput
+		exit
+
 
 ## TODO use shortcutCreate to make shortcuts on Desktop
 
