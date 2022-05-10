@@ -785,6 +785,7 @@ If ($doDownload -eq $true) {
 
 			If (Test-Path -Path "$pathEsData\es_find_rules.xml" -PathType Leaf) {
 				Rename-Item -Path "$pathEsData\es_find_rules.xml" -NewName "es_find_rules.xml.bak" -Force
+			}
 			If (Test-Path -Path "$pathEsData\es_systems.xml" -PathType Leaf) {
 				Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems.xml.bak" -Force
 			}
