@@ -410,6 +410,19 @@ ForEach ($sub in $directoryApps) {
 		}
 }
 
+	IF (Test-Path -path $pathSrmData) {
+			$stringOutput = "$pathSrmData directory already exists"
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+		else {
+			New-Item -path $pathSrmData -ItemType "directory"
+
+			$stringOutput = "$pathSrmData directory created"
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+
 # move log file if necessary
 If ($fileLogHome -eq $true) {
 	Move-Item -path "$pathHome\$fileLogName" -Destination $fileLog -force
