@@ -5,7 +5,8 @@
 ## Parameters
 param (
 	[Parameter()]
-	[string]$branch = "main"
+	[string]$branch = "main",
+	[switch]$doDownload = $false
 )
 
 ## Overrides
@@ -22,6 +23,8 @@ if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture.Contains("64") -eq $fal
 
 # $test = $branch.ToString()
 
+
+
 $gitUrl = "https://github.com/ch3vr0n5/stEmu.git"
 $gitBranches = @('dev','beta','main')
 $gitDownloadUrl = "https://github.com/ch3vr0n5/stEmu/archive/refs/heads/$branch.zip"
@@ -30,11 +33,13 @@ $fileStemuZip = 'stemu.zip'
 $pathLocalAppData = $env:LOCALAPPDATA
 $pathRoamingAppData = $env:APPDATA
 $pathHome = $env:USERPROFILE
+$pathSteam = Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\WOW6432Node\Valve\Steam' -Name InstallPath
 
 $pathStemu = "$pathLocalAppData\Stemu"
 $pathLogs = "$pathStemu\Logs"
 $pathDownloads = "$pathStemu\Downloads"
 $pathApps = "$pathStemu\Apps"
+$pathSrm = "$pathApps\SteamRomManager"
 $pathSrmData = "$pathApps\SteamRomManager\userData"
 $pathEs = "$pathApps\EmulationStation"
 $pathEmulators = "$pathStemu\Emulators"
@@ -43,6 +48,8 @@ $pathTools = "$pathStemu\Tools"
 
 $pathEmulation = "$pathHome\Emulation"
 $pathRoms = "$pathEmulation\Roms"
+
+$pathShortcuts = "$pathHome\Desktop\Emulation"
 
 $stringOutput = ""
 
@@ -107,47 +114,159 @@ $directoryEmulation = @(
 
 $directoryRoms = @(
 	'3do'
+	,'3ds'
+	,'64dd'
+	,'ags'
 	,'amiga'
+	,'amiga600'
+	,'amiga1200'
+	,'amigacd32'
 	,'amstradcpc'
+	,'android'
 	,'apple2'
-	,'art'
+	,'apple2gs'
+	,'arcade'
+	,'astrocade'
+	,'atari800'
 	,'atari2600'
 	,'atari5200'
 	,'atari7800'
-	,'atari800'
 	,'atarijaguar'
 	,'atarijaguarcd'
 	,'atarist'
-	,'atarifalcon'
 	,'atarixe'
+	,'atomiswave'
+	,'bbcmicro'
 	,'c64'
+	,'cavestory'
+	,'cdimono1'
+	,'cdtv'
+	,'chailove'
+	,'channelf'
+	,'coco'
+	,'coleco'
 	,'colecovision'
-	,'amstradcpc'
+	,'cps1'
+	,'cps2'
+	,'cps3'
+	,'daphne'
+	,'desktop'
+	,'doom'
+	,'dos'
+	,'dragon32'
+	,'dreamcast'
+	,'epic'
+	,'famicom'
 	,'fba'
+	,'fbneo'
+	,'fds'
+	,'gameandwatch'
+	,'gamecube'
 	,'gamegear'
 	,'gb'
 	,'gba'
 	,'gbc'
-	,'gc'
+	,'genesis'
+	,'genesiswide'
+	,'gx4000'
 	,'intellivision'
+	,'j2me'
+	,'kodi'
+	,'lutris'
+	,'lutro'
+	,'lynx'
 	,'macintosh'
 	,'mame'
+	,'mame2010'
+	,'mame-advmame'
+	,'mame-mame4all'
 	,'mastersystem'
+	,'megacd'
+	,'megacdjp'
 	,'megadrive'
+	,'mess'
+	,'moonlight'
+	,'moto'
+	,'msx'
+	,'msx1'
+	,'msx2'
+	,'msxturbor'
+	,'multivision'
 	,'n64'
+	,'naomi'
+	,'naomigd'
+	,'nds'
 	,'neogeo'
+	,'neogeocd'
+	,'neogeocdjp'
 	,'nes'
 	,'ngp'
 	,'ngpc'
+	,'odyssey2'
+	,'openbor'
+	,'oric'
+	,'palm'
 	,'pc'
+	,'pc88'
+	,'pc98'
 	,'pcengine'
+	,'pcenginecd'
+	,'pcfx'
+	,'pico8'
+	,'pokemini'
 	,'ports'
+	,'primehacks'
+	,'ps2'
+	,'ps3'
+	,'ps4'
+	,'psp'
+	,'psvita'
 	,'psx'
+	,'quake_1'
+	,'samcoupe'
+	,'satellaview'
+	,'saturn'
+	,'saturnjp'
+	,'scripts'
 	,'scummvm'
 	,'sega32x'
+	,'sega32xjp'
+	,'sega32xna'
 	,'segacd'
+	,'sg-1000'
 	,'snes'
+	,'sneshd'
+	,'snesna'
+	,'solarus'
+	,'spectravideo'
+	,'steam'
+	,'stratagus'
+	,'sufami'
+	,'supergrafx'
+	,'switch'
+	,'symbian'
+	,'tanodragon'
+	,'tg16'
+	,'tg-cd'
+	,'ti99'
+	,'tic80'
+	,'to8'
+	,'trs-80'
+	,'uzebox'
+	,'vectrex'
+	,'vic20'
+	,'videopac'
+	,'virtualboy'
+	,'wii'
+	,'wiiu'
+	,'wonderswan'
+	,'wonderswancolor'
+	,'x1'
+	,'x68000'
+	,'xbox'
+	,'xbox360'
 	,'zmachine'
+	,'zx81'
 	,'zxspectrum'
 	)
 
@@ -364,7 +483,7 @@ else {
 }
 
 ## Download required files
-
+IF ($doDownload -eq $true) {
 	if (test-path -path $pathDownloads) {
 		<#
 		ForEach ($url in $downloadUrls) {
@@ -375,83 +494,41 @@ else {
 		}
 		#>
 
-		# Download Pzip
-		<#
-		$stringOutput = 'Downloading Peazip...'
+		# Download Stemu from Github
+		$stringOutput = 'Downloading Stemu files...'
 		logWrite $stringOutput
 		Write-Host $stringOutput
-		downloadFile $pzUrl "$pathDownloads\pzip.zip"
-		#>
+		Invoke-WebRequest -Uri $gitDownloadUrl -OutFile "$pathDownloads\$fileStemuZip"
 
-		<# Y U NO DOWNLOAD #>
-		# Download Stemu from Github
-		IF ((Test-Path -Path "$pathDownloads\$fileStemuZip" -PathType Leaf) -eq $false) {
-			$stringOutput = 'Downloading Stemu files...'
-			logWrite $stringOutput
-			Write-Host $stringOutput
-
-			Invoke-WebRequest -Uri $gitDownloadUrl -OutFile "$pathDownloads\$fileStemuZip"
-		} else {
-			$stringOutput = 'Stemu already exists. Skipping...'
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		}
-		
 		# Download Retroarch
-		IF ((Test-Path -Path "$pathDownloads\$fileRetroarchZip" -PathType Leaf) -eq $false) {
-			$stringOutput = 'Downloading Retroarch files...'
-			logWrite $stringOutput
-			Write-Host $stringOutput
+		$stringOutput = 'Downloading Retroarch files...'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+		Invoke-WebRequest -Uri $retroarchUrl -OutFile "$pathDownloads\$fileRetroarchZip"
 
-			Invoke-WebRequest -Uri $retroarchUrl -OutFile "$pathDownloads\$fileRetroarchZip"
-		} else {
-			$stringOutput = 'Retroarch already exists. Skipping...'
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		}
-		
 		# Download Retroarch Cores
-		IF ((Test-Path -Path "$pathDownloads\$fileRetroarchCoresZip" -PathType Leaf) -eq $false) {
-			$stringOutput = 'Downloading RetroArch Cores...'
-			logWrite $stringOutput
-			Write-Host $stringOutput
+		$stringOutput = 'Downloading RetroArch Cores...'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+		Invoke-WebRequest -Uri $retroarchCoresUrl -OutFile "$pathDownloads\$fileRetroarchCoresZip"
 
-			Invoke-WebRequest -Uri $retroarchCoresUrl -OutFile "$pathDownloads\$fileRetroarchCoresZip"
-		} else {
-			$stringOutput = 'RetroArch Cores already exist. Skipping...'
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		}
-		
 		# Download Steam Rom Manager
-		IF ((Test-Path -Path "$pathDownloads\$fileSrm" -PathType Leaf) -eq $false) {
-			$stringOutput = 'Downloading Steam Rom Manager...'
-			logWrite $stringOutput
-			Write-Host $stringOutput
-
-			Invoke-WebRequest -Uri $srmUrl -OutFile "$pathDownloads\$fileSrm"
-		} else {
-			$stringOutput = 'Steam Rom Manager already exists. Skipping...'
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		}
+		$stringOutput = 'Downloading Steam Rom Manager...'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+		Invoke-WebRequest -Uri $srmUrl -OutFile "$pathDownloads\$fileSrm"
 
 		# Download Emulation Station
-		IF ((Test-Path -Path "$pathDownloads\$fileEsZip" -PathType Leaf) -eq $false) {
-			$stringOutput = 'Downloading EmulationStation...'
-			logWrite $stringOutput
-			Write-Host $stringOutput
-
-			Invoke-WebRequest -Uri $EsUrl -OutFile "$pathDownloads\$fileEsZip"
-		} else {
-			$stringOutput = 'EmulationStation already exists. Skipping...'
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		}
+		$stringOutput = 'Downloading EmulationStation...'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+		Invoke-WebRequest -Uri $EsUrl -OutFile "$pathDownloads\$fileEsZip"
 
 		$stringOutput = 'Downloads complete'
 		logWrite $stringOutput
 		Write-Host $stringOutput
+
+
 	} Else {
 		$stringOutput = "Unable to continue. $pathDownloads does not exist! Press any key to exit."
 		logWrite $stringOutput
@@ -459,21 +536,26 @@ else {
 		inputPause $stringOutput
 		exit
 	}
+} else {
+	$stringOutput = "Skipping download..."
+	logWrite $stringOutput
+	Write-Host $stringOutput
+}
 
 ## TODO backup any existing configs
 
 ## Install all-the-things
-
-	# install 7z powershell module
-	$stringOutput = 'Installing 7z Powershell Module'
-	logWrite $stringOutput
-	Write-Host $stringOutput
 	
 	if (Get-Module -ListAvailable -Name '7Zip4PowerShell') {
 		$stringOutput = '7z Powershell Module exists. Skipping.'
 		logWrite $stringOutput
 		Write-Host $stringOutput
 	} else {
+		# install 7z powershell module
+		$stringOutput = 'Installing 7z Powershell Module'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+
 		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 		Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser
 		Set-PSRepository -Name 'PSGallery' -SourceLocation "https://www.powershellgallery.com/api/v2" -InstallationPolicy Trusted
@@ -498,7 +580,7 @@ else {
 		# Extract 7zip
 	}
 	#>
-
+If ($doDownload -eq $true) {
 	$stringOutput = "Extracting Stemu to $pathStemu"
 	logWrite $stringOutput
 	Write-Host $stringOutput
@@ -596,9 +678,15 @@ else {
 		logWrite $stringOutput
 		Write-Host $stringOutput
 
+} else {
+		$stringOutput = "Skipping extraction..."
+		logWrite $stringOutput
+		Write-Host $stringOutput
+}
+
 ## Set up symlinks
 
-		# retroarch roms, saves and states
+		# RetroArch links
 
 		$junctionsRetroarch = @('roms','saves','states')
 		$pathSymlink = ''
@@ -621,7 +709,7 @@ else {
 			}
 		}
 
-		# emulation station roms and emulators
+		# EmulationStation DE links
 
 		$junctionsEs = @('ROMs','Emulators')
 
@@ -630,13 +718,48 @@ else {
 			If (Test-Path -Path $pathSymlink) {
 				Remove-Item -Path $pathSymlink -Recurse -Force
 			}
+
+			Switch ($junction.ToString()) {
+					'ROMs' {$pathJunctionSource = $pathRoms} 
+					 'Emulators' {$pathJunctionSource = $pathEmulators}
+			}
 	
 			If ((Test-Path $pathSymlink) -And ((Get-Item -Path $Target -Force).LinkType -eq "Junction")) {
 				$stringOutput = "$pathSymlink is an existing junction. Skipping..."
 				logWrite $stringOutput
 				Write-Host $stringOutput
 			} else {
-				If ($junction.ToString() -eq 'ROMs') {$pathJunctionSource = $pathRoms} else {$pathJunctionSource = $pathEmulators}
+				
+				New-Item -ItemType Junction -Path $pathSymlink -Target $pathJunctionSource
+				$stringOutput = "Junction created at $pathSymlink"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+			}
+		}
+
+		# Steam Rom Manager links
+
+		$junctionsSrm = @('steam', 'roms', 'retroarch', 'emulationstation')
+
+		ForEach ($junction in $junctionsSrm) {
+			$pathSymlink = "$pathSrm\$junction"
+			If (Test-Path -Path $pathSymlink) {
+				Remove-Item -Path $pathSymlink -Recurse -Force
+			}
+
+			Switch ($junction.ToString()) {
+					'steam' {$pathJunctionSource = $pathSteam} 
+					 'roms' {$pathJunctionSource = $pathRoms}
+					 'retroarch' {$pathJunctionSource = $pathRetroarch}
+					 'emulationstation' {$pathJunctionSource = $pathEs}
+			}
+	
+			If ((Test-Path $pathSymlink) -And ((Get-Item -Path $Target -Force).LinkType -eq "Junction")) {
+				$stringOutput = "$pathSymlink is an existing junction. Skipping..."
+				logWrite $stringOutput
+				Write-Host $stringOutput
+			} else {
+				
 				New-Item -ItemType Junction -Path $pathSymlink -Target $pathJunctionSource
 				$stringOutput = "Junction created at $pathSymlink"
 				logWrite $stringOutput
@@ -648,20 +771,70 @@ else {
 
 		# retroarch config
 
-
-
-
-		$stringOutput = 'All Done =)'
-		logWrite $stringOutput
-		inputPause $stringOutput
-		exit
+		## l3+r3 menu combo
+		## fullscreen
+		## save state folder
+		## save folder
+		## organize by core
+		## close on cli
 
 
 ## TODO use shortcutCreate to make shortcuts on Desktop
+	$stringOutput = "Setting up shortcuts in $pathShortcuts..."
+	logWrite $stringOutput
+	Write-Host $stringOutput
+
+	If ((Test-Path -Path "$pathShortcuts") -eq $false) {
+		New-Item -Path "$pathShortcuts" -ItemType "directory"
+	}
+
+	If (Test-Path -Path "$pathShortcuts") {
+		If ((Test-Path -Path "$pathShortcuts\EmulationStation.lnk" -PathType Leaf) -eq $false) {
+			shortcutCreate -SourceExe "$pathEs\emulationstation.exe" -DestinationPath "$pathShortcuts\EmulationStation.lnk"
+			$stringOutput = "$pathShortcuts\EmulationStation.lnk created."
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		} else {
+			$stringOutput = "$pathShortcuts\EmulationStation.lnk already exists."
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+		If ((Test-Path -Path "$pathShortcuts\RetroArch.lnk" -PathType Leaf) -eq $false) {
+			shortcutCreate -SourceExe "$pathRetroarch\RetroArch.exe" -DestinationPath "$pathShortcuts\RetroArch.lnk"
+			$stringOutput = "$pathShortcuts\RetroArch.lnk created."
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		} else {
+			$stringOutput = "$pathShortcuts\RetroArch.lnk already exists."
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+		If ((Test-Path -Path "$pathShortcuts\Steam Rom Manager.lnk" -PathType Leaf) -eq $false) {
+			shortcutCreate -SourceExe "$pathSrm\steam_rom_manager.exe" -DestinationPath "$pathShortcuts\Steam Rom Manager.lnk"
+			$stringOutput = "$pathShortcuts\Steam Rom Manager.lnk created."
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		} else {
+			$stringOutput = "$pathShortcuts\Steam Rom Manager.lnk already exists."
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+	} else {
+		$stringOutput = "Unable to create shortcuts. Directory $pathShortcuts does not exist!"
+		logWrite $stringOutput
+		Write-Host $stringOutput
+	}
 
 ## TODO if existing configs exit, replace, else, copy new configs
 
 ## TODO if existing controller configs exist, replace, else, copy new configs
+
+
+##### FINISH ######
+$stringOutput = 'All Done =) Press any key to exit.'
+logWrite $stringOutput
+inputPause $stringOutput
+exit
 
 <#
 
