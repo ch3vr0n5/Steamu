@@ -688,7 +688,7 @@ If ($doDownload -eq $true) {
 
 		# RetroArch links
 
-		$junctionsRetroarch = @('roms','saves','states')
+		$junctionsRetroarch = @('roms','saves','states','bios')
 		$pathSymlink = ''
 
 		ForEach ($junction in $junctionsRetroarch) {
