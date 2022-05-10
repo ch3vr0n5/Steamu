@@ -5,8 +5,8 @@
 ## Parameters
 param (
 	[Parameter()]
-	[string]$branch = "main",
-	[switch]$doDownload = $false
+	[string]$branch = "dev",
+	[switch]$doDownload = $true
 )
 
 ## Overrides
@@ -595,9 +595,10 @@ If ($doDownload -eq $true) {
 		Copy-Item -Path "$pathStemu\stEmu-$branch\*" -Destination "$pathStemu\" -Recurse -Force
 		Remove-Item -Path "$pathStemu\stEmu-$branch" -Recurse -Force
 	} else {
-		$stringOutput = "Archive does not exist! $pathDownloads\$fileStemuZip"
+		$stringOutput = "Unable to extract Stemu. Cannot continue. Press any key to exit"
 		logWrite $stringOutput
-		Write-Host $stringOutput
+		inputPause $stringOutput
+		exit
 	}
 
 	If (Test-Path -Path $pathEmulators) {
@@ -609,15 +610,24 @@ If ($doDownload -eq $true) {
 				Expand-7Zip -ArchiveFileName "$pathDownloads\$fileRetroarchZip" -TargetPath $pathEmulators
 				#Remove-Item -Path "$pathDownloads\$fileRetroarchZip" -Force
 			} else {
-				$stringOutput = "Archive does not exist! $pathDownloads\$fileRetroarchZip"
+				$stringOutput = "Unable to extract Retroarch. Cannot continue. Press any key to exit"
 				logWrite $stringOutput
-				Write-Host $stringOutput
+				inputPause $stringOutput
+				exit
 			}
 
 			$stringOutput = "Extracting Retroarch Cores to $pathEmulators"
 			logWrite $stringOutput
 			Write-Host $stringOutput
-			Expand-7Zip -ArchiveFileName "$pathDownloads\$fileRetroarchCoresZip" -TargetPath $pathEmulators
+			If (Test-Path -Path "$pathDownloads\$fileRetroarchCoresZip" -PathType Leaf) {
+				Expand-7Zip -ArchiveFileName "$pathDownloads\$fileRetroarchCoresZip" -TargetPath $pathEmulators
+			} else {
+				$stringOutput = "Unable to extract Retroarch Cores. Cannot continue. Press any key to exit"
+				logWrite $stringOutput
+				inputPause $stringOutput
+				exit
+			}
+			
 			#Remove-Item -Path "$pathDownloads\$fileRetroarchCoresZip" -Force
 
 			IF (Test-Path -path "$pathEmulators\RetroArch"){
@@ -643,16 +653,32 @@ If ($doDownload -eq $true) {
 			$stringOutput = 'Moving Steam Rom Manager'
 			logWrite $stringOutput
 			Write-Host $stringOutput
-			Move-Item -Path "$pathDownloads\$fileSrm" -Destination "$pathApps\SteamRomManager\$fileSrm" -Force
+			If (Test-Path -Path "$pathDownloads\$fileSrm" -PathType Leaf) {
+				Move-Item -Path "$pathDownloads\$fileSrm" -Destination "$pathApps\SteamRomManager\$fileSrm" -Force
+			} else {
+				$stringOutput = "Unable to move Steam Rom Manager. Cannot continue. Press any key to exit"
+				logWrite $stringOutput
+				inputPause $stringOutput
+				exit
+			}
+			
 			#Remove-Item -Path "$pathDownloads\$fileSrm"
 
-			# Extract EmulationStation
-			$stringOutput = 'Extracting EmulationStation'
+			# Extract EmulationStation DE
+			$stringOutput = 'Extracting EmulationStation DE'
 			logWrite $stringOutput
 			Write-Host $stringOutput
 			#Expand-Archive -Path "$pathDownloads\$fileEsZip" -Destination "$pathApps"
 			#Remove-Item -Path "$pathDownloads\$fileEsZip"
-			Expand-7Zip -ArchiveFileName "$pathDownloads\$fileEsZip" -TargetPath $pathApps
+			If(Test-Path -Path "$pathDownloads\$fileEsZip" -PathType Leaf) {
+				Expand-7Zip -ArchiveFileName "$pathDownloads\$fileEsZip" -TargetPath $pathApps
+			} else {
+				$stringOutput = "Unable to extract EmulationStation DE. Cannot continue. Press any key to exit"
+				logWrite $stringOutput
+				inputPause $stringOutput
+				exit
+			}
+			
 
 			If (Test-Path -Path "$pathApps\EmulationStation") {
 				Remove-Item -Path "$pathApps\EmulationStation" -Recurse -Force
@@ -776,12 +802,16 @@ If ($doDownload -eq $true) {
 			If (Test-Path -Path "$pathRetroarch\retroarch.cfg" -PathType Leaf) {
 				Rename-Item -Path "$pathRetroarch\retroarch.cfg" -NewName "retroarch.cfg.bak" -Force
 			}
-			Copy-Item -Path "$pathConfigs\RetroArch\retroarch.cfg" -Destination "$pathRetroarch" -Force
+			If (Test-Path -Path "$pathConfigs\RetroArch\retroarch.cfg" -PathType Leaf) {
+				Copy-Item -Path "$pathConfigs\RetroArch\retroarch.cfg" -Destination "$pathRetroarch" -Force
+			}
 
 			If (Test-Path -Path "$pathSrmData\userConfigurations.json" -PathType Leaf) {
 				Rename-Item -Path "$pathSrmData\userConfigurations.json" -NewName "userConfigurations.json.bak" -Force
 			}
-			Copy-Item -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -Destination "$pathSrmData" -Force
+			If (Test-Path -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -PathType Leaf) {
+				Copy-Item -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -Destination "$pathSrmData" -Force
+			}
 
 			If (Test-Path -Path "$pathEsData\es_find_rules.xml" -PathType Leaf) {
 				Rename-Item -Path "$pathEsData\es_find_rules.xml" -NewName "es_find_rules.xml.bak" -Force
@@ -789,7 +819,9 @@ If ($doDownload -eq $true) {
 			If (Test-Path -Path "$pathEsData\es_systems.xml" -PathType Leaf) {
 				Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems.xml.bak" -Force
 			}
-			Copy-Item -Path "$pathConfigs\EmulationStation\*" -Destination "$pathEsData" -Force
+			If (Test-Path -Path "$pathConfigs\EmulationStation\es_systems.xml" -PathType Leaf) {
+				Copy-Item -Path "$pathConfigs\EmulationStation\*" -Destination "$pathEsData" -Force
+			}
 		}
 
 		#need to replace paths in SRM most likely
