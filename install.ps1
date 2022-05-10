@@ -39,9 +39,11 @@ $pathStemu = "$pathLocalAppData\Stemu"
 $pathLogs = "$pathStemu\Logs"
 $pathDownloads = "$pathStemu\Downloads"
 $pathApps = "$pathStemu\Apps"
+$pathConfigs = "$pathStemu\Configs"
 $pathSrm = "$pathApps\SteamRomManager"
 $pathSrmData = "$pathApps\SteamRomManager\userData"
 $pathEs = "$pathApps\EmulationStation"
+$pathEsData = "$pathEs\resources\systems\windows"
 $pathEmulators = "$pathStemu\Emulators"
 $pathRetroarch = "$pathEmulators\RetroArch"
 $pathTools = "$pathStemu\Tools"
@@ -524,6 +526,8 @@ IF ($doDownload -eq $true) {
 		Write-Host $stringOutput
 		Invoke-WebRequest -Uri $EsUrl -OutFile "$pathDownloads\$fileEsZip"
 
+		# need to download all the other emulators
+
 		$stringOutput = 'Downloads complete'
 		logWrite $stringOutput
 		Write-Host $stringOutput
@@ -767,17 +771,27 @@ If ($doDownload -eq $true) {
 			}
 		}
 
-## set config options
+## Copy configs
+		If ($doDownload) {
+			If (Test-Path -Path "$pathRetroarch\retroarch.cfg" -PathType Leaf) {
+				Rename-Item -Path "$pathRetroarch\retroarch.cfg" -NewName "retroarch.cfg.bak" -Force
+			}
+			Copy-Item -Path "$pathConfigs\RetroArch\retroarch.cfg" -Destination "$pathRetroarch" -Force
 
-		# retroarch config
+			If (Test-Path -Path "$pathSrmData\userConfigurations.json" -PathType Leaf) {
+				Rename-Item -Path "$pathSrmData\userConfigurations.json" -NewName "userConfigurations.json.bak" -Force
+			}
+			Copy-Item -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -Destination "$pathSrmData" -Force
 
-		## l3+r3 menu combo
-		## fullscreen
-		## save state folder
-		## save folder
-		## organize by core
-		## close on cli
+			If (Test-Path -Path "$pathEsData\es_find_rules.xml" -PathType Leaf) {
+				Rename-Item -Path "$pathEsData\es_find_rules.xml" -NewName "es_find_rules.xml.bak" -Force
+			If (Test-Path -Path "$pathEsData\es_systems.xml" -PathType Leaf) {
+				Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems.xml.bak" -Force
+			}
+			Copy-Item -Path "$pathConfigs\EmulationStation\*" -Destination "$pathEsData" -Force
+		}
 
+		#need to replace paths in SRM most likely
 
 ## TODO use shortcutCreate to make shortcuts on Desktop
 	$stringOutput = "Setting up shortcuts in $pathShortcuts..."
