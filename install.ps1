@@ -84,7 +84,10 @@ $dependencyArray = @(
 		Extras = $false;
 		ExtrasName = '';
 		ExtrasUrl = '';
-		ExtrasOutput = ''
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasExtractFolder = "";
 	}
 	[PSCustomObject]@{
 		Name = 'Retroarch';
@@ -97,7 +100,10 @@ $dependencyArray = @(
 		Extras = $true;
 		ExtrasName = 'Retroarch Cores';
 		ExtrasUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch_cores.7z";
-		ExtrasOutput = 'retroarch_cores.7z'
+		ExtrasOutput = 'retroarch_cores.7z';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasExtractFolder = "";
 	}
 	[PSCustomObject]@{
 		Name = 'Steam Rom Manager';
@@ -110,7 +116,10 @@ $dependencyArray = @(
 		Extras = $false;
 		ExtrasName = '';
 		ExtrasUrl = '';
-		ExtrasOutput = ''
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasExtractFolder = "";
 	}
 	[PSCustomObject]@{
 		Name = 'Emulation Station DE';
@@ -123,7 +132,10 @@ $dependencyArray = @(
 		Extras = $false;
 		ExtrasName = '';
 		ExtrasUrl = '';
-		ExtrasOutput = ''
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasExtractFolder = "";
 	}
 	[PSCustomObject]@{
 		Name = 'Xemu';
@@ -136,7 +148,10 @@ $dependencyArray = @(
 		Extras = $false;
 		ExtrasName = '';
 		ExtrasUrl = '';
-		ExtrasOutput = ''
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasExtractFolder = "";
 	}
 #	[PSCustomObject]@{
 #		Name = 'Cemu';
@@ -710,7 +725,6 @@ If ($doDownload -eq $true) {
 	ForEach ($dependency in $dependencyArray) {
 		$name = $dependency.Name
 		$directtopath = $dependency.DirectToPath
-		$extras = $dependency.Extras
 		$type = $dependency.Type
 		$extractFolder = $dependency.ExtractFolder
 		$extractPath = "$pathTemp\$extractFolder"
@@ -718,6 +732,12 @@ If ($doDownload -eq $true) {
 		$sourcePath = "$pathDownloads\$sourceFileName"
 		$targetPath = $pathTemp
 		$destinationPath = $dependency.DestinationPath
+
+		$extras = $dependency.Extras
+		$extrasName = $dependency.ExtrasName
+		$extrasSourceFileName = $dependency.ExtrasOutput
+		$extrasSourcePath = "$pathDownloads\$extrasSourceFileName"
+		$extrasTargetPath = $pathTemp
 
 		If ($directtopath) {
 			$targetPath = $extractPath
@@ -735,6 +755,13 @@ If ($doDownload -eq $true) {
 				$stringOutput = "Moving $name to $DestinationPath from $extractPath"
 				logWrite $stringOutput
 				Write-Host $stringOutput
+
+				IF ($extras) {
+					$stringOutput = "Extracting $extrasName to $extractPath"
+					logWrite $stringOutput
+					Write-Host $stringOutput
+					Expand-7Zip -ArchiveFileName $extrasSourcePath -TargetPath $extrasTargetPath
+				}
 		
 				Copy-Item -Path "$extractPath\*" -Destination $destinationPath -Recurse -Force
 
@@ -767,6 +794,7 @@ If ($doDownload -eq $true) {
 			logWrite $stringOutput
 			inputPause $stringOutput
 		}
+
 	}
 <#
 	$stringOutput = "Extracting Stemu to $pathStemu"
