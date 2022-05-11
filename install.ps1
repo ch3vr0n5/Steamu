@@ -30,8 +30,6 @@ if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture.Contains("64") -eq $fal
 
 $gitUrl = "https://github.com/ch3vr0n5/stEmu.git"
 $gitBranches = @('dev','beta','main')
-$gitDownloadUrl = "https://github.com/ch3vr0n5/stEmu/archive/refs/heads/$branch.zip"
-$fileStemuZip = 'stemu.zip'
 
 $pathLocalAppData = $env:LOCALAPPDATA
 $pathRoamingAppData = $env:APPDATA
@@ -45,6 +43,7 @@ $pathApps = "$pathStemu\Apps"
 $pathShortcuts = "$pathStemu\Shortcuts"
 $pathConfigs = "$pathStemu\Configs"
 $pathEmulators = "$pathStemu\Emulators"
+$pathTemp = "$pathStemu\Temp"
 
 $pathSrm = "$pathApps\SteamRomManager"
 $pathSrmData = "$pathApps\SteamRomManager\userData"
@@ -68,22 +67,87 @@ $fileLog = "$pathLogs\$fileLogName"
 
 # Dependency URLs
 ## TODO, turn these into an array with name, url, zip, version, supplementary (like cores)
+
 $retroarchVersion = '1.10.3'
-$retroarchUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch.7z"
-$retroarchCoresUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch_cores.7z"
-$fileRetroarchZip = 'retroarch.7z'
-$fileRetroarchCoresZip = 'retroarch_cores.7z'
+$srmVersion = '2.3.35'
 
-$srmVersion = '2.3.30'
-$srmUrl = "https://github.com/SteamGridDB/steam-rom-manager/releases/download/v$srmVersion/Steam-ROM-Manager-portable-$srmVersion.exe"
-$fileSrm = 'steam_rom_manager.exe'
+$dependencyArray = @(
+	[PSCustomObject]@{
+		Name = 'Stemu';
+		Url = "https://github.com/ch3vr0n5/stEmu/archive/refs/heads/$branch.zip";
+		Output = 'stemu.zip';
+		DirectToPath = $true;
+		DestinationPath = "$pathStemu\";
+		ExtractPath = 'stEmu-$branch';
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = ''
+	}
+	[PSCustomObject]@{
+		Name = 'Retroarch';
+		Url = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch.7z";
+		Output = 'retroarch.7z';
+		DirectToPath = $false;
+		DestinationPath = "$pathRetroarch\";
+		ExtractPath = IF ($architecture -eq 'x86_64') {'RetroArch-Win64'} else {'RetroArch-Win32'};
+		Type = 'zip';
+		Extras = $true;
+		ExtrasName = 'Retroarch Cores';
+		ExtrasUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch_cores.7z";
+		ExtrasOutput = 'retroarch_cores.7z'
+	}
+	[PSCustomObject]@{
+		Name = 'Steam Rom Manager';
+		Url = "https://github.com/SteamGridDB/steam-rom-manager/releases/download/v$srmVersion/Steam-ROM-Manager-portable-$srmVersion.exe"; #https://github.com/SteamGridDB/steam-rom-manager/releases/download/v2.3.35/Steam-ROM-Manager-portable-2.3.35.exe
+		Output = 'steam_rom_manager.exe';
+		DirectToPath = $true;
+		DestinationPath = "$pathSrm\";
+		ExtractPath = '';
+		Type = 'exe';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = ''
+	}
+	[PSCustomObject]@{
+		Name = 'Emulation Station DE';
+		Url = "https://gitlab.com/leonstyhre/emulationstation-de/-/package_files/36880305/download";
+		Output = 'emulationstation.zip';
+		DirectToPath = $false;
+		DestinationPath = "$pathEs\";
+		ExtractPath = 'EmulationStation-DE';
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = ''
+	}
+	[PSCustomObject]@{
+		Name = 'Xemu';
+		Url = "https://github.com/mborgerson/xemu/releases/latest/download/xemu-win-release.zip";
+		Output = 'xemu.zip';
+		DirectToPath = $true;
+		DestinationPath = "$pathXemu\";
+		ExtractPath = 'Xemu';
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = ''
+	}
+#	[PSCustomObject]@{
+#		Name = 'Cemu';
+#		Url = "https://github.com/mborgerson/xemu/releases/latest/download/xemu-win-release.zip";
+#		Output = 'xemu.zip';
+#		DestinationPath = "";
+#		DestinationName = '';
+#		Type = 'zip'
+#	}
+)
 
-$esUrl = 'https://gitlab.com/leonstyhre/emulationstation-de/-/package_files/36880305/download'
-$fileEsZip = 'emulationstation.zip'
-
-$xemuUrl = 'https://github.com/mborgerson/xemu/releases/latest/download/xemu-win-release.zip'
-$xemuZip = 'xemu.zip'
-
+<# Probably safe to get rid of
 If ($architecture -eq 'x86_64') {
 	$peazipUrl = 'https://github.com/peazip/PeaZip/releases/download/8.6.0/peazip_portable-8.6.0.WIN64.zip'
 	$peazipFolder = 'peazip_portable-8.6.0.WIN64'
@@ -96,8 +160,7 @@ $exePeazip = "$pathTools\Peazip\Peazip.exe"
 
 $7zipUrl = 'https://www.7-zip.org/a/7za920.zip'
 $7zipZip = '7zip.zip'
-
-$downloadUrls = @($esUrl,$srmUrl,$retroarchUrl,$gitDownloadUrl)
+#>
 
 
 
@@ -110,6 +173,7 @@ $directoryStemu = @(
 	,	'Emulators'
 	,	'Apps'
 	,	'Shortcuts'
+	,	'Temp'
 	)
 
 $directoryApps = @(
@@ -350,6 +414,26 @@ function shortcutCreate([string]$SourceExe, [string]$DestinationPath){
 	$Shortcut.Save()
 }
 
+function testUrl([string]$testUrl){
+	# https://stackoverflow.com/a/20262872
+	# First we create the request.
+	
+
+	# We then get a response from the site.
+	Try {
+		$HTTP_Request = [System.Net.WebRequest]::Create($testUrl)
+		$HTTP_Response = $HTTP_Request.GetResponse()
+
+		Return $true
+	} catch {
+		Return $false
+		Continue
+	}
+
+	# Finally, we clean up the http request by closing it.
+	$HTTP_Response.Close()
+}
+
 ## Stemu Log FIle
 
 if (Test-Path -path $fileLog -PathType Leaf) {
@@ -514,57 +598,40 @@ else {
 ## Download required files
 IF ($doDownload -eq $true) {
 	if (test-path -path $pathDownloads) {
-		<#
-		ForEach ($url in $downloadUrls) {
-			$stringOutput = "Downloading $url"
-			logWrite $stringOutput
-			Write-Host $stringOutput
-			Invoke-WebRequest -Uri $url -Outfile "$pathDownloads\$fileRetroarchZip"			
+
+		ForEach ($dependency in $dependencyArray) {
+			$name = $dependency.Name
+			$file = $dependency.Output
+			$url = $dependency.Url
+			$extras = $dependency.Extras
+
+			#If(testUrl($url)){
+				$stringOutput = "Downloading $name"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+				Invoke-WebRequest -Uri $Url -Outfile "$pathDownloads\$file."	
+			#} else {
+			#	$stringOutput = "Unable to download $name. URL invalid."
+			#	logWrite $stringOutput
+			#	Write-Host $stringOutput
+			#}
+
+			IF ($extras) {
+				$name = $dependency.ExtrasName
+				$file = $dependency.ExtrasOutput
+				$url = $dependency.ExtrasUrl
+
+				$stringOutput = "Downloading $name"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+				Invoke-WebRequest -Uri $Url -Outfile "$pathDownloads\$file."	
+			}
+					
 		}
-		#>
-
-		# Download Stemu from Github
-		$stringOutput = 'Downloading Stemu files...'
-		logWrite $stringOutput
-		Write-Host $stringOutput
-		Invoke-WebRequest -Uri $gitDownloadUrl -OutFile "$pathDownloads\$fileStemuZip"
-
-		# Download Retroarch
-		$stringOutput = 'Downloading Retroarch files...'
-		logWrite $stringOutput
-		Write-Host $stringOutput
-		Invoke-WebRequest -Uri $retroarchUrl -OutFile "$pathDownloads\$fileRetroarchZip"
-
-		# Download Retroarch Cores
-		$stringOutput = 'Downloading RetroArch Cores...'
-		logWrite $stringOutput
-		Write-Host $stringOutput
-		Invoke-WebRequest -Uri $retroarchCoresUrl -OutFile "$pathDownloads\$fileRetroarchCoresZip"
-
-		# Download Steam Rom Manager
-		$stringOutput = 'Downloading Steam Rom Manager...'
-		logWrite $stringOutput
-		Write-Host $stringOutput
-		Invoke-WebRequest -Uri $srmUrl -OutFile "$pathDownloads\$fileSrm"
-
-		# Download Emulation Station
-		$stringOutput = 'Downloading EmulationStation...'
-		logWrite $stringOutput
-		Write-Host $stringOutput
-		Invoke-WebRequest -Uri $EsUrl -OutFile "$pathDownloads\$fileEsZip"
-
-		# Download Xemu
-		$stringOutput = 'Downloading Xemu...'
-		logWrite $stringOutput
-		Write-Host $stringOutput
-		Invoke-WebRequest -Uri $xemuUrl -OutFile "$pathDownloads\$xemuZip"
-
-		# need to download all the other emulators
 
 		$stringOutput = 'Downloads complete'
 		logWrite $stringOutput
 		Write-Host $stringOutput
-
 
 	} Else {
 		$stringOutput = "Unable to continue. $pathDownloads does not exist! Press any key to exit."
@@ -618,6 +685,69 @@ IF ($doDownload -eq $true) {
 	}
 	#>
 If ($doDownload -eq $true) {
+
+	ForEach ($dependency in $dependencyArray) {
+		$name = $dependency.Name
+		$directtopath = $dependency.DirectToPath
+		$extras = $dependency.Extras
+		$type = $dependency.Type
+		$extractFolder = $dependency.ExtractFolder
+		$extractPath = "$pathTemp\$extractFolder"
+		$sourceFileName = $dependency.Output
+		$sourcePath = "$pathDownloads\$sourceFileName"
+		$targetPath = $pathTemp
+		$destinationPath = $dependency.DestinationPath
+
+		If ($directtopath) {
+			$targetPath = $extractPath
+			New-Item -ItemType "directory" -Path $targetPath
+		}
+
+		If ($type -eq 'zip'){
+			$stringOutput = "Extracting $name to $extractPath"
+			logWrite $stringOutput
+			Write-Host $stringOutput
+
+			IF (Test-Path -Path $sourcePath -PathType Leaf) {
+				Expand-7Zip -ArchiveFileName $sourcePath -TargetPath $targetPath
+
+				$stringOutput = "Moving $name to $DestinationPath from $extractPath"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+		
+				Copy-Item -Path "$extractPath\*" -Destination $destinationPath -Recurse -Force
+
+				Remove-Item -Path $extractPath -Recurse -Force
+			} else {
+				$stringOutput = "Unable to extract $Name. Cannot continue. Press any key to exit"
+				logWrite $stringOutput
+				inputPause $stringOutput
+				exit
+			}
+		} elseif ($type -eq 'exe') {
+			IF (Test-Path -Path $sourcePath -PathType Leaf) {
+				$stringOutput = "Moving $name to $DestinationPath from $sourcePath"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+				IF (Test-Path "$destinationPath\$sourceFileName" -PathType Leaf){
+					Remove-Item "$destinationPath\$sourceFileName" -Force
+				}
+				Move-Item -Path $sourcePath -TargetPath $DestinationPath
+
+				Remove-Item -Path $sourcePath -Recurse -Force
+			} else {
+				$stringOutput = "Unable to extract $Name. Cannot continue. Press any key to exit"
+				logWrite $stringOutput
+				inputPause $stringOutput
+				exit
+			}
+		} else {
+			$stringOutput = "Extraction type not handled for $Name! Type: $type"
+			logWrite $stringOutput
+			inputPause $stringOutput
+		}
+	}
+<#
 	$stringOutput = "Extracting Stemu to $pathStemu"
 	logWrite $stringOutput
 	Write-Host $stringOutput
@@ -739,7 +869,7 @@ If ($doDownload -eq $true) {
 			inputPause $stringOutput
 			exit
 		}
-
+#>
 		$stringOutput = 'Extraction complete'
 		logWrite $stringOutput
 		Write-Host $stringOutput
