@@ -669,6 +669,9 @@ If ($doDownload -eq $true) {
 			logWrite $stringOutput
 			Write-Host $stringOutput
 			If (Test-Path -Path "$pathDownloads\$fileSrm" -PathType Leaf) {
+				If (Test-Path -Path "$pathApps\SteamRomManager\$fileSrm" -PathType Leaf) {
+					Remove-Item -Path "$pathApps\SteamRomManager\$fileSrm" -Force
+				}
 				Move-Item -Path "$pathDownloads\$fileSrm" -Destination "$pathApps\SteamRomManager\$fileSrm" -Force
 			} else {
 				$stringOutput = "Unable to move Steam Rom Manager. Cannot continue. Press any key to exit"
