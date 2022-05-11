@@ -52,6 +52,7 @@ $pathEs = "$pathApps\EmulationStation"
 $pathEsData = "$pathEs\resources\systems\windows"
 
 $pathRetroarch = "$pathEmulators\RetroArch"
+$pathXemu = "$pathEmulators\Xemu"
 $pathTools = "$pathStemu\Tools"
 
 $pathEmulation = "$pathHome\Emulation"
