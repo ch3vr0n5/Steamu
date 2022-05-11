@@ -472,15 +472,15 @@ ForEach ($sub in $directoryEmulation) {
 
 # %HOMEPATH%\Emulation\roms sub-directories
 ForEach ($rom in $directoryRoms) {
-	IF (Test-Path -path "$pathEmulation\roms\$rom") {
-			$stringOutput = "$pathEmulation\roms\$rom directory already exists"
+	IF (Test-Path -path "$pathRoms\$rom") {
+			$stringOutput = "$pathRoms\$rom directory already exists"
 			logWrite $stringOutput
 			Write-Host $stringOutput
 		}
 		else {
-			New-Item -path "$pathEmulation\roms\$rom" -ItemType "directory"
+			New-Item -path "$pathRoms\$rom" -ItemType "directory"
 
-			$stringOutput = "$pathEmulation\roms\$rom directory created"
+			$stringOutput = "$pathRoms\$rom directory created"
 			logWrite $stringOutput
 			Write-Host $stringOutput
 		}
