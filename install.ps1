@@ -826,7 +826,7 @@ If ($doDownload -eq $true) {
 				Rename-Item -Path "$pathSrmData\userConfigurations.json" -NewName "userConfigurations.json.bak" -Force
 			}
 			If (Test-Path -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -PathType Leaf) {
-				If (Test-Path -Path "$pathSrmData\" -eq $false) {
+				If ((Test-Path -Path "$pathSrmData\") -eq $false) {
 					New-Item -ItemType "directory" -path "$pathSrmData\"
 				}
 				Copy-Item -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -Destination "$pathSrmData\" -Force
