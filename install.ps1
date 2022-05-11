@@ -39,6 +39,7 @@ $pathStemu = "$pathLocalAppData\Stemu"
 $pathLogs = "$pathStemu\Logs"
 $pathDownloads = "$pathStemu\Downloads"
 $pathApps = "$pathStemu\Apps"
+$pathShortcuts = "$pathStemu\Shortcuts"
 $pathConfigs = "$pathStemu\Configs"
 $pathSrm = "$pathApps\SteamRomManager"
 $pathSrmData = "$pathApps\SteamRomManager\userData"
@@ -98,6 +99,7 @@ $directoryStemu = @(
 	,	'Tools'
 	,	'Emulators'
 	,	'Apps'
+	,	'Shortcuts'
 	)
 
 $directoryApps = @(
@@ -795,6 +797,7 @@ If ($doDownload -eq $true) {
 					 'roms' {$pathJunctionSource = $pathRoms}
 					 'retroarch' {$pathJunctionSource = $pathRetroarch}
 					 'emulationstation' {$pathJunctionSource = $pathEs}
+					 'shortcuts' {$pathJunctionSource = $pathShortcuts}
 			}
 	
 			If ((Test-Path $pathSymlink) -And ((Get-Item -Path $Target -Force).LinkType -eq "Junction")) {
@@ -816,14 +819,14 @@ If ($doDownload -eq $true) {
 				Rename-Item -Path "$pathRetroarch\retroarch.cfg" -NewName "retroarch.cfg.bak" -Force
 			}
 			If (Test-Path -Path "$pathConfigs\RetroArch\retroarch.cfg" -PathType Leaf) {
-				Copy-Item -Path "$pathConfigs\RetroArch\retroarch.cfg" -Destination "$pathRetroarch" -Force
+				Copy-Item -Path "$pathConfigs\RetroArch\retroarch.cfg" -Destination "$pathRetroarch\" -Force
 			}
 
 			If (Test-Path -Path "$pathSrmData\userConfigurations.json" -PathType Leaf) {
 				Rename-Item -Path "$pathSrmData\userConfigurations.json" -NewName "userConfigurations.json.bak" -Force
 			}
 			If (Test-Path -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -PathType Leaf) {
-				Copy-Item -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -Destination "$pathSrmData" -Force
+				Copy-Item -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -Destination "$pathSrmData\" -Force
 			}
 
 			If (Test-Path -Path "$pathEsData\es_find_rules.xml" -PathType Leaf) {
@@ -833,7 +836,7 @@ If ($doDownload -eq $true) {
 				Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems.xml.bak" -Force
 			}
 			If (Test-Path -Path "$pathConfigs\EmulationStation\es_systems.xml" -PathType Leaf) {
-				Copy-Item -Path "$pathConfigs\EmulationStation\*" -Destination "$pathEsData" -Force
+				Copy-Item -Path "$pathConfigs\EmulationStation\*" -Destination "$pathEsData\" -Force
 			}
 		}
 
