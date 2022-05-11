@@ -52,7 +52,7 @@ $pathTools = "$pathStemu\Tools"
 $pathEmulation = "$pathHome\Emulation"
 $pathRoms = "$pathEmulation\Roms"
 
-$pathShortcuts = "$pathHome\Desktop\Emulation"
+$pathDesktopShortcuts = "$pathHome\Desktop\Emulation"
 
 $stringOutput = ""
 
@@ -784,7 +784,7 @@ If ($doDownload -eq $true) {
 
 		# Steam Rom Manager links
 
-		$junctionsSrm = @('steam', 'roms', 'retroarch', 'emulationstation')
+		$junctionsSrm = @('steam', 'roms', 'retroarch', 'emulationstation', 'shortcuts')
 
 		ForEach ($junction in $junctionsSrm) {
 			$pathSymlink = "$pathSrm\$junction"
@@ -826,6 +826,9 @@ If ($doDownload -eq $true) {
 				Rename-Item -Path "$pathSrmData\userConfigurations.json" -NewName "userConfigurations.json.bak" -Force
 			}
 			If (Test-Path -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -PathType Leaf) {
+				If (Test-Path -Path "$pathSrmData\" -eq $false) {
+					New-Item -ItemType "directory" -path "$pathSrmData\"
+				}
 				Copy-Item -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -Destination "$pathSrmData\" -Force
 			}
 
@@ -847,43 +850,43 @@ If ($doDownload -eq $true) {
 	logWrite $stringOutput
 	Write-Host $stringOutput
 
-	If ((Test-Path -Path "$pathShortcuts") -eq $false) {
-		New-Item -Path "$pathShortcuts" -ItemType "directory"
+	If ((Test-Path -Path "$pathDesktopShortcuts") -eq $false) {
+		New-Item -Path "$pathDesktopShortcuts" -ItemType "directory"
 	}
 
-	If (Test-Path -Path "$pathShortcuts") {
-		If ((Test-Path -Path "$pathShortcuts\EmulationStation.lnk" -PathType Leaf) -eq $false) {
-			shortcutCreate -SourceExe "$pathEs\emulationstation.exe" -DestinationPath "$pathShortcuts\EmulationStation.lnk"
-			$stringOutput = "$pathShortcuts\EmulationStation.lnk created."
+	If (Test-Path -Path "$pathDesktopShortcuts") {
+		If ((Test-Path -Path "$pathDesktopShortcuts\EmulationStation.lnk" -PathType Leaf) -eq $false) {
+			shortcutCreate -SourceExe "$pathEs\emulationstation.exe" -DestinationPath "$pathDesktopShortcuts\EmulationStation.lnk"
+			$stringOutput = "$pathDesktopShortcuts\EmulationStation.lnk created."
 			logWrite $stringOutput
 			Write-Host $stringOutput
 		} else {
-			$stringOutput = "$pathShortcuts\EmulationStation.lnk already exists."
+			$stringOutput = "$pathDesktopShortcuts\EmulationStation.lnk already exists."
 			logWrite $stringOutput
 			Write-Host $stringOutput
 		}
-		If ((Test-Path -Path "$pathShortcuts\RetroArch.lnk" -PathType Leaf) -eq $false) {
-			shortcutCreate -SourceExe "$pathRetroarch\RetroArch.exe" -DestinationPath "$pathShortcuts\RetroArch.lnk"
-			$stringOutput = "$pathShortcuts\RetroArch.lnk created."
+		If ((Test-Path -Path "$pathDesktopShortcuts\RetroArch.lnk" -PathType Leaf) -eq $false) {
+			shortcutCreate -SourceExe "$pathRetroarch\RetroArch.exe" -DestinationPath "$pathDesktopShortcuts\RetroArch.lnk"
+			$stringOutput = "$pathDesktopShortcuts\RetroArch.lnk created."
 			logWrite $stringOutput
 			Write-Host $stringOutput
 		} else {
-			$stringOutput = "$pathShortcuts\RetroArch.lnk already exists."
+			$stringOutput = "$pathDesktopShortcuts\RetroArch.lnk already exists."
 			logWrite $stringOutput
 			Write-Host $stringOutput
 		}
-		If ((Test-Path -Path "$pathShortcuts\Steam Rom Manager.lnk" -PathType Leaf) -eq $false) {
-			shortcutCreate -SourceExe "$pathSrm\steam_rom_manager.exe" -DestinationPath "$pathShortcuts\Steam Rom Manager.lnk"
-			$stringOutput = "$pathShortcuts\Steam Rom Manager.lnk created."
+		If ((Test-Path -Path "$pathDesktopShortcuts\Steam Rom Manager.lnk" -PathType Leaf) -eq $false) {
+			shortcutCreate -SourceExe "$pathSrm\steam_rom_manager.exe" -DestinationPath "$pathDesktopShortcuts\Steam Rom Manager.lnk"
+			$stringOutput = "$pathDesktopShortcuts\Steam Rom Manager.lnk created."
 			logWrite $stringOutput
 			Write-Host $stringOutput
 		} else {
-			$stringOutput = "$pathShortcuts\Steam Rom Manager.lnk already exists."
+			$stringOutput = "$pathDesktopShortcuts\Steam Rom Manager.lnk already exists."
 			logWrite $stringOutput
 			Write-Host $stringOutput
 		}
 	} else {
-		$stringOutput = "Unable to create shortcuts. Directory $pathShortcuts does not exist!"
+		$stringOutput = "Unable to create shortcuts. Directory $pathDesktopShortcuts does not exist!"
 		logWrite $stringOutput
 		Write-Host $stringOutput
 	}
