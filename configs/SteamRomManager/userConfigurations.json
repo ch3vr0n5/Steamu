@@ -5,7 +5,7 @@
     "steamCategory": "${Emulation}",
     "executableArgs": "",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "%%pathEmulationStation%%",
+    "romDirectory": "${srmdir}${/}emulationstation",
     "steamDirectory": "${srmdir}${/}steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
@@ -25,7 +25,7 @@
     "disabled": false,
     "advanced": false,
     "executable": {
-      "path": "%%pathEmulationStationExe%%",
+      "path": "",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -58,7 +58,7 @@
     "steamCategory": "${Emulation}",
     "executableArgs": "\"${filePath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "%%pathEmulatorShortcuts%%",
+    "romDirectory": "${srmdir}${/}shortcuts",
     "steamDirectory": "${srmdir}${/}steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
@@ -75,7 +75,7 @@
     "localHeroImages": "",
     "localLogoImages": "",
     "localIcons": "",
-    "disabled": true,
+    "disabled": false,
     "advanced": false,
     "executable": {
       "path": "",
