@@ -9,6 +9,8 @@ param (
 	[switch]$doDownload = $true
 )
 
+[switch]$customRomDirectory = $false
+
 ## Overrides
 
 # Turn off download progress bar otherwise downloads take SIGNIFICANTLY longer
@@ -50,7 +52,7 @@ $pathRetroarch = "$pathEmulators\RetroArch"
 $pathTools = "$pathStemu\Tools"
 
 $pathEmulation = "$pathHome\Emulation"
-$pathRoms = "$pathEmulation\Roms"
+$pathRoms = "$pathEmulation\roms"
 
 $pathDesktopShortcuts = "$pathHome\Desktop\Emulation"
 
@@ -471,19 +473,21 @@ ForEach ($sub in $directoryEmulation) {
 }
 
 # %HOMEPATH%\Emulation\roms sub-directories
-ForEach ($rom in $directoryRoms) {
-	IF (Test-Path -path "$pathRoms\$rom") {
-			$stringOutput = "$pathRoms\$rom directory already exists"
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		}
-		else {
-			New-Item -path "$pathRoms\$rom" -ItemType "directory"
+If ($customRomDirectory = $false) {
+	ForEach ($rom in $directoryRoms) {
+		IF (Test-Path -path "$pathRoms\$rom") {
+				$stringOutput = "$pathRoms\$rom directory already exists"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+			}
+			else {
+				New-Item -path "$pathRoms\$rom" -ItemType "directory"
 
-			$stringOutput = "$pathRoms\$rom directory created"
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		}
+				$stringOutput = "$pathRoms\$rom directory created"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+			}
+	}
 }
 
 ## Set Branch
@@ -741,8 +745,16 @@ If ($doDownload -eq $true) {
 
 		ForEach ($junction in $junctionsRetroarch) {
 			$pathSymlink = "$pathRetroarch\$junction"
+			
 			If (Test-Path -Path $pathSymlink) {
 				Remove-Item -Path $pathSymlink -Recurse -Force
+			}
+
+			Switch ($junction.ToString()) {
+				'roms' {$pathJunctionSource = $pathRoms}
+				 'saves' {$pathJunctionSource = "$pathEmulation\saves"}
+				 'states' {$pathJunctionSource = "$pathEmulation\states"}
+				 'bios' {$pathJunctionSource = "$pathEmulation\bios"}
 			}
 			
 			If ((Test-Path $pathSymlink) -And ((Get-Item -Path $Target -Force).LinkType -eq "Junction")) {
@@ -750,7 +762,8 @@ If ($doDownload -eq $true) {
 				logWrite $stringOutput
 				Write-Host $stringOutput
 			} else {
-				New-Item -ItemType Junction -Path $pathSymlink -Target $pathEmulation\$junction
+
+				New-Item -ItemType Junction -Path $pathSymlink -Target $pathJunctionSource
 				$stringOutput = "Junction created at $pathSymlink"
 				logWrite $stringOutput
 				Write-Host $stringOutput
