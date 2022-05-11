@@ -904,7 +904,7 @@ If ($doDownload -eq $true) {
 
 	If (Test-Path -Path "$pathShortcuts") {
 		If ((Test-Path -Path "$pathShortcuts\Retroarch.lnk" -PathType Leaf) -eq $false) {
-			shortcutCreate -SourceExe "%LOCALAPPDATA%\Stemu\Emulators\Retroarch.exe" -DestinationPath "$pathShortcuts\Retroarch.lnk"
+			shortcutCreate -SourceExe "%LOCALAPPDATA%\Stemu\Emulators\RetroArch\retroarch.exe" -DestinationPath "$pathShortcuts\Retroarch.lnk"
 			$stringOutput = "$pathShortcuts\Retroarch.lnk created."
 			logWrite $stringOutput
 			Write-Host $stringOutput
