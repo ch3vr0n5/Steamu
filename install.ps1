@@ -846,7 +846,7 @@ If ($doDownload -eq $true) {
 		#need to replace paths in SRM most likely
 
 ## TODO use shortcutCreate to make shortcuts on Desktop
-	$stringOutput = "Setting up shortcuts in $pathShortcuts..."
+	$stringOutput = "Setting up shortcuts in $pathDesktopShortcuts..."
 	logWrite $stringOutput
 	Write-Host $stringOutput
 
@@ -887,6 +887,32 @@ If ($doDownload -eq $true) {
 		}
 	} else {
 		$stringOutput = "Unable to create shortcuts. Directory $pathDesktopShortcuts does not exist!"
+		logWrite $stringOutput
+		Write-Host $stringOutput
+	}
+
+	$stringOutput = "Setting up shortcuts in $pathShortcuts..."
+	logWrite $stringOutput
+	Write-Host $stringOutput
+
+	If ((Test-Path -Path "$pathShortcuts") -eq $false) {
+		New-Item -Path "$pathShortcuts" -ItemType "directory"
+	}
+
+	If (Test-Path -Path "$pathShortcuts") {
+		If ((Test-Path -Path "$pathShortcuts\Retroarch.lnk" -PathType Leaf) -eq $false) {
+			shortcutCreate -SourceExe "%LOCALAPPDATA%\Stemu\Emulators\Retroarch.exe" -DestinationPath "$pathShortcuts\Retroarch.lnk"
+			$stringOutput = "$pathShortcuts\Retroarch.lnk created."
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		} else {
+			$stringOutput = "$pathShortcuts\Retroarch.lnk already exists."
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+
+	} else {
+		$stringOutput = "Unable to create shortcuts. Directory $pathShortcuts does not exist!"
 		logWrite $stringOutput
 		Write-Host $stringOutput
 	}
