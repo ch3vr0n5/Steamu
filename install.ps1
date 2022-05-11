@@ -179,7 +179,11 @@ $directoryStemu = @(
 $directoryApps = @(
 		'SteamRomManager'
 	,	'EmulationStation'
+	)
 
+$directoryEmulators = @(
+		'Retroarch'
+	,	'Xemu'
 	)
 
 $directoryEmulation = @(
@@ -485,6 +489,22 @@ ForEach ($sub in $directoryStemu) {
 			New-Item -path "$pathStemu\$sub" -ItemType "directory"
 
 			$stringOutput = "$pathStemu\$sub directory created"
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+}
+
+# %LOCALAPPDATA%\Stemu\Emulators sub-directories
+ForEach ($sub in $directoryEmulators) {
+	IF (Test-Path -path "$pathEmulators\$sub") {
+			$stringOutput = "$pathEmulators\$sub directory already exists"
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
+		else {
+			New-Item -path "$pathEmulators\$sub" -ItemType "directory"
+
+			$stringOutput = "$pathEmulators\$sub directory created"
 			logWrite $stringOutput
 			Write-Host $stringOutput
 		}
