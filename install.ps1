@@ -826,7 +826,7 @@ If ($doDownload -eq $true) {
 			}
 
 			If (Test-Path -Path "$pathSrmData\userConfigurations.json" -PathType Leaf) {
-				Rename-Item -Path "$pathSrmData\userConfigurations.json" -NewName "userConfigurations.json.bak" -Force
+				Rename-Item -Path "$pathSrmData\userConfigurations.json" -NewName "userConfigurations.json.bak" -Force #need to do something here when these backup files already exist... probably an md5 so if it's the same file ignore it.
 			}
 			If (Test-Path -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -PathType Leaf) {
 				If ((Test-Path -Path "$pathSrmData\") -eq $false) {
@@ -914,6 +914,16 @@ If ($doDownload -eq $true) {
 			Write-Host $stringOutput
 		}
 
+		If ((Test-Path -Path "$pathShortcuts\EmulationStation.lnk" -PathType Leaf) -eq $false) {
+			shortcutCreate -SourceExe "%LOCALAPPDATA%\Stemu\Apps\EmulationStation\EmulationStation.exe" -DestinationPath "$pathShortcuts\EmulationStation.lnk"
+			$stringOutput = "$pathShortcuts\EmnulationStation.lnk created."
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		} else {
+			$stringOutput = "$pathShortcuts\EmulationStation.lnk already exists."
+			logWrite $stringOutput
+			Write-Host $stringOutput
+		}
 	} else {
 		$stringOutput = "Unable to create shortcuts. Directory $pathShortcuts does not exist!"
 		logWrite $stringOutput

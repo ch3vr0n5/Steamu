@@ -1,59 +1,6 @@
 [
   {
     "parserType": "Glob",
-    "configTitle": "EmulationStationDE",
-    "steamCategory": "${Emulation}",
-    "executableArgs": "",
-    "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}emulationstation",
-    "steamDirectory": "${srmdir}${/}steam",
-    "startInDirectory": "",
-    "imageProviders": ["SteamGridDB"],
-    "titleModifier": "${fuzzyTitle}",
-    "onlineImageQueries": "${${fuzzyTitle}}",
-    "imagePool": "${fuzzyTitle}",
-    "defaultImage": "",
-    "defaultTallImage": "",
-    "defaultHeroImage": "",
-    "defaultLogoImage": "",
-    "defaultIcon": "",
-    "localImages": "",
-    "localTallImages": "",
-    "localHeroImages": "",
-    "localLogoImages": "",
-    "localIcons": "",
-    "disabled": false,
-    "advanced": false,
-    "executable": {
-      "path": "${srmdir}${/}emulationstation${/}emulationstation.exe",
-      "shortcutPassthrough": false,
-      "appendArgsToExecutable": true
-    },
-    "userAccounts": {
-      "specifiedAccounts": "",
-      "skipWithMissingDataDir": true,
-      "useCredentials": true
-    },
-    "parserInputs": {
-      "glob": "${title}@(.exe)"
-    },
-    "titleFromVariable": {
-      "limitToGroups": "",
-      "caseInsensitiveVariables": false,
-      "skipFileIfVariableWasNotFound": false,
-      "tryToMatchTitle": false
-    },
-    "fuzzyMatch": {
-      "use": true,
-      "replaceDiacritics": true,
-      "removeCharacters": true,
-      "removeBrackets": true
-    },
-    "parserId": "164824496516097458",
-    "version": 5
-  },
-  {
-    "parserType": "Glob",
     "configTitle": "Emulators",
     "steamCategory": "${Emulation}",
     "executableArgs": "",
