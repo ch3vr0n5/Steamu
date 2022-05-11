@@ -787,7 +787,7 @@ If ($doDownload -eq $true) {
 				IF (Test-Path "$destinationPath\$sourceFileName" -PathType Leaf){
 					Remove-Item "$destinationPath\$sourceFileName" -Force
 				}
-				Move-Item -Path $sourcePath -Destination $DestinationPath
+				Copy-Item -Path $sourcePath -Destination $DestinationPath -Force
 
 				Remove-Item -Path $sourcePath -Recurse -Force
 			} else {
