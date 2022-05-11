@@ -26,6 +26,7 @@ if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture.Contains("64") -eq $fal
 # $test = $branch.ToString()
 
 
+# Paths & URLs
 
 $gitUrl = "https://github.com/ch3vr0n5/stEmu.git"
 $gitBranches = @('dev','beta','main')
@@ -43,11 +44,14 @@ $pathDownloads = "$pathStemu\Downloads"
 $pathApps = "$pathStemu\Apps"
 $pathShortcuts = "$pathStemu\Shortcuts"
 $pathConfigs = "$pathStemu\Configs"
+$pathEmulators = "$pathStemu\Emulators"
+
 $pathSrm = "$pathApps\SteamRomManager"
 $pathSrmData = "$pathApps\SteamRomManager\userData"
+
 $pathEs = "$pathApps\EmulationStation"
 $pathEsData = "$pathEs\resources\systems\windows"
-$pathEmulators = "$pathStemu\Emulators"
+
 $pathRetroarch = "$pathEmulators\RetroArch"
 $pathTools = "$pathStemu\Tools"
 
@@ -63,6 +67,7 @@ $fileLog = "$pathLogs\$fileLogName"
 [switch]$fileLogHome = $false
 
 # Dependency URLs
+## TODO, turn these into an array with name, url, zip, version, supplementary (like cores)
 $retroarchVersion = '1.10.3'
 $retroarchUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch.7z"
 $retroarchCoresUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch_cores.7z"
@@ -75,6 +80,9 @@ $fileSrm = 'steam_rom_manager.exe'
 
 $esUrl = 'https://gitlab.com/leonstyhre/emulationstation-de/-/package_files/36880305/download'
 $fileEsZip = 'emulationstation.zip'
+
+$xemuUrl = 'https://github.com/mborgerson/xemu/releases/latest/download/xemu-win-release.zip'
+$xemuZip = 'xemu.zip'
 
 If ($architecture -eq 'x86_64') {
 	$peazipUrl = 'https://github.com/peazip/PeaZip/releases/download/8.6.0/peazip_portable-8.6.0.WIN64.zip'
@@ -545,6 +553,12 @@ IF ($doDownload -eq $true) {
 		Write-Host $stringOutput
 		Invoke-WebRequest -Uri $EsUrl -OutFile "$pathDownloads\$fileEsZip"
 
+		# Download Xemu
+		$stringOutput = 'Downloading Xemu...'
+		logWrite $stringOutput
+		Write-Host $stringOutput
+		Invoke-WebRequest -Uri $xemuUrl -OutFile "$pathDownloads\$xemuZip"
+
 		# need to download all the other emulators
 
 		$stringOutput = 'Downloads complete'
@@ -745,7 +759,7 @@ If ($doDownload -eq $true) {
 
 		ForEach ($junction in $junctionsRetroarch) {
 			$pathSymlink = "$pathRetroarch\$junction"
-			
+
 			If (Test-Path -Path $pathSymlink) {
 				Remove-Item -Path $pathSymlink -Recurse -Force
 			}
