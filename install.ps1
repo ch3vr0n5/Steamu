@@ -109,7 +109,7 @@ $dependencyArray = @(
 		Name = 'Steam Rom Manager';
 		Url = "https://github.com/SteamGridDB/steam-rom-manager/releases/download/v$srmVersion/Steam-ROM-Manager-portable-$srmVersion.exe"; #https://github.com/SteamGridDB/steam-rom-manager/releases/download/v2.3.35/Steam-ROM-Manager-portable-2.3.35.exe
 		Output = 'steam_rom_manager.exe';
-		DirectToPath = $true;
+		DirectToPath = $false;
 		DestinationPath = "$pathSrm\";
 		ExtractFolder = '';
 		Type = 'exe';
@@ -745,25 +745,32 @@ If ($doDownload -eq $true) {
 		}
 
 		If ($type -eq 'zip'){
-			$stringOutput = "Extracting $name to $extractPath"
-			logWrite $stringOutput
-			Write-Host $stringOutput
-
 			IF (Test-Path -Path $sourcePath -PathType Leaf) {
+
+				$stringOutput = "Extracting $name to $extractPath"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+
 				Expand-7Zip -ArchiveFileName $sourcePath -TargetPath $targetPath
+
+				IF ($extras) {
+
+					$stringOutput = "Extracting $extrasName to $extractPath"
+					logWrite $stringOutput
+					Write-Host $stringOutput
+
+					Expand-7Zip -ArchiveFileName $extrasSourcePath -TargetPath $extrasTargetPath
+				}
 
 				$stringOutput = "Moving $name to $DestinationPath from $extractPath"
 				logWrite $stringOutput
 				Write-Host $stringOutput
-
-				IF ($extras) {
-					$stringOutput = "Extracting $extrasName to $extractPath"
-					logWrite $stringOutput
-					Write-Host $stringOutput
-					Expand-7Zip -ArchiveFileName $extrasSourcePath -TargetPath $extrasTargetPath
-				}
 		
 				Copy-Item -Path "$extractPath\*" -Destination $destinationPath -Recurse -Force
+
+				$stringOutput = "Removing temp $name folder from $extractPath"
+				logWrite $stringOutput
+				Write-Host $stringOutput
 
 				Remove-Item -Path $extractPath -Recurse -Force
 			} else {
@@ -780,7 +787,7 @@ If ($doDownload -eq $true) {
 				IF (Test-Path "$destinationPath\$sourceFileName" -PathType Leaf){
 					Remove-Item "$destinationPath\$sourceFileName" -Force
 				}
-				Move-Item -Path $sourcePath -TargetPath $DestinationPath
+				Move-Item -Path $sourcePath -Destination $DestinationPath
 
 				Remove-Item -Path $sourcePath -Recurse -Force
 			} else {
