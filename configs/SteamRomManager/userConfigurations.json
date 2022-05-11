@@ -25,7 +25,7 @@
     "disabled": false,
     "advanced": false,
     "executable": {
-      "path": "",
+      "path": "${srmdir}${/}emulationstation${/}emulationstation.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -56,7 +56,7 @@
     "parserType": "Glob",
     "configTitle": "Emulators",
     "steamCategory": "${Emulation}",
-    "executableArgs": "\"${filePath}\"",
+    "executableArgs": "",
     "executableModifier": "\"${exePath}\"",
     "romDirectory": "${srmdir}${/}shortcuts",
     "steamDirectory": "${srmdir}${/}steam",
@@ -79,7 +79,7 @@
     "advanced": false,
     "executable": {
       "path": "",
-      "shortcutPassthrough": false,
+      "shortcutPassthrough": true,
       "appendArgsToExecutable": true
     },
     "userAccounts": {
