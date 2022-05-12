@@ -70,6 +70,7 @@ $fileLog = "$pathLogs\$fileLogName"
 
 $retroarchVersion = '1.10.3'
 $srmVersion = '2.3.35'
+$ppssppVersion = '1_12_3'
 
 $dependencyArray = @(
 	[PSCustomObject]@{
@@ -172,6 +173,26 @@ $dependencyArray = @(
 		CreateDesktopShortcut = $true
 		ShortcutName = 'Xemu.lnk'
 	}
+	[PSCustomObject]@{
+		Name = 'PPSSPP';
+		Url = "https://www.ppsspp.org/files/$ppssppVersion/ppsspp_win.zip";
+		Output = 'ppsspp.zip';
+		DirectToPath = $true;
+		DestinationPath = "$pathPpsspp\";
+		ExtractFolder = 'PPSSPP';
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasExtractFolder = "";
+		Exe = IF ($architecture -eq 'x86_64') {'PPSSPPWindows64.exe'} else {'PPSSPPWindows.exe'};
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+		ShortcutName = 'PPSSPP.lnk'
+	}
 #	[PSCustomObject]@{
 #		Name = 'Cemu';
 #		Url = "https://github.com/mborgerson/xemu/releases/latest/download/xemu-win-release.zip";
@@ -219,6 +240,7 @@ $directoryApps = @(
 $directoryEmulators = @(
 		'Retroarch'
 	,	'Xemu'
+	,	'PPSSPP'
 	)
 
 $directoryEmulation = @(
