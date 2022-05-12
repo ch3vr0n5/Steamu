@@ -1089,6 +1089,7 @@ If ($doDownload -eq $true) {
 					logWrite $stringOutput
 					Write-Host $stringOutput
 				}
+				<#
 				If ((Test-Path -Path $shortcutSrmPath -PathType Leaf) -eq $false) {
 					shortcutCreate -SourceExe $exeFullPath -DestinationPath $shortcutSrmPath
 					$stringOutput = "$shortcutSrmPath created."
@@ -1099,6 +1100,7 @@ If ($doDownload -eq $true) {
 					logWrite $stringOutput
 					Write-Host $stringOutput
 				}
+				#>
 			}
 		}
 	} else {

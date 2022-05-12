@@ -1847,7 +1847,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}pcsx2${/}pcsx2.exe",
+      "path": "${srmdir}${/}..${/}..${/}Emulators${/}PCSX2${/}pcsx2.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1900,7 +1900,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}rpcs3${/}rpcs3.exe",
+      "path": "${srmdir}${/}..${/}..${/}Emulators${/}RPCS3${/}rpcs3.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -2006,8 +2006,8 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}ppsspp.lnk",
-      "shortcutPassthrough": true,
+      "path": "${srmdir}${/}..${/}..${/}Emulators${/}PPSSPP${/}PPSSPPWindows64.exe",
+      "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
     "parserId": "164785656634747068",
@@ -2039,7 +2039,7 @@
     "disabled": false,
     "advanced": false,
     "executable": {
-      "path": "%%pathXemu%%",
+      "path": "${srmdir}${/}..${/}..${/}Emulators${/}Xemu${/}xemu.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
