@@ -54,6 +54,7 @@ $pathEsData = "$pathEs\resources\systems\windows"
 $pathRetroarch = "$pathEmulators\RetroArch"
 $pathXemu = "$pathEmulators\Xemu"
 $pathPpsspp = "$pathEmulators\PPSSPP" #move these to array property and then  foreach loop folder creation
+$pathRpcs3 = "$pathEmulators\RPCS3"
 $pathTools = "$pathStemu\Tools"
 
 $pathEmulation = "$pathHome\Emulation"
@@ -194,6 +195,26 @@ $dependencyArray = @(
 		CreateDesktopShortcut = $true
 		ShortcutName = 'PPSSPP.lnk'
 	}
+	[PSCustomObject]@{
+		Name = 'RPCS3';
+		Url = "https://github.com/RPCS3/rpcs3-binaries-win/releases/download/build-5ae9de4e3b7f4aa59ede098796c08e128783989a/rpcs3-v0.0.22-13592-5ae9de4e_win64.7z";
+		Output = 'rpcs3.zip';
+		DirectToPath = $true;
+		DestinationPath = "$pathEmulators\RPCS3\";
+		ExtractFolder = 'RPCS3';
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasExtractFolder = "";
+		Exe = 'rpcs3.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+		ShortcutName = 'RPCS3.lnk'
+	}
 #	[PSCustomObject]@{
 #		Name = 'Cemu';
 #		Url = "https://github.com/mborgerson/xemu/releases/latest/download/xemu-win-release.zip";
@@ -242,6 +263,7 @@ $directoryEmulators = @(
 		'Retroarch'
 	,	'Xemu'
 	,	'PPSSPP'
+	,	'RPCS3'
 	)
 
 $directoryEmulation = @(
