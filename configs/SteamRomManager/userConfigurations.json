@@ -1847,7 +1847,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "%%pathPcsx2%%",
+      "path": "${srmdir}${/}pcsx2${/}pcsx2.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1900,7 +1900,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "%%pathRpcs3%%",
+      "path": "${srmdir}${/}rpcs3${/}rpcs3.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -2006,8 +2006,8 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "%%pathPpsspp%%",
-      "shortcutPassthrough": false,
+      "path": "${srmdir}${/}ppsspp.lnk",
+      "shortcutPassthrough": true,
       "appendArgsToExecutable": true
     },
     "parserId": "164785656634747068",

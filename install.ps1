@@ -1063,6 +1063,7 @@ If ($doDownload -eq $true) {
 			$exeFullPath = "$exePath\$exeName"
 			$shortcutDesktopPath = "$pathDesktopShortcuts\$shortcutName"
 			$shortcutSteamPath = "$pathShortcuts\$shortcutName"
+			$shortcutSrmPath = "$pathSrm\$shortcutName"
 
 
 			IF ($createShortcutDesktop){
@@ -1085,6 +1086,16 @@ If ($doDownload -eq $true) {
 					Write-Host $stringOutput
 				} else {
 					$stringOutput = "$shortcutSteamPath already exists."
+					logWrite $stringOutput
+					Write-Host $stringOutput
+				}
+				If ((Test-Path -Path $shortcutSrmPath -PathType Leaf) -eq $false) {
+					shortcutCreate -SourceExe $exeFullPath -DestinationPath $shortcutSrmPath
+					$stringOutput = "$shortcutSrmPath created."
+					logWrite $stringOutput
+					Write-Host $stringOutput
+				} else {
+					$stringOutput = "$shortcutSrmPath already exists."
 					logWrite $stringOutput
 					Write-Host $stringOutput
 				}
