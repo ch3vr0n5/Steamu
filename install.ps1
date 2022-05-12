@@ -67,7 +67,6 @@ $fileLog = "$pathLogs\$fileLogName"
 [switch]$fileLogHome = $false
 
 # Dependency URLs
-## TODO, turn these into an array with name, url, zip, version, supplementary (like cores)
 
 $retroarchVersion = '1.10.3'
 $srmVersion = '2.3.35'
@@ -88,6 +87,9 @@ $dependencyArray = @(
 		ExtrasDirectToPath = $false;
 		ExtrasDestinationPath = "";
 		ExtrasExtractFolder = "";
+		Exe = '';
+		CreateSteamShortcut = $false;
+		CreateDesktopShortcut = $false
 	}
 	[PSCustomObject]@{
 		Name = 'Retroarch';
@@ -102,8 +104,11 @@ $dependencyArray = @(
 		ExtrasUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch_cores.7z";
 		ExtrasOutput = 'retroarch_cores.7z';
 		ExtrasDirectToPath = $false;
-		ExtrasDestinationPath = "";
-		ExtrasExtractFolder = "";
+		ExtrasDestinationPath = "$pathRetroarch\";
+		ExtrasExtractFolder = IF ($architecture -eq 'x86_64') {'RetroArch-Win64'} else {'RetroArch-Win32'};
+		Exe = 'retroarch.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
 	}
 	[PSCustomObject]@{
 		Name = 'Steam Rom Manager';
@@ -120,6 +125,9 @@ $dependencyArray = @(
 		ExtrasDirectToPath = $false;
 		ExtrasDestinationPath = "";
 		ExtrasExtractFolder = "";
+		Exe = 'steam_rom_manager.exe'
+		CreateSteamShortcut = $false;
+		CreateDesktopShortcut = $true
 	}
 	[PSCustomObject]@{
 		Name = 'Emulation Station DE';
@@ -136,6 +144,9 @@ $dependencyArray = @(
 		ExtrasDirectToPath = $false;
 		ExtrasDestinationPath = "";
 		ExtrasExtractFolder = "";
+		Exe = 'emulationstation.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
 	}
 	[PSCustomObject]@{
 		Name = 'Xemu';
@@ -152,6 +163,9 @@ $dependencyArray = @(
 		ExtrasDirectToPath = $false;
 		ExtrasDestinationPath = "";
 		ExtrasExtractFolder = "";
+		Exe = '';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
 	}
 #	[PSCustomObject]@{
 #		Name = 'Cemu';
@@ -735,9 +749,12 @@ If ($doDownload -eq $true) {
 
 		$extras = $dependency.Extras
 		$extrasName = $dependency.ExtrasName
+		$extrasExtractFolder = $dependency.ExtrasExtractFolder
+		$extrasExtractPath = "pathTemp\$extractFolder"
 		$extrasSourceFileName = $dependency.ExtrasOutput
 		$extrasSourcePath = "$pathDownloads\$extrasSourceFileName"
 		$extrasTargetPath = $pathTemp
+		$extrasDestinationPath = $dependency.ExtrasDestinationPath
 
 		If ($directtopath) {
 			$targetPath = $extractPath
@@ -753,15 +770,6 @@ If ($doDownload -eq $true) {
 
 				Expand-7Zip -ArchiveFileName $sourcePath -TargetPath $targetPath
 
-				IF ($extras) {
-
-					$stringOutput = "Extracting $extrasName to $extractPath"
-					logWrite $stringOutput
-					Write-Host $stringOutput
-
-					Expand-7Zip -ArchiveFileName $extrasSourcePath -TargetPath $extrasTargetPath
-				}
-
 				$stringOutput = "Moving $name to $DestinationPath from $extractPath"
 				logWrite $stringOutput
 				Write-Host $stringOutput
@@ -771,8 +779,30 @@ If ($doDownload -eq $true) {
 				$stringOutput = "Removing temp $name folder from $extractPath"
 				logWrite $stringOutput
 				Write-Host $stringOutput
-
+				
 				Remove-Item -Path $extractPath -Recurse -Force
+
+				IF ($extras) {
+
+					$stringOutput = "Extracting $extrasName to $extrasExtractPath"
+					logWrite $stringOutput
+					Write-Host $stringOutput
+
+					Expand-7Zip -ArchiveFileName $extrasSourcePath -TargetPath $extrasTargetPath
+
+					$stringOutput = "Moving $extrasName to $extrasDestinationPath from $extrasExtractPath"
+					logWrite $stringOutput
+					Write-Host $stringOutput
+		
+					Copy-Item -Path "$extrasExtractPath\*" -Destination $extrasDestinationPath -Recurse -Force
+
+					$stringOutput = "Removing temp $extrasName folder from $extrasExtractPath"
+					logWrite $stringOutput
+					Write-Host $stringOutput
+
+					Remove-Item -Path $extrasExtractPath -Recurse -Force
+				}
+
 			} else {
 				$stringOutput = "Unable to extract $Name. Cannot continue. Press any key to exit"
 				logWrite $stringOutput
@@ -803,129 +833,7 @@ If ($doDownload -eq $true) {
 		}
 
 	}
-<#
-	$stringOutput = "Extracting Stemu to $pathStemu"
-	logWrite $stringOutput
-	Write-Host $stringOutput
-	IF (Test-Path -Path "$pathDownloads\$fileStemuZip" -PathType Leaf) {
-		Expand-7Zip -ArchiveFileName "$pathDownloads\$fileStemuZip" -TargetPath $pathStemu
-		#Remove-Item -Path "$pathDownloads\$fileStemuZip" -Force
 
-		Copy-Item -Path "$pathStemu\stEmu-$branch\*" -Destination "$pathStemu\" -Recurse -Force
-		Remove-Item -Path "$pathStemu\stEmu-$branch" -Recurse -Force
-	} else {
-		$stringOutput = "Unable to extract Stemu. Cannot continue. Press any key to exit"
-		logWrite $stringOutput
-		inputPause $stringOutput
-		exit
-	}
-
-	If (Test-Path -Path $pathEmulators) {
-			# Extract Retroarch
-			$stringOutput = "Extracting Retroarch to $pathEmulators"
-			logWrite $stringOutput
-			Write-Host $stringOutput
-			If(Test-Path -Path "$pathDownloads\$fileRetroarchZip" -PathType Leaf) {
-				Expand-7Zip -ArchiveFileName "$pathDownloads\$fileRetroarchZip" -TargetPath $pathEmulators
-				#Remove-Item -Path "$pathDownloads\$fileRetroarchZip" -Force
-			} else {
-				$stringOutput = "Unable to extract Retroarch. Cannot continue. Press any key to exit"
-				logWrite $stringOutput
-				inputPause $stringOutput
-				exit
-			}
-
-			$stringOutput = "Extracting Retroarch Cores to $pathEmulators"
-			logWrite $stringOutput
-			Write-Host $stringOutput
-			If (Test-Path -Path "$pathDownloads\$fileRetroarchCoresZip" -PathType Leaf) {
-				Expand-7Zip -ArchiveFileName "$pathDownloads\$fileRetroarchCoresZip" -TargetPath $pathEmulators
-			} else {
-				$stringOutput = "Unable to extract Retroarch Cores. Cannot continue. Press any key to exit"
-				logWrite $stringOutput
-				inputPause $stringOutput
-				exit
-			}
-			
-			#Remove-Item -Path "$pathDownloads\$fileRetroarchCoresZip" -Force
-
-			IF (Test-Path -path "$pathEmulators\RetroArch"){
-				Remove-Item -Path "$pathEmulators\RetroArch" -Recurse -Force
-			}
-			If ($architecture -eq "x86_64") {
-				Rename-Item -Path "$pathEmulators\RetroArch-Win64" -NewName 'RetroArch'
-				$stringOutput = "Renamed $pathEmulators\RetroArch-Win64 to $pathEmulators\RetroArch"
-				logWrite $stringOutput
-				Write-Host $stringOutput
-
-			} else { 
-				Rename-Item -Path "$pathEmulators\RetroArch-Win32" -NewName 'RetroArch'
-				$stringOutput = "Renamed $pathEmulators\RetroArch-Win32 to $pathEmulators\RetroArch"
-				logWrite $stringOutput
-				Write-Host $stringOutput
-			}
-	}
-
-	If(test-path -path $pathApps) {
-
-			# Extract Steam Rom Manager
-			$stringOutput = 'Moving Steam Rom Manager'
-			logWrite $stringOutput
-			Write-Host $stringOutput
-			If (Test-Path -Path "$pathDownloads\$fileSrm" -PathType Leaf) {
-				If (Test-Path -Path "$pathApps\SteamRomManager\$fileSrm" -PathType Leaf) {
-					Remove-Item -Path "$pathApps\SteamRomManager\$fileSrm" -Force
-				}
-				Move-Item -Path "$pathDownloads\$fileSrm" -Destination "$pathApps\SteamRomManager\$fileSrm" -Force
-			} else {
-				$stringOutput = "Unable to move Steam Rom Manager. Cannot continue. Press any key to exit"
-				logWrite $stringOutput
-				inputPause $stringOutput
-				exit
-			}
-			
-			#Remove-Item -Path "$pathDownloads\$fileSrm"
-
-			# Extract EmulationStation DE
-			$stringOutput = 'Extracting EmulationStation DE'
-			logWrite $stringOutput
-			Write-Host $stringOutput
-			#Expand-Archive -Path "$pathDownloads\$fileEsZip" -Destination "$pathApps"
-			#Remove-Item -Path "$pathDownloads\$fileEsZip"
-			If(Test-Path -Path "$pathDownloads\$fileEsZip" -PathType Leaf) {
-				Expand-7Zip -ArchiveFileName "$pathDownloads\$fileEsZip" -TargetPath $pathApps
-			} else {
-				$stringOutput = "Unable to extract EmulationStation DE. Cannot continue. Press any key to exit"
-				logWrite $stringOutput
-				inputPause $stringOutput
-				exit
-			}
-			
-
-			If (Test-Path -Path "$pathApps\EmulationStation") {
-				Remove-Item -Path "$pathApps\EmulationStation" -Recurse -Force
-			}  
-			If (Test-Path -Path "$pathApps\EmulationStation-DE") {
-				Rename-Item -Path "$pathApps\EmulationStation-DE" -NewName 'EmulationStation'
-				$stringOutput = "Renamed $pathEmulators\EmulationStation-DE to $pathEmulators\EmulationStation"
-				logWrite $stringOutput
-				Write-Host $stringOutput
-			} else {
-				$stringOutput = 'Unable to place EmulationStation. Folder EmulationStation-DE does not exist!'
-				logWrite $stringOutput
-				Write-Host $stringOutput
-			}
-			
-			
-		}
-		else {
-			$stringOutput = "Unable to continue. $pathApps does not exist! Press any key to exit."
-			logWrite $stringOutput
-			#Write-Host $stringOutput
-			inputPause $stringOutput
-			exit
-		}
-#>
 		$stringOutput = 'Extraction complete'
 		logWrite $stringOutput
 		Write-Host $stringOutput
@@ -1071,35 +979,43 @@ If ($doDownload -eq $true) {
 	}
 
 	If (Test-Path -Path "$pathDesktopShortcuts") {
-		If ((Test-Path -Path "$pathDesktopShortcuts\EmulationStation.lnk" -PathType Leaf) -eq $false) {
-			shortcutCreate -SourceExe "$pathEs\emulationstation.exe" -DestinationPath "$pathDesktopShortcuts\EmulationStation.lnk"
-			$stringOutput = "$pathDesktopShortcuts\EmulationStation.lnk created."
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		} else {
-			$stringOutput = "$pathDesktopShortcuts\EmulationStation.lnk already exists."
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		}
-		If ((Test-Path -Path "$pathDesktopShortcuts\RetroArch.lnk" -PathType Leaf) -eq $false) {
-			shortcutCreate -SourceExe "$pathRetroarch\RetroArch.exe" -DestinationPath "$pathDesktopShortcuts\RetroArch.lnk"
-			$stringOutput = "$pathDesktopShortcuts\RetroArch.lnk created."
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		} else {
-			$stringOutput = "$pathDesktopShortcuts\RetroArch.lnk already exists."
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		}
-		If ((Test-Path -Path "$pathDesktopShortcuts\Steam Rom Manager.lnk" -PathType Leaf) -eq $false) {
-			shortcutCreate -SourceExe "$pathSrm\steam_rom_manager.exe" -DestinationPath "$pathDesktopShortcuts\Steam Rom Manager.lnk"
-			$stringOutput = "$pathDesktopShortcuts\Steam Rom Manager.lnk created."
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		} else {
-			$stringOutput = "$pathDesktopShortcuts\Steam Rom Manager.lnk already exists."
-			logWrite $stringOutput
-			Write-Host $stringOutput
+		ForEach ($dependency in $dependencyArray){
+			$name = $dependency.Name
+			
+			$createShortcutDesktop = $dependency.CreateDesktopShortcut
+			$createShortcutSteam = $dependency.CreateSteamShortcut
+			
+			$shortcutName = $dependency.ShortcutName
+			$exePath = $dependency.DestinationPath
+			$exeName = $dependency.Exe
+			$exeFullPath = "$exePath\$exeName"
+			$shortcutDesktopPath = "$pathDesktopShortcuts\$shortcutName"
+			$shortcutSteamPath = "$pathShortcuts\$shortcutName"
+
+
+			IF ($createDesktopShortcut){
+				If ((Test-Path -Path $shortcutDesktopPath -PathType Leaf) -eq $false) {
+					shortcutCreate -SourceExe $exeFullPath -DestinationPath $shortcutDesktopPath
+					$stringOutput = "$shortcutDesktopPath created."
+					logWrite $stringOutput
+					Write-Host $stringOutput
+				} else {
+					$stringOutput = "$shortcutDesktopPath already exists."
+					logWrite $stringOutput
+					Write-Host $stringOutput
+				}
+			} elseif ($createShortcutSteam) {
+				If ((Test-Path -Path $shortcutSteamPath -PathType Leaf) -eq $false) {
+					shortcutCreate -SourceExe $exeFullPath -DestinationPath $shortcutSteamPath
+					$stringOutput = "$shortcutSteamPath created."
+					logWrite $stringOutput
+					Write-Host $stringOutput
+				} else {
+					$stringOutput = "$shortcutSteamPath already exists."
+					logWrite $stringOutput
+					Write-Host $stringOutput
+				}
+			}
 		}
 	} else {
 		$stringOutput = "Unable to create shortcuts. Directory $pathDesktopShortcuts does not exist!"
@@ -1107,41 +1023,6 @@ If ($doDownload -eq $true) {
 		Write-Host $stringOutput
 	}
 
-	$stringOutput = "Setting up shortcuts in $pathShortcuts..."
-	logWrite $stringOutput
-	Write-Host $stringOutput
-
-	If ((Test-Path -Path "$pathShortcuts") -eq $false) {
-		New-Item -Path "$pathShortcuts" -ItemType "directory"
-	}
-
-	If (Test-Path -Path "$pathShortcuts") {
-		If ((Test-Path -Path "$pathShortcuts\Retroarch.lnk" -PathType Leaf) -eq $false) {
-			shortcutCreate -SourceExe "%LOCALAPPDATA%\Stemu\Emulators\RetroArch\retroarch.exe" -DestinationPath "$pathShortcuts\Retroarch.lnk"
-			$stringOutput = "$pathShortcuts\Retroarch.lnk created."
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		} else {
-			$stringOutput = "$pathShortcuts\Retroarch.lnk already exists."
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		}
-
-		If ((Test-Path -Path "$pathShortcuts\EmulationStation.lnk" -PathType Leaf) -eq $false) {
-			shortcutCreate -SourceExe "%LOCALAPPDATA%\Stemu\Apps\EmulationStation\EmulationStation.exe" -DestinationPath "$pathShortcuts\EmulationStation.lnk"
-			$stringOutput = "$pathShortcuts\EmnulationStation.lnk created."
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		} else {
-			$stringOutput = "$pathShortcuts\EmulationStation.lnk already exists."
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		}
-	} else {
-		$stringOutput = "Unable to create shortcuts. Directory $pathShortcuts does not exist!"
-		logWrite $stringOutput
-		Write-Host $stringOutput
-	}
 
 ## TODO if existing configs exit, replace, else, copy new configs
 
