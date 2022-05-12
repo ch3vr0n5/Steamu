@@ -73,6 +73,7 @@ $fileLog = "$pathLogs\$fileLogName"
 $retroarchVersion = '1.10.3'
 $srmVersion = '2.3.35'
 $ppssppVersion = '1_12_3'
+$pcsx2Version = '1.6.0'
 
 $dependencyArray = @(
 	[PSCustomObject]@{
@@ -200,7 +201,7 @@ $dependencyArray = @(
 		Url = "https://github.com/RPCS3/rpcs3-binaries-win/releases/download/build-5ae9de4e3b7f4aa59ede098796c08e128783989a/rpcs3-v0.0.22-13592-5ae9de4e_win64.7z";
 		Output = 'rpcs3.zip';
 		DirectToPath = $true;
-		DestinationPath = "$pathEmulators\RPCS3\";
+		DestinationPath = "$pathEmulators\RPCS3\"; # either do this for each or add destinatonfolder prop and keep this the base path
 		ExtractFolder = 'RPCS3';
 		Type = 'zip';
 		Extras = $false;
@@ -213,7 +214,27 @@ $dependencyArray = @(
 		Exe = 'rpcs3.exe';
 		CreateSteamShortcut = $true;
 		CreateDesktopShortcut = $true
-		ShortcutName = 'RPCS3.lnk'
+		ShortcutName = 'RPCS3.lnk' # get rid of this just use name
+	}
+	[PSCustomObject]@{
+		Name = 'PCSX2';
+		Url = "https://github.com/PCSX2/pcsx2/releases/download/v$pcsx2Version/pcsx2-v$pcsx2Version-windows-32bit-portable.7z";
+		Output = 'pcsx2.zip';
+		DirectToPath = $false;
+		DestinationPath = "$pathEmulators\PCSX2\";
+		ExtractFolder = "PCSX2 $pcsx2Version";
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasExtractFolder = "";
+		Exe = 'pcsx2.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+		ShortcutName = 'PCSX2.lnk'
 	}
 #	[PSCustomObject]@{
 #		Name = 'Cemu';
@@ -264,6 +285,7 @@ $directoryEmulators = @(
 	,	'Xemu'
 	,	'PPSSPP'
 	,	'RPCS3'
+	,	'PCSX2'
 	)
 
 $directoryEmulation = @(
