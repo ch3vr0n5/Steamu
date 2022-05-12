@@ -53,6 +53,7 @@ $pathEsData = "$pathEs\resources\systems\windows"
 
 $pathRetroarch = "$pathEmulators\RetroArch"
 $pathXemu = "$pathEmulators\Xemu"
+$pathPpsspp = "$pathEmulators\PPSSPP" #move these to array property and then  foreach loop folder creation
 $pathTools = "$pathStemu\Tools"
 
 $pathEmulation = "$pathHome\Emulation"
