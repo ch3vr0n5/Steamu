@@ -945,14 +945,14 @@ If ($doDownload -eq $true) {
 ## Copy configs
 		If ($doDownload) {
 			If (Test-Path -Path "$pathRetroarch\retroarch.cfg" -PathType Leaf) {
-				Rename-Item -Path "$pathRetroarch\retroarch.cfg" -NewName "retroarch.cfg.bak" -Force
+				Rename-Item -Path "$pathRetroarch\retroarch.cfg" -NewName "retroarch-$(get-date -f yyyyMMddHHmm).cfg" -Force
 			}
 			If (Test-Path -Path "$pathConfigs\RetroArch\retroarch.cfg" -PathType Leaf) {
 				Copy-Item -Path "$pathConfigs\RetroArch\retroarch.cfg" -Destination "$pathRetroarch\" -Force
 			}
 
 			If (Test-Path -Path "$pathSrmData\userConfigurations.json" -PathType Leaf) {
-				Rename-Item -Path "$pathSrmData\userConfigurations.json" -NewName "userConfigurations.json.bak" -Force #need to do something here when these backup files already exist... probably an md5 so if it's the same file ignore it.
+				Rename-Item -Path "$pathSrmData\userConfigurations.json" -NewName "userConfigurations-$(get-date -f yyyyMMddHHmm).json" -Force #need to do something here when these backup files already exist... probably an md5 so if it's the same file ignore it.
 			}
 			If (Test-Path -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -PathType Leaf) {
 				If ((Test-Path -Path "$pathSrmData\") -eq $false) {
@@ -962,10 +962,10 @@ If ($doDownload -eq $true) {
 			}
 
 			If (Test-Path -Path "$pathEsData\es_find_rules.xml" -PathType Leaf) {
-				Rename-Item -Path "$pathEsData\es_find_rules.xml" -NewName "es_find_rules.xml.bak" -Force
+				Rename-Item -Path "$pathEsData\es_find_rules.xml" -NewName "es_find_rules-$(get-date -f yyyyMMddHHmm).xml" -Force
 			}
 			If (Test-Path -Path "$pathEsData\es_systems.xml" -PathType Leaf) {
-				Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems.xml.bak" -Force
+				Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems-$(get-date -f yyyyMMddHHmm).xml" -Force
 			}
 			If (Test-Path -Path "$pathConfigs\EmulationStation\es_systems.xml" -PathType Leaf) {
 				Copy-Item -Path "$pathConfigs\EmulationStation\*" -Destination "$pathEsData\" -Force
@@ -1009,7 +1009,8 @@ If ($doDownload -eq $true) {
 					logWrite $stringOutput
 					Write-Host $stringOutput
 				}
-			} elseif ($createShortcutSteam) {
+			} 
+			If ($createShortcutSteam) {
 				If ((Test-Path -Path $shortcutSteamPath -PathType Leaf) -eq $false) {
 					shortcutCreate -SourceExe $exeFullPath -DestinationPath $shortcutSteamPath
 					$stringOutput = "$shortcutSteamPath created."
