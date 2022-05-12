@@ -89,7 +89,8 @@ $dependencyArray = @(
 		ExtrasExtractFolder = "";
 		Exe = '';
 		CreateSteamShortcut = $false;
-		CreateDesktopShortcut = $false
+		CreateDesktopShortcut = $false;
+		ShortcutName = ''
 	}
 	[PSCustomObject]@{
 		Name = 'Retroarch';
@@ -109,6 +110,7 @@ $dependencyArray = @(
 		Exe = 'retroarch.exe';
 		CreateSteamShortcut = $true;
 		CreateDesktopShortcut = $true
+		ShortcutName = 'Retroarch.lnk'
 	}
 	[PSCustomObject]@{
 		Name = 'Steam Rom Manager';
@@ -128,6 +130,7 @@ $dependencyArray = @(
 		Exe = 'steam_rom_manager.exe'
 		CreateSteamShortcut = $false;
 		CreateDesktopShortcut = $true
+		ShortcutName = 'Steam ROM Manager.lnk'
 	}
 	[PSCustomObject]@{
 		Name = 'Emulation Station DE';
@@ -147,6 +150,7 @@ $dependencyArray = @(
 		Exe = 'emulationstation.exe';
 		CreateSteamShortcut = $true;
 		CreateDesktopShortcut = $true
+		ShortcutName = 'EmulationStation.lnk'
 	}
 	[PSCustomObject]@{
 		Name = 'Xemu';
@@ -166,6 +170,7 @@ $dependencyArray = @(
 		Exe = '';
 		CreateSteamShortcut = $true;
 		CreateDesktopShortcut = $true
+		ShortcutName = 'Xemu.lnk'
 	}
 #	[PSCustomObject]@{
 #		Name = 'Cemu';
@@ -750,7 +755,7 @@ If ($doDownload -eq $true) {
 		$extras = $dependency.Extras
 		$extrasName = $dependency.ExtrasName
 		$extrasExtractFolder = $dependency.ExtrasExtractFolder
-		$extrasExtractPath = "pathTemp\$extractFolder"
+		$extrasExtractPath = "$pathTemp\$extrasExtractFolder"
 		$extrasSourceFileName = $dependency.ExtrasOutput
 		$extrasSourcePath = "$pathDownloads\$extrasSourceFileName"
 		$extrasTargetPath = $pathTemp
@@ -993,7 +998,7 @@ If ($doDownload -eq $true) {
 			$shortcutSteamPath = "$pathShortcuts\$shortcutName"
 
 
-			IF ($createDesktopShortcut){
+			IF ($createShortcutDesktop){
 				If ((Test-Path -Path $shortcutDesktopPath -PathType Leaf) -eq $false) {
 					shortcutCreate -SourceExe $exeFullPath -DestinationPath $shortcutDesktopPath
 					$stringOutput = "$shortcutDesktopPath created."
