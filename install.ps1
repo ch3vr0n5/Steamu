@@ -210,7 +210,7 @@ $dependencyArray = @(
 		Url = "https://github.com/RPCS3/rpcs3-binaries-win/releases/download/build-5ae9de4e3b7f4aa59ede098796c08e128783989a/rpcs3-v0.0.22-13592-5ae9de4e_win64.7z";
 		Output = 'rpcs3.zip';
 		DirectToPath = $true;
-		DestinationPath = "$pathEmulators"; # either do this for each or add destinatonfolder prop and keep this the base path
+		DestinationPath = "$pathEmulators";
 		DestinationName = 'RPCS3';
 		ExtractFolder = 'RPCS3';
 		Type = 'zip';
@@ -290,24 +290,6 @@ $dependencyArray = @(
 		CreateDesktopShortcut = $true
 	}
 )
-
-<# Probably safe to get rid of
-If ($architecture -eq 'x86_64') {
-	$peazipUrl = 'https://github.com/peazip/PeaZip/releases/download/8.6.0/peazip_portable-8.6.0.WIN64.zip'
-	$peazipFolder = 'peazip_portable-8.6.0.WIN64'
-} else {
-	$peazipUrl = 'https://github.com/peazip/PeaZip/releases/download/8.6.0/peazip_portable-8.6.0.WINDOWS.zip'
-	$peazipFolder = 'peazip_portable-8.6.0.WINDOWS'
-}
-$filePeazip = 'pzip.zip'
-$exePeazip = "$pathTools\Peazip\Peazip.exe"
-
-$7zipUrl = 'https://www.7-zip.org/a/7za920.zip'
-$7zipZip = '7zip.zip'
-#>
-
-
-
 
 # directories
 $directorySteamu = @(
