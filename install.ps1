@@ -3,6 +3,9 @@
 <#
 	TODO work on advanced install with options for replacing existing configs with defaults, path choices, etc.
 	TODO foreach loop the junctions for emulators in srm
+	TODO prompt to cancel in welcome message
+	TODO if $customRomDirectory gets set to true, we should junction the %homepath%\emulation\roms to the custom rom path
+	TODO turn prompt into function to return true/false from yes/no
 #>
 
 ## CLI Parameters
