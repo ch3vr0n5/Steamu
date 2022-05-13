@@ -98,7 +98,7 @@ $dependencyArray = @(
 		ExtrasExtractFolder = "";
 		Exe = '';
 		CreateSteamShortcut = $false;
-		CreateDesktopShortcut = $false;
+		CreateDesktopShortcut = $false
 	}
 	[PSCustomObject]@{
 		Name = 'Retroarch';
