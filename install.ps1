@@ -623,7 +623,7 @@ ForEach ($sub in $directoryStemu) {
 # %LOCALAPPDATA%\Stemu\Emulators sub-directories
 ForEach ($dependency in $dependencyArray) {
 	$testPathType = $dependency.DestinationPath
-	IF ($testPathType = $pathEmulators) {
+	IF ($testPathType -eq $pathEmulators) {
 		$pathName = $dependency.DestinationName
 		IF (Test-Path -path "$pathEmulators\$pathName") {
 				$stringOutput = "$pathEmulators\$pathName directory already exists"
