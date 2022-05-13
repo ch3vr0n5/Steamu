@@ -325,6 +325,7 @@ $directoryApps = @(
 	,	'EmulationStation'
 	)
 
+<# replaced in favor of foreach loop
 $directoryEmulators = @(
 		'Retroarch'
 	,	'Xemu'
@@ -332,6 +333,7 @@ $directoryEmulators = @(
 	,	'RPCS3'
 	,	'PCSX2'
 	)
+#>
 
 $directoryEmulation = @(
 		'bios'
