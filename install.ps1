@@ -11,14 +11,13 @@
 ## CLI Parameters
 param (
 	[Parameter()]
-	[string]$branch = "dev",
-	[switch]$doDownload = $true
+	[string]$branch = "main",
+	[switch]$doDownload = $false,
+	[switch]$doCustomRomDirectory = $false,
+	[switch]$doRomSubFolders = $false
 )
 
-## Configuration options
-
-[switch]$customRomDirectory = $false
-
+$branch = 'dev' #set this for development only
 
 ## Overrides
 
