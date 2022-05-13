@@ -31,7 +31,7 @@ if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture.Contains("64") -eq $fal
 
 # Paths & URLs
 
-$gitUrl = "https://github.com/ch3vr0n5/stEmu.git"
+$gitUrl = "https://github.com/ch3vr0n5/Steamu.git"
 $gitBranches = @('dev','beta','main')
 
 $pathLocalAppData = $env:LOCALAPPDATA
@@ -39,14 +39,14 @@ $pathRoamingAppData = $env:APPDATA
 $pathHome = $env:USERPROFILE
 $pathSteam = Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\WOW6432Node\Valve\Steam' -Name InstallPath
 
-$pathStemu = "$pathLocalAppData\Stemu"
-$pathLogs = "$pathStemu\Logs"
-$pathDownloads = "$pathStemu\Downloads"
-$pathApps = "$pathStemu\Apps"
-$pathShortcuts = "$pathStemu\Shortcuts"
-$pathConfigs = "$pathStemu\Configs"
-$pathEmulators = "$pathStemu\Emulators"
-$pathTemp = "$pathStemu\Temp"
+$pathSteamu = "$pathLocalAppData\Steamu"
+$pathLogs = "$pathSteamu\Logs"
+$pathDownloads = "$pathSteamu\Downloads"
+$pathApps = "$pathSteamu\Apps"
+$pathShortcuts = "$pathSteamu\Shortcuts"
+$pathConfigs = "$pathSteamu\Configs"
+$pathEmulators = "$pathSteamu\Emulators"
+$pathTemp = "$pathSteamu\Temp"
 
 $pathSrm = "$pathApps\SteamRomManager"
 $pathSrmData = "$pathApps\SteamRomManager\userData"
@@ -55,10 +55,7 @@ $pathEs = "$pathApps\EmulationStation"
 $pathEsData = "$pathEs\resources\systems\windows"
 
 $pathRetroarch = "$pathEmulators\RetroArch"
-$pathXemu = "$pathEmulators\Xemu"
-$pathPpsspp = "$pathEmulators\PPSSPP" #move these to array property and then  foreach loop folder creation
-$pathRpcs3 = "$pathEmulators\RPCS3"
-$pathTools = "$pathStemu\Tools"
+$pathTools = "$pathSteamu\Tools"
 
 $pathEmulation = "$pathHome\Emulation"
 $pathRoms = "$pathEmulation\roms"
@@ -67,7 +64,7 @@ $pathDesktopShortcuts = "$pathHome\Desktop\Emulation"
 
 $stringOutput = ""
 
-$fileLogName = 'stemu_log.txt'
+$fileLogName = 'Steamu_log.txt'
 $fileLog = "$pathLogs\$fileLogName"
 [switch]$fileLogHome = $false
 
@@ -81,13 +78,13 @@ $cemuVersion = '1.26.2'
 
 $dependencyArray = @(
 	[PSCustomObject]@{
-		Name = 'Stemu';
-		Url = "https://github.com/ch3vr0n5/stEmu/archive/refs/heads/$branch.zip";
-		Output = 'stemu.zip';
+		Name = 'Steamu';
+		Url = "https://github.com/ch3vr0n5/Steamu/archive/refs/heads/$branch.zip";
+		Output = 'steamu.zip';
 		DirectToPath = $false;
 		DestinationPath = "$pathLocalAppData";
-		DestinationName = 'Stemu';
-		ExtractFolder = "stEmu-$branch";
+		DestinationName = 'Steamu';
+		ExtractFolder = "Steamu-$branch";
 		Type = 'zip';
 		Extras = $false;
 		ExtrasName = '';
@@ -311,7 +308,7 @@ $7zipZip = '7zip.zip'
 
 
 # directories
-$directoryStemu = @(
+$directorySteamu = @(
 		'Logs'
 	,	'Downloads'
 	,	'Tools'
@@ -588,7 +585,7 @@ function testUrl([string]$testUrl){
 	$HTTP_Response.Close()
 }
 
-## Stemu Log FIle
+## Steamu Log FIle
 
 if (Test-Path -path $fileLog -PathType Leaf) {
 	#Clear-Content -path $fileLog
@@ -597,10 +594,10 @@ if (Test-Path -path $fileLog -PathType Leaf) {
 	Write-Host $stringOutput
 }
 else {
-	If (Test-Path -Path "$pathLogs\stemu_log.txt") {
+	If (Test-Path -Path "$pathLogs\Steamu_log.txt") {
 
 	} else {
-	New-Item -path "$pathLogs\stemu_log.txt" -ItemType "file"
+	New-Item -path "$pathLogs\Steamu_log.txt" -ItemType "file"
 	$stringOutput = "$fileLog Created Log File"
 
 	logWrite $stringOutput
@@ -608,43 +605,43 @@ else {
 	}
 }
 
-## Set up Stemu directory structure
+## Set up Steamu directory structure
 
-$stringOutput = "Creating $pathStemu directory structure"
+$stringOutput = "Creating $pathSteamu directory structure"
 logWrite $stringOutput
 Write-Host $stringOutput
 
-# %LOCALAPPDATA%\Stemu directory
-IF (Test-Path -path $pathStemu) {
-	$stringOutput = "$pathStemu directory already exists"
+# %LOCALAPPDATA%\Steamu directory
+IF (Test-Path -path $pathSteamu) {
+	$stringOutput = "$pathSteamu directory already exists"
 	logWrite $stringOutput
 	Write-Host $stringOutput
 }
 else {
-	New-Item -path $pathStemu -ItemType "directory"
+	New-Item -path $pathSteamu -ItemType "directory"
 
-	$stringOutput = "$pathStemu directory created"
+	$stringOutput = "$pathSteamu directory created"
 	logWrite $stringOutput
 	Write-Host $stringOutput
 }
 
-# %LOCALAPPDATA%\Stemu sub-directories
-ForEach ($sub in $directoryStemu) {
-	IF (Test-Path -path "$pathStemu\$sub") {
-			$stringOutput = "$pathStemu\$sub directory already exists"
+# %LOCALAPPDATA%\Steamu sub-directories
+ForEach ($sub in $directorySteamu) {
+	IF (Test-Path -path "$pathSteamu\$sub") {
+			$stringOutput = "$pathSteamu\$sub directory already exists"
 			logWrite $stringOutput
 			Write-Host $stringOutput
 		}
 		else {
-			New-Item -path "$pathStemu\$sub" -ItemType "directory"
+			New-Item -path "$pathSteamu\$sub" -ItemType "directory"
 
-			$stringOutput = "$pathStemu\$sub directory created"
+			$stringOutput = "$pathSteamu\$sub directory created"
 			logWrite $stringOutput
 			Write-Host $stringOutput
 		}
 }
 
-# %LOCALAPPDATA%\Stemu\Emulators sub-directories
+# %LOCALAPPDATA%\Steamu\Emulators sub-directories
 ForEach ($dependency in $dependencyArray) {
 	$testPathType = $dependency.DestinationPath
 	IF ($testPathType -eq $pathEmulators) {
@@ -664,7 +661,7 @@ ForEach ($dependency in $dependencyArray) {
 		}
 }
 
-# %LOCALAPPDATA%\Stemu\Apps sub-directories
+# %LOCALAPPDATA%\Steamu\Apps sub-directories
 ForEach ($sub in $directoryApps) {
 	IF (Test-Path -path "$pathApps\$sub") {
 			$stringOutput = "$pathApps\$sub directory already exists"
