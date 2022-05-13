@@ -586,6 +586,7 @@ Function Get-Folder($initialDirectory="")
     }
     return $folder
 }
+
 ## Steamu Log FIle
 
 if (Test-Path -path $fileLog -PathType Leaf) {
@@ -605,6 +606,32 @@ else {
 	Write-Host $stringOutput
 	}
 }
+
+## set up installation parameters
+
+# Set automated installation parameters
+$doDownload = $true
+$doCustomRomDirectory = $false
+$doRomSubFolders = $true
+
+[System.Windows.MessageBox]::Show(
+	'Welcome to Steamu!
+
+	This program is designed to simplify the process of
+	downloading, installing and configuring emulation
+	to get you retro gaming in a matter of minutes. At the
+	end of the installation process you will be presented
+	with information on where things are located as well
+	as shortcuts to installed apps and emulators.
+	Additionally you will be given instructions on 
+	further emulator setup that cannot be done via this
+	program as well as a quick walk-through on how to
+	use Steam ROM Manager to quickly add your games directly
+	to Steam!
+
+	Enjoy!
+	'
+	)
 
 ## Set up Steamu directory structure
 
@@ -736,8 +763,38 @@ ForEach ($sub in $directoryEmulation) {
 		}
 }
 
+# now that basic folders are set up, get advanced installation parameters if needed
+$title    = 'Installation'
+$question = 'Would you like to proceed with an automated installation or do you wish to customize your install?'
+
+$choices = @('&Automated','&Custom')
+
+$decision = $Host.UI.PromptForChoice($title, $question, $choices, 1)
+if ($decision -eq 0) {
+    Write-Host 'Automated'
+} else {
+    Write-Host 'Custom'
+	$pathRoms = Get-Folder
+	$doCustomRomDirectory = $true
+
+	$title    = 'Installation'
+	$question = 'Would you like ROM system sub-directories created in the ROM path? ROMs won''t be moved or deleted.'
+
+	$choices = @('&Yes','&No')
+
+	$decision = $Host.UI.PromptForChoice($title, $question, $choices, 1)
+	if ($decision -eq 0) {
+    	Write-Host 'Yes ROM sub folders'
+		$doRomSubFolders = $true
+	} else {
+    	Write-Host 'No ROM sub Folders'
+		$doRomSubFolders = $false
+	}
+
+}
+
 # %HOMEPATH%\Emulation\roms sub-directories
-If ($customRomDirectory = $false) {
+If ($doRomSubfolders -eq $true) {
 	ForEach ($rom in $directoryRoms) {
 		IF (Test-Path -path "$pathRoms\$rom") {
 				$stringOutput = "$pathRoms\$rom directory already exists"
