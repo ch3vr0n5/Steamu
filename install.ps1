@@ -268,6 +268,27 @@ $dependencyArray = @(
 		CreateSteamShortcut = $true;
 		CreateDesktopShortcut = $true
 	}
+	[PSCustomObject]@{
+		Name = 'Yuzu';
+		Url = "https://github.com/yuzu-emu/yuzu-mainline/releases/download/mainline-0-1014/yuzu-windows-msvc-20220512-4d5eaaf3f.zip";
+		Output = 'yuzu.zip';
+		DirectToPath = $false;
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'Yuzu';
+		ExtractFolder = "yuzu-windows-mscv";
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
+		ExtrasExtractFolder = "";
+		Exe = 'yuzu.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+	}
 )
 
 <# Probably safe to get rid of
