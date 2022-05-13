@@ -1093,9 +1093,9 @@ If ($doDownload -eq $true) {
 			$exePath = $dependency.DestinationPath
 			$exeName = $dependency.Exe
 			$exeFullPath = "$exePath\$exeName"
-			$shortcutDesktopPath = "$pathDesktopShortcuts\$shortcutName"
-			$shortcutSteamPath = "$pathShortcuts\$shortcutName"
-			$shortcutSrmPath = "$pathSrm\$shortcutName"
+			$shortcutDesktopPath = "$pathDesktopShortcuts\$shortcutName.lnk"
+			$shortcutSteamPath = "$pathShortcuts\$shortcutName.lnk"
+			$shortcutSrmPath = "$pathSrm\$shortcutName.lnk"
 
 
 			IF ($createShortcutDesktop){
