@@ -1,15 +1,20 @@
 ## Windows Powershell Script
 
-## TODO work on advanced install with options for replacing existing configs with defaults, path choices, etc.
+<#
+	TODO work on advanced install with options for replacing existing configs with defaults, path choices, etc.
+#>
 
-## Parameters
+## CLI Parameters
 param (
 	[Parameter()]
 	[string]$branch = "dev",
 	[switch]$doDownload = $true
 )
 
+## Configuration options
+
 [switch]$customRomDirectory = $false
+
 
 ## Overrides
 
@@ -17,14 +22,11 @@ param (
 $ProgressPreference = 'SilentlyContinue'
 
 ## Variables
-$architecture = 'x86_64'
 
+$architecture = 'x86_64'
 if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture.Contains("64") -eq $false) {
 	$architecture = 'x86'
 }
-
-# $test = $branch.ToString()
-
 
 # Paths & URLs
 
@@ -68,12 +70,13 @@ $fileLogName = 'stemu_log.txt'
 $fileLog = "$pathLogs\$fileLogName"
 [switch]$fileLogHome = $false
 
-# Dependency URLs
+# Dependency information
 
 $retroarchVersion = '1.10.3'
 $srmVersion = '2.3.35'
 $ppssppVersion = '1_12_3'
 $pcsx2Version = '1.6.0'
+$cemuVersion = '1.26.2'
 
 $dependencyArray = @(
 	[PSCustomObject]@{
@@ -81,7 +84,8 @@ $dependencyArray = @(
 		Url = "https://github.com/ch3vr0n5/stEmu/archive/refs/heads/$branch.zip";
 		Output = 'stemu.zip';
 		DirectToPath = $false;
-		DestinationPath = "$pathStemu\";
+		DestinationPath = "$pathLocalAppData";
+		DestinationName = 'Stemu';
 		ExtractFolder = "stEmu-$branch";
 		Type = 'zip';
 		Extras = $false;
@@ -90,18 +94,19 @@ $dependencyArray = @(
 		ExtrasOutput = '';
 		ExtrasDirectToPath = $false;
 		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
 		ExtrasExtractFolder = "";
 		Exe = '';
 		CreateSteamShortcut = $false;
 		CreateDesktopShortcut = $false;
-		ShortcutName = ''
 	}
 	[PSCustomObject]@{
 		Name = 'Retroarch';
 		Url = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch.7z";
 		Output = 'retroarch.7z';
 		DirectToPath = $false;
-		DestinationPath = "$pathRetroarch\";
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'Retroarch';
 		ExtractFolder = IF ($architecture -eq 'x86_64') {'RetroArch-Win64'} else {'RetroArch-Win32'};
 		Type = 'zip';
 		Extras = $true;
@@ -110,18 +115,19 @@ $dependencyArray = @(
 		ExtrasOutput = 'retroarch_cores.7z';
 		ExtrasDirectToPath = $false;
 		ExtrasDestinationPath = "$pathRetroarch\";
+		ExtrasDestinationName = '';
 		ExtrasExtractFolder = IF ($architecture -eq 'x86_64') {'RetroArch-Win64'} else {'RetroArch-Win32'};
 		Exe = 'retroarch.exe';
 		CreateSteamShortcut = $true;
 		CreateDesktopShortcut = $true
-		ShortcutName = 'Retroarch.lnk'
 	}
 	[PSCustomObject]@{
 		Name = 'Steam Rom Manager';
 		Url = "https://github.com/SteamGridDB/steam-rom-manager/releases/download/v$srmVersion/Steam-ROM-Manager-portable-$srmVersion.exe"; #https://github.com/SteamGridDB/steam-rom-manager/releases/download/v2.3.35/Steam-ROM-Manager-portable-2.3.35.exe
 		Output = 'steam_rom_manager.exe';
 		DirectToPath = $false;
-		DestinationPath = "$pathSrm\";
+		DestinationPath = "$pathApps";
+		DestinationName = 'SteamRomManager';
 		ExtractFolder = '';
 		Type = 'exe';
 		Extras = $false;
@@ -130,18 +136,19 @@ $dependencyArray = @(
 		ExtrasOutput = '';
 		ExtrasDirectToPath = $false;
 		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
 		ExtrasExtractFolder = "";
 		Exe = 'steam_rom_manager.exe'
 		CreateSteamShortcut = $false;
 		CreateDesktopShortcut = $true
-		ShortcutName = 'Steam ROM Manager.lnk'
 	}
 	[PSCustomObject]@{
 		Name = 'Emulation Station DE';
 		Url = "https://gitlab.com/leonstyhre/emulationstation-de/-/package_files/36880305/download";
 		Output = 'emulationstation.zip';
 		DirectToPath = $false;
-		DestinationPath = "$pathEs\";
+		DestinationPath = "$pathApps";
+		DestinationName = 'EmulationStation';
 		ExtractFolder = 'EmulationStation-DE';
 		Type = 'zip';
 		Extras = $false;
@@ -150,18 +157,19 @@ $dependencyArray = @(
 		ExtrasOutput = '';
 		ExtrasDirectToPath = $false;
 		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
 		ExtrasExtractFolder = "";
 		Exe = 'emulationstation.exe';
 		CreateSteamShortcut = $true;
 		CreateDesktopShortcut = $true
-		ShortcutName = 'EmulationStation.lnk'
 	}
 	[PSCustomObject]@{
 		Name = 'Xemu';
 		Url = "https://github.com/mborgerson/xemu/releases/latest/download/xemu-win-release.zip";
 		Output = 'xemu.zip';
 		DirectToPath = $true;
-		DestinationPath = "$pathXemu\";
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'Xemu';
 		ExtractFolder = 'Xemu';
 		Type = 'zip';
 		Extras = $false;
@@ -170,18 +178,19 @@ $dependencyArray = @(
 		ExtrasOutput = '';
 		ExtrasDirectToPath = $false;
 		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
 		ExtrasExtractFolder = "";
 		Exe = 'xemu.exe';
 		CreateSteamShortcut = $true;
 		CreateDesktopShortcut = $true
-		ShortcutName = 'Xemu.lnk'
 	}
 	[PSCustomObject]@{
 		Name = 'PPSSPP';
 		Url = "https://www.ppsspp.org/files/$ppssppVersion/ppsspp_win.zip";
 		Output = 'ppsspp.zip';
 		DirectToPath = $true;
-		DestinationPath = "$pathPpsspp\";
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'PPSSPP';
 		ExtractFolder = 'PPSSPP';
 		Type = 'zip';
 		Extras = $false;
@@ -190,18 +199,19 @@ $dependencyArray = @(
 		ExtrasOutput = '';
 		ExtrasDirectToPath = $false;
 		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
 		ExtrasExtractFolder = "";
 		Exe = IF ($architecture -eq 'x86_64') {'PPSSPPWindows64.exe'} else {'PPSSPPWindows.exe'};
 		CreateSteamShortcut = $true;
 		CreateDesktopShortcut = $true
-		ShortcutName = 'PPSSPP.lnk'
 	}
 	[PSCustomObject]@{
 		Name = 'RPCS3';
 		Url = "https://github.com/RPCS3/rpcs3-binaries-win/releases/download/build-5ae9de4e3b7f4aa59ede098796c08e128783989a/rpcs3-v0.0.22-13592-5ae9de4e_win64.7z";
 		Output = 'rpcs3.zip';
 		DirectToPath = $true;
-		DestinationPath = "$pathEmulators\RPCS3\"; # either do this for each or add destinatonfolder prop and keep this the base path
+		DestinationPath = "$pathEmulators"; # either do this for each or add destinatonfolder prop and keep this the base path
+		DestinationName = 'RPCS3';
 		ExtractFolder = 'RPCS3';
 		Type = 'zip';
 		Extras = $false;
@@ -210,18 +220,19 @@ $dependencyArray = @(
 		ExtrasOutput = '';
 		ExtrasDirectToPath = $false;
 		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
 		ExtrasExtractFolder = "";
 		Exe = 'rpcs3.exe';
 		CreateSteamShortcut = $true;
 		CreateDesktopShortcut = $true
-		ShortcutName = 'RPCS3.lnk' # get rid of this just use name
 	}
 	[PSCustomObject]@{
 		Name = 'PCSX2';
 		Url = "https://github.com/PCSX2/pcsx2/releases/download/v$pcsx2Version/pcsx2-v$pcsx2Version-windows-32bit-portable.7z";
 		Output = 'pcsx2.zip';
 		DirectToPath = $false;
-		DestinationPath = "$pathEmulators\PCSX2\";
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'PCSX2';
 		ExtractFolder = "PCSX2 $pcsx2Version";
 		Type = 'zip';
 		Extras = $false;
@@ -230,20 +241,33 @@ $dependencyArray = @(
 		ExtrasOutput = '';
 		ExtrasDirectToPath = $false;
 		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
 		ExtrasExtractFolder = "";
 		Exe = 'pcsx2.exe';
 		CreateSteamShortcut = $true;
 		CreateDesktopShortcut = $true
-		ShortcutName = 'PCSX2.lnk'
 	}
-#	[PSCustomObject]@{
-#		Name = 'Cemu';
-#		Url = "https://github.com/mborgerson/xemu/releases/latest/download/xemu-win-release.zip";
-#		Output = 'xemu.zip';
-#		DestinationPath = "";
-#		DestinationName = '';
-#		Type = 'zip'
-#	}
+	[PSCustomObject]@{
+		Name = 'Cemu';
+		Url = "https://cemu.info/releases/cemu_$cemuVersion.zip";
+		Output = 'cemu.zip';
+		DirectToPath = $false;
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'Cemu';
+		ExtractFolder = "Cemu_$cemuVersion";
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
+		ExtrasExtractFolder = "";
+		Exe = 'Cemu.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+	}
 )
 
 <# Probably safe to get rid of
@@ -597,18 +621,22 @@ ForEach ($sub in $directoryStemu) {
 }
 
 # %LOCALAPPDATA%\Stemu\Emulators sub-directories
-ForEach ($sub in $directoryEmulators) {
-	IF (Test-Path -path "$pathEmulators\$sub") {
-			$stringOutput = "$pathEmulators\$sub directory already exists"
-			logWrite $stringOutput
-			Write-Host $stringOutput
-		}
-		else {
-			New-Item -path "$pathEmulators\$sub" -ItemType "directory"
+ForEach ($dependency in $dependencyArray) {
+	$testPathType = $dependency.DestinationPath
+	IF ($testPathType = $pathEmulators) {
+		$pathName = $dependency.DestinatioName
+		IF (Test-Path -path "$pathEmulators\$pathName") {
+				$stringOutput = "$pathEmulators\$pathName directory already exists"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+			}
+			else {
+				New-Item -path "$pathEmulators\$pathName" -ItemType "directory"
 
-			$stringOutput = "$pathEmulators\$sub directory created"
-			logWrite $stringOutput
-			Write-Host $stringOutput
+				$stringOutput = "$pathEmulators\$pathName directory created"
+				logWrite $stringOutput
+				Write-Host $stringOutput
+			}
 		}
 }
 
@@ -817,7 +845,9 @@ If ($doDownload -eq $true) {
 		$sourceFileName = $dependency.Output
 		$sourcePath = "$pathDownloads\$sourceFileName"
 		$targetPath = $pathTemp
-		$destinationPath = $dependency.DestinationPath
+		$destinationPathBase = $dependency.DestinationPath
+		$destinationName = $dependency.DestinationName
+		$destinationPath = "$destinationPathBase\$DestinationName"
 
 		$extras = $dependency.Extras
 		$extrasName = $dependency.ExtrasName
@@ -826,7 +856,9 @@ If ($doDownload -eq $true) {
 		$extrasSourceFileName = $dependency.ExtrasOutput
 		$extrasSourcePath = "$pathDownloads\$extrasSourceFileName"
 		$extrasTargetPath = $pathTemp
-		$extrasDestinationPath = $dependency.ExtrasDestinationPath
+		$extrasPathBase = $dependency.ExtrasDestinationPath
+		$extrasPathName = $dependency.ExtrasDestinationName
+		$extrasDestinationPath = "$extrasPathBase\$extrasPathName"
 
 		If ($directtopath) {
 			$targetPath = $extractPath
@@ -1057,7 +1089,7 @@ If ($doDownload -eq $true) {
 			$createShortcutDesktop = $dependency.CreateDesktopShortcut
 			$createShortcutSteam = $dependency.CreateSteamShortcut
 			
-			$shortcutName = $dependency.ShortcutName
+			$shortcutName = $name
 			$exePath = $dependency.DestinationPath
 			$exeName = $dependency.Exe
 			$exeFullPath = "$exePath\$exeName"
