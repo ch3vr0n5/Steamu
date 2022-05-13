@@ -2,6 +2,7 @@
 
 <#
 	TODO work on advanced install with options for replacing existing configs with defaults, path choices, etc.
+	TODO foreach loop the junctions for emulators in srm
 #>
 
 ## CLI Parameters
