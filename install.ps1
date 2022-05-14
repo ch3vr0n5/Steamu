@@ -613,8 +613,7 @@ $doDownload = $true
 $doCustomRomDirectory = $false
 $doRomSubFolders = $true
 
-[System.Windows.MessageBox]::Show(
-	'Welcome to Steamu!
+inputPause 'Welcome to Steamu!
 
 	This program is designed to simplify the process of
 	downloading, installing and configuring emulation
@@ -629,6 +628,8 @@ $doRomSubFolders = $true
 	to Steam!
 
 	Enjoy!
+
+	Press any key to continue...
 	'
 	)
 
