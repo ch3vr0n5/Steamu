@@ -587,7 +587,7 @@ Function Get-Folder($initialDirectory="")
     return $folder
 }
 
-Function Get-Choice([string]$choiceTitle,[string]$choiceQuestion,[array]$choiceChoices,[int]$choiceDefault) {
+Function Get-Choice([string]$choiceTitle,[string]$choiceQuestion,[string]$choiceChoices,[int]$choiceDefault) {
 	$title    = $choiceTitle
 	$question = $choiceQuestion
 
