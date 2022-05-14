@@ -587,13 +587,10 @@ Function Get-Folder($initialDirectory="")
     return $folder
 }
 
-Function Get-Choice([string]$choiceTitle,[string]$choiceQuestion,[string]$choiceChoices,[int]$choiceDefault) {
-	$title    = $choiceTitle
-	$question = $choiceQuestion
+Function Get-Choice([string]$title,[string]$question,[int]$default,[string[]]$choices) {
 
-	$choices = $choiceChoices
 
-	$decision = $Host.UI.PromptForChoice($title, $question, $choices, $choiceDefault)
+	$decision = $Host.UI.PromptForChoice($title, $question, $choices, $default)
 
 	Return $decision
 }
@@ -626,27 +623,26 @@ $doDownload = $true
 $doCustomRomDirectory = $false
 $doRomSubFolders = $true
 
-$continueInstallation = Get-Choice (
-	'',
-	'Welcome to Steamu!
+$title = 'Welcome'
+$question = 'Welcome to Steamu!
 
-	This program is designed to simplify the process of
-	downloading, installing and configuring emulation
-	to get you retro gaming in a matter of minutes. At the
-	end of the installation process you will be presented
-	with information on where things are located as well
-	as shortcuts to installed apps and emulators.
-	Additionally you will be given instructions on 
-	further emulator setup that cannot be done via this
-	program as well as a quick walk-through on how to
-	use Steam ROM Manager to quickly add your games directly
-	to Steam!
+This program is designed to simplify the process of
+downloading, installing and configuring emulation
+to get you retro gaming in a matter of minutes. At the
+end of the installation process you will be presented
+with information on where things are located as well
+as shortcuts to installed apps and emulators.
+Additionally you will be given instructions on 
+further emulator setup that cannot be done via this
+program as well as a quick walk-through on how to
+use Steam ROM Manager to quickly add your games directly
+to Steam!
 
-	Enjoy!
-	',
-	@('&Continue','&Quit'),
-	0
-)
+Enjoy!'
+$choices = @('&Continue','&Quit')
+$default = 0
+$continueInstallation = Get-Choice $title $question $default $choices
+
 If ($continueInstallation -eq 1) {
 	inputPause 'Installation cancelled. Press any key to exit.'
 	exit
@@ -783,33 +779,62 @@ ForEach ($sub in $directoryEmulation) {
 }
 
 # now that basic folders are set up, get advanced installation parameters if needed
-$installChoice = Get-Choice(
-		'Installation',
-		'Would you like to proceed with an automated installation or do you wish to customize your install?',
-		'&Automated','&Custom',
-		0
-		)
+$title = 'Installation'
+$question = 'Would you like to proceed with an automated installation or do you wish to customize your install?'
+$default = 0
+$choices = @('&Automated','&Custom')
+$installChoice = Get-Choice $title $question $default $choices
+
 
 if ($installChoice -eq 0) {
     Write-Host 'Automated'
 } else {
     Write-Host 'Custom'
-	$pathRoms = Get-Folder
-	$doCustomRomDirectory = $true
 
-	$installChoice = Get-Choice (
-		'Custom ROM Directory',
-		'Would you like ROM system sub-directories created in the ROM path? ROMs won''t be moved or deleted.',
-		@('&Yes','&No'),
-		0
-	) 
-	if ($installChoice -eq 0) {
-    	Write-Host 'Yes ROM sub folders'
-		$doRomSubFolders = $true
+	# choose a custom rom directory
+	$title = 'Custom ROM Directory'
+	$question = "Would you like to choose your own ROM path?
+
+				Default path: $pathRoms
+
+				If you choose yes, you will be prompted to select the proper path."
+	$default = 1
+	$choices = @('&Yes','&No')
+	$customRomDirectoryChoice = Get-Choice $title $question $default $choices
+	if ($customRomDirectoryChoice -eq 0) {
+    	Write-Host 'Yes custom ROM directory'
+		$doCustomRomDirectory = $true
+		$pathRoms = Get-Folder
 	} else {
-    	Write-Host 'No ROM sub Folders'
-		$doRomSubFolders = $false
+    	Write-Host 'No custom ROM directory. Using default path.'
+		$doCustomRomDirectory = $false
 	}
+
+	# choose if you want to populate your custom rom path only if they chose custom
+	If ($doCustomRomDirectory) {
+		$title = 'Custom ROM Directory Sub-folders'
+		$question = "Would you like ROM system sub-directories created in your custom ROM path?
+
+					Custom path: $pathRoms
+
+					This would create folders at the destination for all the supported systems
+					such as amiga, snes, mame, etc.
+
+					Existing ROMs in this path won't be moved or deleted."
+		$default = 0
+		$choices = @('&Yes','&No')
+		$subFolderChoice = Get-Choice $title $question $default $choices
+		
+		if ($subFolderChoice -eq 0) {
+    		Write-Host 'Yes ROM sub folders'
+			$doRomSubFolders = $true
+		} else {
+    		Write-Host 'No ROM sub Folders'
+			$doRomSubFolders = $false
+		}
+	}
+
+	#further custom options here
 
 }
 
@@ -1190,8 +1215,9 @@ If ($doDownload -eq $true) {
 			
 			$shortcutName = $name
 			$exePath = $dependency.DestinationPath
+			$exePathName = $dependency.DestinationName
 			$exeName = $dependency.Exe
-			$exeFullPath = "$exePath\$exeName"
+			$exeFullPath = "$exePath\$exePathName\$exeName"
 			$shortcutDesktopPath = "$pathDesktopShortcuts\$shortcutName.lnk"
 			$shortcutSteamPath = "$pathShortcuts\$shortcutName.lnk"
 			$shortcutSrmPath = "$pathSrm\$shortcutName.lnk"
