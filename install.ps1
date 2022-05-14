@@ -275,7 +275,7 @@ $dependencyArray = @(
 		DirectToPath = $false;
 		DestinationPath = "$pathEmulators";
 		DestinationName = 'Yuzu';
-		ExtractFolder = "yuzu-windows-mscv";
+		ExtractFolder = "yuzu-windows-msvc";
 		Type = 'zip';
 		Extras = $false;
 		ExtrasName = '';
@@ -596,15 +596,14 @@ if (Test-Path -path $fileLog -PathType Leaf) {
 	Write-Host $stringOutput
 }
 else {
-	If (Test-Path -Path "$pathLogs\Steamu_log.txt") {
 
-	} else {
-	New-Item -path "$pathLogs\Steamu_log.txt" -ItemType "file"
-	$stringOutput = "$fileLog Created Log File"
-
+	New-Item -path "$pathLogs" -ItemType "directory"	
+	New-Item -path $fileLog -ItemType "file"
+	
+	$stringOutput = "Created Log File at $pathLogs"
 	logWrite $stringOutput
 	Write-Host $stringOutput
-	}
+
 }
 
 ## set up installation parameters
