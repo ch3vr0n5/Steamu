@@ -587,6 +587,17 @@ Function Get-Folder($initialDirectory="")
     return $folder
 }
 
+Function Get-Choice([string]$choiceTitle,[string]$choiceQuestion,[array]$choiceChoices,[integer]$choiceDefault) {
+	$title    = $choiceTitle
+	$question = $choiceQuestion
+
+	$choices = $choiceChoices
+
+	$decision = $Host.UI.PromptForChoice($title, $question, $choices, $choiceDefault)
+
+	Return $decision
+}
+
 ## Steamu Log FIle
 
 if (Test-Path -path $fileLog -PathType Leaf) {
@@ -594,10 +605,12 @@ if (Test-Path -path $fileLog -PathType Leaf) {
 	$stringOutput = "$fileLog Cleared Log File"
 	logWrite $stringOutput
 	Write-Host $stringOutput
-}
-else {
+} else {
 
-	New-Item -path $pathLogs -ItemType "directory"	
+	If ((Test-Path -Path $pathLogs) -eq $false) {
+		New-Item -Path $pathLogs -ItemType "directory" 
+	}
+
 	New-Item -path $fileLog -ItemType "file"
 	
 	$stringOutput = "Created Log File at $pathLogs"
@@ -613,7 +626,9 @@ $doDownload = $true
 $doCustomRomDirectory = $false
 $doRomSubFolders = $true
 
-inputPause 'Welcome to Steamu!
+$continueInstallation = Get-Choice (
+	'',
+	'Welcome to Steamu!
 
 	This program is designed to simplify the process of
 	downloading, installing and configuring emulation
@@ -628,9 +643,14 @@ inputPause 'Welcome to Steamu!
 	to Steam!
 
 	Enjoy!
-
-	Press any key to continue...
-	'
+	',
+	@('&Continue','&Quit'),
+	0
+)
+If ($continueInstallation -eq 1) {
+	inputPause 'Installation cancelled. Press any key to exit.'
+	exit
+}
 
 ## Set up Steamu directory structure
 
@@ -763,26 +783,27 @@ ForEach ($sub in $directoryEmulation) {
 }
 
 # now that basic folders are set up, get advanced installation parameters if needed
-$title    = 'Installation'
-$question = 'Would you like to proceed with an automated installation or do you wish to customize your install?'
+$installChoice = Get-Choice(
+		'Installation',
+		'Would you like to proceed with an automated installation or do you wish to customize your install?',
+		'&Automated','&Custom',
+		0
+		)
 
-$choices = @('&Automated','&Custom')
-
-$decision = $Host.UI.PromptForChoice($title, $question, $choices, 1)
-if ($decision -eq 0) {
+if ($installChoice -eq 0) {
     Write-Host 'Automated'
 } else {
     Write-Host 'Custom'
 	$pathRoms = Get-Folder
 	$doCustomRomDirectory = $true
 
-	$title    = 'Installation'
-	$question = 'Would you like ROM system sub-directories created in the ROM path? ROMs won''t be moved or deleted.'
-
-	$choices = @('&Yes','&No')
-
-	$decision = $Host.UI.PromptForChoice($title, $question, $choices, 1)
-	if ($decision -eq 0) {
+	$installChoice = Get-Choice (
+		'Custom ROM Directory',
+		'Would you like ROM system sub-directories created in the ROM path? ROMs won''t be moved or deleted.',
+		@('&Yes','&No'),
+		0
+	) 
+	if ($installChoice -eq 0) {
     	Write-Host 'Yes ROM sub folders'
 		$doRomSubFolders = $true
 	} else {
