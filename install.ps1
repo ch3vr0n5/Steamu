@@ -597,7 +597,7 @@ if (Test-Path -path $fileLog -PathType Leaf) {
 }
 else {
 
-	New-Item -path "$pathLogs" -ItemType "directory"	
+	New-Item -path $pathLogs -ItemType "directory"	
 	New-Item -path $fileLog -ItemType "file"
 	
 	$stringOutput = "Created Log File at $pathLogs"
@@ -631,7 +631,6 @@ inputPause 'Welcome to Steamu!
 
 	Press any key to continue...
 	'
-	)
 
 ## Set up Steamu directory structure
 
