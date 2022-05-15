@@ -1229,28 +1229,28 @@ If ($doDownload -eq $true) {
 
 
 			IF ($createShortcutDesktop){
-				If ((Test-Path -Path $shortcutDesktopPath -PathType Leaf) -eq $false) {
+				#If ((Test-Path -Path $shortcutDesktopPath -PathType Leaf) -eq $false) {
 					shortcutCreate -SourceExe $exeFullPath -DestinationPath $shortcutDesktopPath
 					$stringOutput = "$shortcutDesktopPath created."
 					logWrite $stringOutput
 					Write-Host $stringOutput
-				} else {
-					$stringOutput = "$shortcutDesktopPath already exists."
-					logWrite $stringOutput
-					Write-Host $stringOutput
-				}
+				#} else {
+				#	$stringOutput = "$shortcutDesktopPath already exists."
+				#	logWrite $stringOutput
+				#	Write-Host $stringOutput
+				#}
 			} 
 			If ($createShortcutSteam) {
-				If ((Test-Path -Path $shortcutSteamPath -PathType Leaf) -eq $false) {
+				#If ((Test-Path -Path $shortcutSteamPath -PathType Leaf) -eq $false) {
 					shortcutCreate -SourceExe $exeFullPath -DestinationPath $shortcutSteamPath
 					$stringOutput = "$shortcutSteamPath created."
 					logWrite $stringOutput
 					Write-Host $stringOutput
-				} else {
-					$stringOutput = "$shortcutSteamPath already exists."
-					logWrite $stringOutput
-					Write-Host $stringOutput
-				}
+				#} else {
+				#	$stringOutput = "$shortcutSteamPath already exists."
+				#	logWrite $stringOutput
+				#	Write-Host $stringOutput
+				#}
 				<#
 				If ((Test-Path -Path $shortcutSrmPath -PathType Leaf) -eq $false) {
 					shortcutCreate -SourceExe $exeFullPath -DestinationPath $shortcutSrmPath
