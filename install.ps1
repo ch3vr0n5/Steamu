@@ -7,6 +7,7 @@
 	TODO if $customRomDirectory gets set to true, we should junction the %homepath%\emulation\roms to the custom rom path
 	TODO turn prompt into function to return true/false from yes/no
 	TODO write xml to save custom settings, then load those settings and present prompt to bypass install and use previous settings
+	TODO fix Cemu paths in srm... why?
 #>
 
 ## CLI Parameters
