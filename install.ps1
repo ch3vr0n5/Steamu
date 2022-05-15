@@ -544,6 +544,10 @@ function DownloadFile($url, $targetFile)
 
 function shortcutCreate([string]$SourceExe, [string]$DestinationPath){
 # https://stackoverflow.com/a/9701907
+	If(Test-Path -Path $DestinationPath -PathType Leaf) {
+		Remove-Item -Path $DestinationPath -Force
+	}
+
 	$WshShell = New-Object -comObject WScript.Shell
 	$Shortcut = $WshShell.CreateShortcut($DestinationPath)
 	$Shortcut.TargetPath = $SourceExe
