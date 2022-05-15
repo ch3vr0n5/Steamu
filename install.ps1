@@ -15,7 +15,8 @@ param (
 	[string]$branch = "main",
 	[switch]$doDownload = $false,
 	[switch]$doCustomRomDirectory = $false,
-	[switch]$doRomSubFolders = $false
+	[switch]$doRomSubFolders = $false,
+	[switch]$devSkip = $false
 )
 
 $branch = 'dev' #set this for development only
@@ -875,7 +876,7 @@ else {
 }
 
 ## Download required files
-IF ($doDownload -eq $true) {
+IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	if (test-path -path $pathDownloads) {
 
 		ForEach ($dependency in $dependencyArray) {
@@ -963,7 +964,7 @@ IF ($doDownload -eq $true) {
 		# Extract 7zip
 	}
 	#>
-If ($doDownload -eq $true) {
+If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 	ForEach ($dependency in $dependencyArray) {
 		$name = $dependency.Name
