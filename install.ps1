@@ -2,7 +2,6 @@
 
 <#
 	TODO work on advanced install with options for replacing existing configs with defaults, path choices, etc.
-	TODO turn junction creation into function
 	TODO write xml to save custom settings, then load those settings and present prompt to bypass install and use previous settings
 	TODO fix Cemu paths in srm... why?
 	TODO consider putting paths and other options in array to then load them based on name. This way if a custom path for an emulator or app is used then we can just update the array for that path and use it when making junctions, config changes, etc.
