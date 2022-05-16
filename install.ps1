@@ -971,7 +971,7 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	$stringOutput = @"
 Downloads are skipped due to configuration.
 
-doDownloads: $doDownloads
+doDownload: $doDownload
 devSkip: $devSkip
 "@
 	Write-Log $stringOutput $true
@@ -1117,7 +1117,7 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	$stringOutput = @"
 Extraction is skipped due to configuration.
 
-doDownloads: $doDownloads
+doDownload: $doDownload
 devSkip: $devSkip
 "@
 	Write-Log $stringOutput $true
