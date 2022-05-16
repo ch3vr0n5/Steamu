@@ -1024,7 +1024,7 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 		$extrasDestinationPath = "$extrasPathBase\$extrasPathName"
 
 		$stringOutput = "Extracting $name..."
-		logWrite
+		logWrite $stringOutput $true
 
 		If ($directtopath) {
 			$targetPath = $extractPath
