@@ -616,15 +616,19 @@ Function Get-Choice([string]$title,[string]$question,[int]$default,[string[]]$ch
 }
 
 Function New-Junction([string]$source,[string]$target){
-	If ((Get-Item -Path $target -Force).LinkType -eq "Junction") {
+	[bool]$isJunction = $false
+	If ((Get-Item -Path $target -Force).LinkType -eq "Junction"){
+		$isJunction = $true
+	}
+	If ($isJunction) {
 		$stringOutput = "$target is an existing junction. Removing..."
 		logWrite $stringOutput $false
 		Remove-Item -Path $target -Force
-	} else {
+	}
+
 		New-Item -ItemType Junction -Path $target -Target $source
 		$stringOutput = "Junction created at $target pointing to $source"
 		logWrite $stringOutput $false
-	}
 }
 
 ## Steamu Log FIle
@@ -1263,7 +1267,7 @@ logWrite $stringOutput $true
 						Copy-Item -Path "$pathConfigs\$DestinationName\*" -Destination "$destinationPath\$destinationName\" -Force -Recurse
 
 						$stringOutput = "Copied configs for $name"
-						logWrite $stringOutput $false
+						logWrite $stringOutput $true
 					}
 				}
 			}
