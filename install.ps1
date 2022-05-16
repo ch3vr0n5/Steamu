@@ -43,7 +43,7 @@ $gitBranches = @('dev','beta','main')
 $pathLocalAppData = $env:LOCALAPPDATA
 $pathRoamingAppData = $env:APPDATA
 $pathHome = $env:USERPROFILE
-$pathSteam = If ($architecture -contains '64') {Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\WOW6432Node\Valve\Steam' -Name InstallPath} else {Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\Valve\Steam' -Name InstallPath}
+$pathSteam = If ($architecture -eq 'x86_64') {Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\WOW6432Node\Valve\Steam' -Name InstallPath} else {Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\Valve\Steam' -Name InstallPath}
 
 $pathSteamu = "$pathLocalAppData\Steamu"
 $pathLogs = "$pathSteamu\Logs"
