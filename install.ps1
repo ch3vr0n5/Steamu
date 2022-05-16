@@ -6,6 +6,7 @@
 	TODO write xml to save custom settings, then load those settings and present prompt to bypass install and use previous settings
 	TODO fix Cemu paths in srm... why?
 	TODO consider putting paths in array to then load them based on name. This way if a custom path for an emulator or app is used then we can pull that path and use it when making junctions, config changes, etc.
+	TODO if custom path = normal path then don't junction
 #>
 
 ## CLI Parameters
