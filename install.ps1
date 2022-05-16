@@ -936,9 +936,18 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 				$file = $dependency.ExtrasOutput
 				$url = $dependency.ExtrasUrl
 
-				$stringOutput = "Downloading $name"
-				logWrite $stringOutput $true
-				Invoke-WebRequest -Uri $Url -Outfile "$pathDownloads\$file."	
+				
+				try {
+					$stringOutput = "Downloading $name"
+					logWrite $stringOutput $true
+					Invoke-WebRequest -Uri $Url -Outfile "$pathDownloads\$file."
+				}
+				catch {
+					$stringOutput = "Unable to continue. Error downloading $name."
+					inputPause $stringOutput
+					exit
+				}
+					
 			}
 					
 		}
