@@ -155,7 +155,7 @@ $dependencyArray = @(
 	}
 	[PSCustomObject]@{
 		Name = 'Emulation Station DE';
-		Url = "https://gitlab.com/leonstyhre/emulationstation-de/-/package_files/36880305/download";
+		Url = "https://gitlab.com/es-de/emulationstation-de/-/package_files/36880305/download";
 		Output = 'emulationstation.zip';
 		DirectToPath = $false;
 		DestinationPath = "$pathApps";
