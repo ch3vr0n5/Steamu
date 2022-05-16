@@ -513,12 +513,12 @@ Function inputPause ($stringMessageArg)
     }
     else
     {
-        LogWrite $stringMessageArg $true
+        Write-Log $stringMessageArg $true
         $x = $host.ui.RawUI.ReadKey("NoEcho,IncludeKeyDown")
     }
 }
 
-function logWrite ($stringMessageArg, [bool]$toHost)
+function Write-Log ($stringMessageArg, [bool]$toHost)
 # http://woshub.com/write-output-log-files-powershell/
 {
 	$timeStamp = (Get-Date).toString("yyyy/MM/dd HH:mm:ss")
@@ -557,16 +557,16 @@ function DownloadFile($url, $targetFile)
    $responseStream.Dispose()
 }
 
-function shortcutCreate([string]$SourceExe, [string]$DestinationPath){
+function New-Shortcut([string]$SourceExe, [string]$DestinationPath){
 # https://stackoverflow.com/a/9701907
 	If(Test-Path -Path $DestinationPath -PathType Leaf) {
-		Remove-Item -Path $DestinationPath -Force
+		Remove-Item -Path $DestinationPath -Force | Out-Null
 	}
 
 	$WshShell = New-Object -comObject WScript.Shell
 	$Shortcut = $WshShell.CreateShortcut($DestinationPath)
 	$Shortcut.TargetPath = $SourceExe
-	$Shortcut.Save()
+	$Shortcut.Save() | Out-Null
 }
 
 function testUrl([string]$testUrl){
@@ -617,18 +617,21 @@ Function Get-Choice([string]$title,[string]$question,[int]$default,[string[]]$ch
 
 Function New-Junction([string]$source,[string]$target){
 	[bool]$isJunction = $false
-	If ((Get-Item -Path $target -Force).LinkType -eq "Junction"){
+	$pathLinkType = (Get-Item -Path $target -Force).LinkType
+
+	If ($pathLinkType -eq "Junction"){
 		$isJunction = $true
 	}
+
 	If ($isJunction) {
 		$stringOutput = "$target is an existing junction. Removing..."
-		logWrite $stringOutput $false
-		Remove-Item -Path $target -Force
+		Write-Log $stringOutput $false
+		Remove-Item -Path $target -Force -Recurse | Out-Null
 	}
 
-		New-Item -ItemType Junction -Path $target -Target $source
+		New-Item -ItemType Junction -Path $target -Target $source | Out-Null
 		$stringOutput = "Junction created at $target pointing to $source"
-		logWrite $stringOutput $false
+		Write-Log $stringOutput $false
 }
 
 ## Steamu Log FIle
@@ -636,18 +639,18 @@ Function New-Junction([string]$source,[string]$target){
 if (Test-Path -path $fileLog -PathType Leaf) {
 	#Clear-Content -path $fileLog
 	$stringOutput = "$fileLog Cleared Log File"
-	logWrite $stringOutput $false
+	Write-Log $stringOutput $false
 
 } else {
 
 	If ((Test-Path -Path $pathLogs) -eq $false) {
-		New-Item -Path $pathLogs -ItemType "directory" 
+		New-Item -Path $pathLogs -ItemType "directory"  | Out-Null
 	}
 
-	New-Item -path $fileLog -ItemType "file"
+	New-Item -path $fileLog -ItemType "file" | Out-Null
 	
 	$stringOutput = "Created Log File at $pathLogs"
-	logWrite $stringOutput $false
+	Write-Log $stringOutput $false
 
 }
 
@@ -689,31 +692,31 @@ $stringOutput = @"
 Creating Steamu directory structure
 Path: $pathSteamu
 "@
-logWrite $stringOutput $true
+Write-Log $stringOutput $true
 
 # %LOCALAPPDATA%\Steamu directory
 IF (Test-Path -path $pathSteamu) {
 	$stringOutput = "$pathSteamu directory already exists"
-	logWrite $stringOutput $false
+	Write-Log $stringOutput $false
 }
 else {
-	New-Item -path $pathSteamu -ItemType "directory"
+	New-Item -path $pathSteamu -ItemType "directory" | Out-Null
 
 	$stringOutput = "$pathSteamu directory created"
-	logWrite $stringOutput $false
+	Write-Log $stringOutput $false
 }
 
 # %LOCALAPPDATA%\Steamu sub-directories
 ForEach ($sub in $directorySteamu) {
 	IF (Test-Path -path "$pathSteamu\$sub") {
 			$stringOutput = "$pathSteamu\$sub directory already exists"
-			logWrite $stringOutput $false
+			Write-Log $stringOutput $false
 		}
 		else {
-			New-Item -path "$pathSteamu\$sub" -ItemType "directory"
+			New-Item -path "$pathSteamu\$sub" -ItemType "directory" | Out-Null
 
 			$stringOutput = "$pathSteamu\$sub directory created"
-			logWrite $stringOutput $false
+			Write-Log $stringOutput $false
 		}
 }
 
@@ -724,13 +727,13 @@ ForEach ($dependency in $dependencyArray) {
 		$pathName = $dependency.DestinationName
 		IF (Test-Path -path "$pathEmulators\$pathName") {
 				$stringOutput = "$pathEmulators\$pathName directory already exists"
-				logWrite $stringOutput $false
+				Write-Log $stringOutput $false
 			}
 			else {
-				New-Item -path "$pathEmulators\$pathName" -ItemType "directory"
+				New-Item -path "$pathEmulators\$pathName" -ItemType "directory" | Out-Null
 
 				$stringOutput = "$pathEmulators\$pathName directory created"
-				logWrite $stringOutput $false
+				Write-Log $stringOutput $false
 			}
 		}
 }
@@ -739,60 +742,60 @@ ForEach ($dependency in $dependencyArray) {
 ForEach ($sub in $directoryApps) {
 	IF (Test-Path -path "$pathApps\$sub") {
 			$stringOutput = "$pathApps\$sub directory already exists"
-			logWrite $stringOutput $false
+			Write-Log $stringOutput $false
 		}
 		else {
-			New-Item -path "$pathApps\$sub" -ItemType "directory"
+			New-Item -path "$pathApps\$sub" -ItemType "directory" | Out-Null
 
 			$stringOutput = "$pathApps\$sub directory created"
-			logWrite $stringOutput $false
+			Write-Log $stringOutput $false
 		}
 }
 
 	IF (Test-Path -path $pathSrmData) {
 			$stringOutput = "$pathSrmData directory already exists"
-			logWrite $stringOutput $false
+			Write-Log $stringOutput $false
 		}
 		else {
-			New-Item -path $pathSrmData -ItemType "directory"
+			New-Item -path $pathSrmData -ItemType "directory" | Out-Null
 
 			$stringOutput = "$pathSrmData directory created"
-			logWrite $stringOutput $false
+			Write-Log $stringOutput $false
 		}
 
 $stringOutput = 'Steamu directory structure created.'
-logWrite $stringOutput $true
+Write-Log $stringOutput $true
 
 ## Set up emulation directory structure
 $stringOutput = @"
 Creating user's home Emulation directory structure
 Path: $pathEmulation
 "@
-logWrite $stringOutput $true
+Write-Log $stringOutput $true
 
 # %HOMEPATH%\Emulation
 IF (Test-Path -path $pathEmulation) {
 		$stringOutput = "$pathEmulation directory already exists"
-		logWrite $stringOutput $false
+		Write-Log $stringOutput $false
 	}
 	else {
-		New-Item -path $pathEmulation -ItemType "directory"
+		New-Item -path $pathEmulation -ItemType "directory" | Out-Null
 
 		$stringOutput = "$pathEmulation directory created"
-		logWrite $stringOutput $false
+		Write-Log $stringOutput $false
 	}
 
 # %HOMEPATH%\Emulation sub-directories
 ForEach ($sub in $directoryEmulation) {
 	IF (Test-Path -path "$pathEmulation\$sub") {
 			$stringOutput = "$pathEmulation\$sub directory already exists"
-			logWrite $stringOutput $false
+			Write-Log $stringOutput $false
 		}
 		else {
-			New-Item -path "$pathEmulation\$sub" -ItemType "directory"
+			New-Item -path "$pathEmulation\$sub" -ItemType "directory" | Out-Null
 
 			$stringOutput = "$pathEmulation\$sub directory created"
-			logWrite $stringOutput $false
+			Write-Log $stringOutput $false
 		}
 }
 
@@ -805,9 +808,9 @@ $installChoice = Get-Choice $title $question $default $choices
 
 
 if ($installChoice -eq 0) {
-    logWrite 'Automated install chosen' $true
+    Write-Log 'Automated install chosen' $true
 } else {
-    logWrite 'Custom install chosen' $true
+    Write-Log 'Custom install chosen' $true
 
 	# choose a custom rom directory
 	$title = 'Custom ROM Directory'
@@ -825,13 +828,13 @@ If you choose yes, you will be prompted to select the proper path.
     	
 		$doCustomRomDirectory = $true
 		$pathRoms = Get-Folder
-		logWrite @"
+		Write-Log @"
 CUSTOM: Custom ROM directory chosen.
 
 Path: $pathRoms
 "@ $true
 	} else {
-    	logWrite @"
+    	Write-Log @"
 Using default ROM directory.
 
 Path: $pathRoms
@@ -859,10 +862,10 @@ Path: $pathRoms
 		$subFolderChoice = Get-Choice $title $question $default $choices
 		
 		if ($subFolderChoice -eq 0) {
-    		logWrite 'CUSTOM: Yes, ROM sub-directories will be created, if missing.'
+    		Write-Log 'CUSTOM: Yes, ROM sub-directories will be created, if missing.'
 			$doRomSubFolders = $true
 		} else {
-    		logWrite 'CUSTOM: No, ROM sub-directories will NOT be created. You will need to do this manually.'
+    		Write-Log 'CUSTOM: No, ROM sub-directories will NOT be created. You will need to do this manually.'
 			$doRomSubFolders = $false
 		}
 	}
@@ -876,13 +879,13 @@ If ($doRomSubfolders -eq $true) {
 	ForEach ($rom in $directoryRoms) {
 		IF (Test-Path -path "$pathRoms\$rom") {
 				$stringOutput = "$pathRoms\$rom directory already exists"
-				logWrite $stringOutput $false
+				Write-Log $stringOutput $false
 			}
 			else {
-				New-Item -path "$pathRoms\$rom" -ItemType "directory"
+				New-Item -path "$pathRoms\$rom" -ItemType "directory" | Out-Null
 
 				$stringOutput = "$pathRoms\$rom directory created"
-				logWrite $stringOutput $false
+				Write-Log $stringOutput $false
 			}
 	}
 }
@@ -891,13 +894,13 @@ If ($doRomSubfolders -eq $true) {
 ForEach ($system in $directoryBios) {
 	IF (Test-Path -path "$pathBios\$system") {
 			$stringOutput = "$pathBios\$system directory already exists"
-			logWrite $stringOutput $false
+			Write-Log $stringOutput $false
 		}
 		else {
-			New-Item -path "$pathBios\$system" -ItemType "directory"
+			New-Item -path "$pathBios\$system" -ItemType "directory" | Out-Null
 
 			$stringOutput = "$pathBios\$system directory created"
-			logWrite $stringOutput $false
+			Write-Log $stringOutput $false
 		}
 }
 
@@ -910,14 +913,14 @@ if ( !$gitBranches -contains $branch ) {
 }
 else {
 	$stringOutput = "Valid branch: $branch"
-	logWrite $stringOutput $false
+	Write-Log $stringOutput $false
 }
 
 ## Download required files
 IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	if (test-path -path $pathDownloads) {
 		$stringOutput = 'Beginning downloads.'
-		logWrite $stringOutput $true
+		Write-Log $stringOutput $true
 
 		ForEach ($dependency in $dependencyArray) {
 			$name = $dependency.Name
@@ -927,11 +930,11 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 			#If(testUrl($url)){
 				$stringOutput = "Downloading $name"
-				logWrite $stringOutput $true
+				Write-Log $stringOutput $true
 				Invoke-WebRequest -Uri $Url -Outfile "$pathDownloads\$file."	
 			#} else {
 			#	$stringOutput = "Unable to download $name. URL invalid."
-			#	logWrite $stringOutput
+			#	Write-Log $stringOutput
 			#	Write-Host $stringOutput
 			#}
 
@@ -943,7 +946,7 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 				
 				try {
 					$stringOutput = "Downloading $name"
-					logWrite $stringOutput $true
+					Write-Log $stringOutput $true
 					Invoke-WebRequest -Uri $Url -Outfile "$pathDownloads\$file."
 				}
 				catch {
@@ -957,7 +960,7 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 		}
 
 		$stringOutput = 'Downloads complete'
-		logWrite $stringOutput $true
+		Write-Log $stringOutput $true
 
 	} Else {
 		$stringOutput = "Unable to continue. $pathDownloads does not exist! Press any key to exit."
@@ -971,7 +974,7 @@ Downloads are skipped due to configuration.
 doDownloads: $doDownloads
 devSkip: $devSkip
 "@
-	logWrite $stringOutput $true
+	Write-Log $stringOutput $true
 }
 
 ## TODO backup any existing configs
@@ -980,16 +983,16 @@ devSkip: $devSkip
 	
 	if (Get-Module -ListAvailable -Name '7Zip4PowerShell') {
 		$stringOutput = '7z Powershell Module exists. Skipping.'
-		logWrite $stringOutput $false
+		Write-Log $stringOutput $false
 	} else {
 		# install 7z powershell module
 		$stringOutput = 'Installing 7z Powershell Module'
-		logWrite $stringOutput $true
+		Write-Log $stringOutput $true
 
 		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-		Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser
-		Set-PSRepository -Name 'PSGallery' -SourceLocation "https://www.powershellgallery.com/api/v2" -InstallationPolicy Trusted
-		Install-Module -Name 7Zip4PowerShell -Force -Scope CurrentUser
+		Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser | Out-Null
+		Set-PSRepository -Name 'PSGallery' -SourceLocation "https://www.powershellgallery.com/api/v2" -InstallationPolicy Trusted | Out-Null
+		Install-Module -Name 7Zip4PowerShell -Force -Scope CurrentUser | Out-Null
 	}
 
 
@@ -999,7 +1002,7 @@ devSkip: $devSkip
 		# Extract Peazip
 		
 		$stringOutput = "Extracting Peazip to $pathTools"
-		logWrite $stringOutput
+		Write-Log $stringOutput
 		Write-Host $stringOutput
 		Expand-Archive -Path "$pathDownloads\$filePeazip" -DestinationPath "$pathTools"
 
@@ -1037,47 +1040,47 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 		$extrasDestinationPath = "$extrasPathBase\$extrasPathName"
 
 		$stringOutput = "Extracting $name..."
-		logWrite $stringOutput $true
+		Write-Log $stringOutput $true
 
 		If ($directtopath) {
 			$targetPath = $extractPath
-			New-Item -ItemType "directory" -Path $targetPath
+			New-Item -ItemType "directory" -Path $targetPath | Out-Null
 		}
 
 		If ($type -eq 'zip'){
 			IF (Test-Path -Path $sourcePath -PathType Leaf) {
 
 				$stringOutput = "Extracting $name to $extractPath"
-				logWrite $stringOutput $false
+				Write-Log $stringOutput $false
 
-				Expand-7Zip -ArchiveFileName $sourcePath -TargetPath $targetPath
+				Expand-7Zip -ArchiveFileName $sourcePath -TargetPath $targetPath | Out-Null
 
 				$stringOutput = "Moving $name to $DestinationPath from $extractPath"
-				logWrite $stringOutput $false
+				Write-Log $stringOutput $false
 		
-				Copy-Item -Path "$extractPath\*" -Destination $destinationPath -Recurse -Force
+				Copy-Item -Path "$extractPath\*" -Destination $destinationPath -Recurse -Force | Out-Null
 
 				$stringOutput = "Removing temp $name folder from $extractPath"
-				logWrite $stringOutput $false
+				Write-Log $stringOutput $false
 				
-				Remove-Item -Path $extractPath -Recurse -Force
+				Remove-Item -Path $extractPath -Recurse -Force | Out-Null
 
 				IF ($extras) {
 
 					$stringOutput = "Extracting $extrasName to $extrasExtractPath"
-					logWrite $stringOutput $false
+					Write-Log $stringOutput $false
 
-					Expand-7Zip -ArchiveFileName $extrasSourcePath -TargetPath $extrasTargetPath
+					Expand-7Zip -ArchiveFileName $extrasSourcePath -TargetPath $extrasTargetPath | Out-Null
 
 					$stringOutput = "Moving $extrasName to $extrasDestinationPath from $extrasExtractPath"
-					logWrite $stringOutput $false
+					Write-Log $stringOutput $false
 		
-					Copy-Item -Path "$extrasExtractPath\*" -Destination $extrasDestinationPath -Recurse -Force
+					Copy-Item -Path "$extrasExtractPath\*" -Destination $extrasDestinationPath -Recurse -Force | Out-Null
 
 					$stringOutput = "Removing temp $extrasName folder from $extrasExtractPath"
-					logWrite $stringOutput $false
+					Write-Log $stringOutput $false
 
-					Remove-Item -Path $extrasExtractPath -Recurse -Force
+					Remove-Item -Path $extrasExtractPath -Recurse -Force | Out-Null
 				}
 
 			} else {
@@ -1088,13 +1091,13 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 		} elseif ($type -eq 'exe') {
 			IF (Test-Path -Path $sourcePath -PathType Leaf) {
 				$stringOutput = "Moving $name to $DestinationPath from $sourcePath"
-				logWrite $stringOutput $false
+				Write-Log $stringOutput $false
 				IF (Test-Path "$destinationPath\$sourceFileName" -PathType Leaf){
-					Remove-Item "$destinationPath\$sourceFileName" -Force
+					Remove-Item "$destinationPath\$sourceFileName" -Force | Out-Null
 				}
-				Copy-Item -Path $sourcePath -Destination $DestinationPath -Force
+				Copy-Item -Path $sourcePath -Destination $DestinationPath -Force | Out-Null
 
-				Remove-Item -Path $sourcePath -Recurse -Force
+				Remove-Item -Path $sourcePath -Recurse -Force | Out-Null
 			} else {
 				$stringOutput = "Unable to extract $Name. Cannot continue. Press any key to exit"
 				inputPause $stringOutput
@@ -1108,7 +1111,7 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	}
 
 		$stringOutput = 'Extraction complete'
-		logWrite $stringOutput $true
+		Write-Log $stringOutput $true
 
 } else {
 	$stringOutput = @"
@@ -1117,13 +1120,13 @@ Extraction is skipped due to configuration.
 doDownloads: $doDownloads
 devSkip: $devSkip
 "@
-	logWrite $stringOutput $true
+	Write-Log $stringOutput $true
 }
 
 ## Set up symlinks
 
 $stringOutput = 'Creating Junctions (symlinks)...'
-logWrite $stringOutput $true
+Write-Log $stringOutput $true
 
 		# RetroArch links
 
@@ -1217,44 +1220,44 @@ logWrite $stringOutput $true
 		}
 
 		$stringOutput = 'Created Junctions (symlinks).'
-		logWrite $stringOutput $true
+		Write-Log $stringOutput $true
 
 ## Copy configs
 		If ($doDownload) {
 			$stringOutput = "Backing up existing configs..."
-			logWrite $stringOutput $true
+			Write-Log $stringOutput $true
 
 			$backupDateTime = $(get-date -f yyyyMMddHHmm)
 
 			#Backup existing configs
 			If (Test-Path -Path "$pathRetroarch\retroarch.cfg" -PathType Leaf) {
-				Rename-Item -Path "$pathRetroarch\retroarch.cfg" -NewName "retroarch-$backupDateTime.cfg" -Force
+				Rename-Item -Path "$pathRetroarch\retroarch.cfg" -NewName "retroarch-$backupDateTime.cfg" -Force | Out-Null
 				$stringOutput = "$pathRetroarch\retroarch.cfg backed up to retroarch-$backupDateTime.cfg"
-				logWrite $stringOutput $false
+				Write-Log $stringOutput $false
 			}
 
 			If (Test-Path -Path "$pathSrmData\userConfigurations.json" -PathType Leaf) {
-				Rename-Item -Path "$pathSrmData\userConfigurations.json" -NewName "userConfigurations-$backupDateTime.json" -Force #need to do something here when these backup files already exist... probably an md5 so if it's the same file ignore it.
+				Rename-Item -Path "$pathSrmData\userConfigurations.json" -NewName "userConfigurations-$backupDateTime.json" -Force | Out-Null #need to do something here when these backup files already exist... probably an md5 so if it's the same file ignore it.
 				$stringOutput = "$pathSrmData\userConfigurations.json backed up to userConfigurations-$backupDateTime.json"
-				logWrite $stringOutput $false
+				Write-Log $stringOutput $false
 			}
 
 			If (Test-Path -Path "$pathEsData\es_find_rules.xml" -PathType Leaf) {
-				Rename-Item -Path "$pathEsData\es_find_rules.xml" -NewName "es_find_rules-$backupDateTime.xml" -Force
+				Rename-Item -Path "$pathEsData\es_find_rules.xml" -NewName "es_find_rules-$backupDateTime.xml" -Force | Out-Null
 				$stringOutput = "$pathEsData\es_find_rules.xml backed up to es_find_rules-$backupDateTime.xml"
-				logWrite $stringOutput $false
+				Write-Log $stringOutput $false
 			}
 			If (Test-Path -Path "$pathEsData\es_systems.xml" -PathType Leaf) {
-				Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems-$backupDateTime.xml" -Force
+				Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems-$backupDateTime.xml" -Force | Out-Null
 				$stringOutput = "$pathEsData\es_systems.xml backed up to es_systems-$backupDateTime.xml"
-				logWrite $stringOutput $false
+				Write-Log $stringOutput $false
 			}
 
 			$stringOutput = "Existing configs backed up."
-			logWrite $stringOutput $true
+			Write-Log $stringOutput $true
 
 			$stringOutput = "Updating existing configs..."
-			logWrite $stringOutput $true
+			Write-Log $stringOutput $true
 
 			# Copy default configs
 			ForEach ($dependency in $dependencyArray){
@@ -1264,16 +1267,16 @@ logWrite $stringOutput $true
 					$name = $dependency.Name
 					$destinationName = $dependency.DestinationName
 					If (Test-Path -Path "$pathConfigs\$DestinationName") {
-						Copy-Item -Path "$pathConfigs\$DestinationName\*" -Destination "$destinationPath\$destinationName\" -Force -Recurse
+						Copy-Item -Path "$pathConfigs\$DestinationName\*" -Destination "$destinationPath\$destinationName\" -Force -Recurse | Out-Null
 
 						$stringOutput = "Copied configs for $name"
-						logWrite $stringOutput $true
+						Write-Log $stringOutput $true
 					}
 				}
 			}
 
 			$stringOutput = "Existing configs updated."
-			logWrite $stringOutput $true
+			Write-Log $stringOutput $true
 
 			<# moved to ForEach
 
@@ -1294,12 +1297,12 @@ logWrite $stringOutput $true
 
 		#need to replace paths in SRM most likely
 
-## TODO use shortcutCreate to make shortcuts on Desktop
+## TODO use New-Shortcut to make shortcuts on Desktop
 	$stringOutput = "Setting up shortcuts in $pathDesktopShortcuts..."
-	logWrite $stringOutput $true
+	Write-Log $stringOutput $true
 
 	If ((Test-Path -Path "$pathDesktopShortcuts") -eq $false) {
-		New-Item -Path "$pathDesktopShortcuts" -ItemType "directory"
+		New-Item -Path "$pathDesktopShortcuts" -ItemType "directory" | Out-Null
 	}
 
 	If (Test-Path -Path "$pathDesktopShortcuts") {
@@ -1320,22 +1323,22 @@ logWrite $stringOutput $true
 
 			IF ($createShortcutDesktop){
 
-					shortcutCreate -SourceExe $exeFullPath -DestinationPath $shortcutDesktopPath
+					New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutDesktopPath
 					$stringOutput = "$shortcutDesktopPath created."
-					logWrite $stringOutput $false
+					Write-Log $stringOutput $false
 
 			} 
 			If ($createShortcutSteam) {
 
-					shortcutCreate -SourceExe $exeFullPath -DestinationPath $shortcutSteamPath
+					New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutSteamPath
 					$stringOutput = "$shortcutSteamPath created."
-					logWrite $stringOutput $false
+					Write-Log $stringOutput $false
 
 			}
 		}
 	} else {
 		$stringOutput = "Unable to create shortcuts. Directory $pathDesktopShortcuts does not exist!"
-		logWrite $stringOutput $true
+		Write-Log $stringOutput $true
 	}
 
 
