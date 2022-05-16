@@ -634,6 +634,22 @@ Function New-Junction([string]$source,[string]$target){
 		Write-Log $stringOutput $false
 }
 
+Function Write-Space {
+	$space = @"
+
+
+
+
+
+
+
+
+
+
+"@
+	Write-Host $space
+}
+
 ## Steamu Log FIle
 
 if (Test-Path -path $fileLog -PathType Leaf) {
@@ -679,6 +695,7 @@ to Steam!
 Enjoy!'
 $choices = @('&Continue','&Quit')
 $default = 0
+Write-Space
 $continueInstallation = Get-Choice $title $question $default $choices
 
 If ($continueInstallation -eq 1) {
@@ -804,6 +821,7 @@ $title = 'Installation'
 $question = 'Would you like to proceed with an automated installation or do you wish to customize your install?'
 $default = 0
 $choices = @('&Automated','&Custom')
+Write-Space
 $installChoice = Get-Choice $title $question $default $choices
 
 
@@ -823,6 +841,7 @@ If you choose yes, you will be prompted to select the proper path.
 "@
 	$default = 1
 	$choices = @('&Yes','&No')
+	Write-Space
 	$customRomDirectoryChoice = Get-Choice $title $question $default $choices
 	if ($customRomDirectoryChoice -eq 0) {
     	
@@ -859,6 +878,7 @@ Path: $pathRoms
 						to be seen by the various apps and emulators."
 		$default = 0
 		$choices = @('&Yes','&No')
+		Write-Space
 		$subFolderChoice = Get-Choice $title $question $default $choices
 		
 		if ($subFolderChoice -eq 0) {
