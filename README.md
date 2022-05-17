@@ -1,18 +1,18 @@
-# stEmu
-This project is based on [EmuDeck](https://github.com/dragoonDorise/EmuDeck)
+# Steamu
+This project is based on the idea and methodology of [EmuDeck](https://github.com/dragoonDorise/EmuDeck). It was originally a fork but being based on a different OS and different scripting language it has since be re-imported.
 
 # <img src="replace_me.png">
 
-stEmu is a collection of scripts for Windows that automatically downloads, installs, and configures popular emulators for painless integration within the Steam library wether you use it exclusively on the desktop or prefer Big Picture Mode. It creates your roms directory structure and downloads all of the needed Emulators for you along with the recommended configurations for each of them. stEmu uses [Steam Rom Manager](https://github.com/SteamGridDB/steam-rom-manager) for this integration but is configured "out of the box" to work with [EmulationStation Desktop Edition (ES-DE)] (https://es-de.org/) as well.
+Steamu is a collection of scripts for Windows that automatically downloads, installs, and configures popular emulators for painless integration within the Steam library wether you use it exclusively on the desktop or prefer Big Picture Mode. It creates your roms directory structure and downloads all of the needed Emulators for you along with the recommended configurations for each of them. Steamu uses [Steam Rom Manager](https://github.com/SteamGridDB/steam-rom-manager) for this integration but is configured "out of the box" to work with [EmulationStation Desktop Edition (ES-DE)](https://es-de.org/) as well.
 
-There are two ways of using stEmu:
+There are two ways of using Steamu:
 
 ## Using Steam Rom Manager
 
 <img src="https://www.emudeck.com/img/ss1.png">
 
 This option gives you all your games presented with their box arts as if they were a regular Steam Game.
-stEmu has preloaded configurations for Steam Rom Manager for the following systems:
+Steamu has preloaded configurations for Steam Rom Manager for the following systems:
 
 | System                    | Emulator                             | Roms format                                                          |
 | ------------------------- | ------------------------------------ | -------------------------------------------------------------------- |
@@ -56,7 +56,7 @@ stEmu has preloaded configurations for Steam Rom Manager for the following syste
 
 <img src="https://es-de.org/____impro/1/onewebmedia/ES-DE_logo.png?etag=%226071-6041244a%22&sourceContentType=image%2Fpng&ignoreAspectRatio&resize=240%2B168">
 
-stEmu configures EmulationStation DE to use the same rom folders that stEmu creates for you and it even downloads all the emulators and cores that EmulationStation DE needs. All configurations that stEmu installs are carried over when using EmulationStation DE. For a comprehensive list of all the systems that EmulationStation DE supports go to [EmulationStation DE](https://es-de.org/)
+Steamu configures EmulationStation DE to use the same rom folders that Steamu creates for you and it even downloads all the emulators and cores that EmulationStation DE needs. All configurations that Steamu installs are carried over when using EmulationStation DE. For a comprehensive list of all the systems that EmulationStation DE supports go to [EmulationStation DE](https://es-de.org/)
 
 # Hotkeys
 
@@ -65,17 +65,17 @@ We try to use the same hotkeys for every emulator but some of them has its own d
 |  Hotkey         | RetroArch      | Dolphin        | Citra \* | Cemu \*        | Yuzu           | PCSX2 \*     | RPCS3        |
 | --------------- | -------------- | -------------- | -------- | -------------- | -------------- | ------------ | ------------ |
 | Menu            | L3 + R3        | -              | -        | -              | -              | -            | -            |
-| Exit            | Select + Start | Select + Start | R5       | Select + Start | Select + Start | STEAM Button | STEAM Button |
+| Exit            | Select + Start | Select + Start |          | Select + Start | Select + Start | Home Button  | Home Button  |
 | Pause Emulation | Select + A     | Select + A     | -        | -              | Select + A     |              | -            |
 | Fast Forward    | Select + R2    | Select         | -        | -              | Select + R2    | Select + R2  | -            |
 | Load State      | Select + L1    | Select + L1    | -        | -              | -              | Select + L1  | -            |
 | Save State      | Select + R1    | Select + R1    | -        | -              | -              | Select + R1  | -            |
-| Full Screen     | -              | -              | L4       | -              | -              | -            | -            |
-| Swap Screens    | -              | -              | R4       | R4             | -              | -            | -            |
-| Toggle Layout   | -              | -              | L5       | -              | -              | -            | -            |
+| Full Screen     | -              | -              |          | -              | -              | -            | -            |
+| Swap Screens    | -              | -              |          |                | -              | -            | -            |
+| Toggle Layout   | -              | -              |          | -              | -              | -            | -            |
 
 \* You need to activate Steam Input to get those hotkeys to work https://www.emudeck.com/#steam_input
 
 # Want to contribute?
 
-Feel free to submit Pull Requests. stEmu follows the same philosophy as EmuDeck; therefore, you should keep in mind that this is developed to be very hands off for end users.
+Feel free to submit Pull Requests. Steamu follows the same philosophy as EmuDeck; therefore, you should keep in mind that this is developed to be very hands off for end users.
