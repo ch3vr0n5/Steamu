@@ -698,22 +698,31 @@ $doDownload = $true
 $doCustomRomDirectory = $false
 $doRomSubFolders = $true
 
-$title = 'Welcome'
-$question = 'Welcome to Steamu!
+$title = 'Welcome to Steamu!'
+$question = @"
 
 This program is designed to simplify the process of
 downloading, installing and configuring emulation
-to get you retro gaming in a matter of minutes. At the
-end of the installation process you will be presented
-with information on where things are located as well
-as shortcuts to installed apps and emulators.
-Additionally you will be given instructions on 
-further emulator setup that cannot be done via this
-program as well as a quick walk-through on how to
-use Steam ROM Manager to quickly add your games directly
-to Steam!
+to get you retro gaming in a matter of minutes. 
 
-Enjoy!'
+You will have the option to use an entirely automated
+installation using defaults or a customized installation
+for more advanced configurations.
+
+Default installation path for Steamu, Apps and Emulators:
+$pathSteamu
+
+Default path for ROMs, Bios files, saves, states and misc storage:
+$pathEmulation
+
+Default path for shortcuts to Apps and Emulators:
+$pathDesktopShortcuts
+
+Documentation is forthcoming, please be patient.
+
+Enjoy!
+
+"@
 $choices = @('&Continue','&Quit')
 $default = 0
 Write-Space
@@ -726,8 +735,12 @@ If ($continueInstallation -eq 1) {
 
 # ask here to install Steamu, apps, emulators to a different path
 
-$title = 'Installation'
-$question = 'Would you like to proceed with an automated installation or do you wish to customize your install?'
+$title = 'Installation Selection'
+$question = @"
+
+Would you like to proceed with an automated installation or do you wish to customize your install?
+
+"@
 $default = 0
 $choices = @('&Automated','&Custom')
 Write-Space
@@ -740,13 +753,15 @@ if ($installChoice -eq 0) {
     Write-Log 'Custom install chosen' $true
 
 	# choose a custom rom directory
-	$title = 'Custom ROM Directory'
+	$title = 'Custom ROM Directory Selection'
 	$question = @"
+
 Would you like to choose your own ROM path?
 
 Default path: $pathRoms
 
 If you choose yes, you will be prompted to select the proper path.
+
 "@
 	$default = 1
 	$choices = @('&Yes','&No')
@@ -773,18 +788,22 @@ Path: $pathRoms
 	# choose if you want to populate your custom rom path only if they chose custom
 	If ($doCustomRomDirectory) {
 		$title = 'Custom ROM Directory Sub-folders'
-		$question = "Would you like ROM system sub-directories created in your custom ROM path?
+		$question = @"
 
-					Custom path: $pathRoms
+Would you like ROM system sub-directories created in your custom ROM path?
 
-					This will create properly named directories at the destination for all the supported systems
-					such as amiga, snes, mame, etc.
+Custom path: $pathRoms
 
-					Existing ROMs at the destination won't be moved or deleted.
+This will create properly named directories at the destination for all the supported systems
+such as amiga, snes, mame, etc.
 
-					IMPORTANT: We use exact system directory names as defined in our documentation on Github.
-						You may need to move existing roms into properly named system folders in order for them
-						to be seen by the various apps and emulators."
+Existing ROMs at the destination won't be moved or deleted.
+
+IMPORTANT: We use exact system directory names as defined in our documentation on Github.
+		You may need to move existing roms into properly named system folders in order for them
+		to be seen by the various apps and emulators.
+
+"@
 		$default = 0
 		$choices = @('&Yes','&No')
 		Write-Space
