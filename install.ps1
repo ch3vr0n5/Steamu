@@ -7,6 +7,7 @@
 	TODO consider putting paths and other options in array to then load them based on name. This way if a custom path for an emulator or app is used then we can just update the array for that path and use it when making junctions, config changes, etc.
 	TODO if custom path = normal path then don't junction
 	TODO add junction switch/boolean and array to $dependency array and then reduce junction code to single instance
+	TODO move this to kanban board
 #>
 
 ## CLI Parameters
