@@ -22,8 +22,6 @@ param (
 	[switch]$devSkip = $false
 )
 
-$branch = 'dev' #set this for development only
-
 ## Overrides
 
 # Turn off download progress bar otherwise downloads take SIGNIFICANTLY longer
