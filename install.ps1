@@ -785,6 +785,11 @@ Path: $pathRoms
 		$doCustomRomDirectory = $false
 	}
 
+	# check to make sure custom path was selected, if it is the same as the default then reset $doCustomRomDirectory
+	If ($pathRoms = "$pathEmulation\roms") {
+		$doCustomRomDirectory = $false
+	}
+
 	# choose if you want to populate your custom rom path only if they chose custom
 	If ($doCustomRomDirectory) {
 		$title = 'Custom ROM Directory Sub-folders'
