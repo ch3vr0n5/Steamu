@@ -1,16 +1,7 @@
 ## Windows Powershell Script
 
-<#
-	TODO work on advanced install with options for replacing existing configs with defaults, path choices, etc.
-	TODO write xml to save custom settings, then load those settings and present prompt to bypass install and use previous settings
-	TODO fix Cemu paths in srm... why?
-	TODO consider putting paths and other options in array to then load them based on name. This way if a custom path for an emulator or app is used then we can just update the array for that path and use it when making junctions, config changes, etc.
-	TODO if custom path = normal path then don't junction
-	TODO add junction switch/boolean and array to $dependency array and then reduce junction code to single instance
-	TODO move this to kanban board
-#>
+#region ------------------------------ CLI Parameters
 
-## CLI Parameters
 param (
 	[Parameter()]
 	[string]$branch = "main",
@@ -22,19 +13,21 @@ param (
 	[switch]$devSkip = $false
 )
 
-## Overrides
+#endregion
+
+#region ------------------------------ Overrides
 
 # Turn off download progress bar otherwise downloads take SIGNIFICANTLY longer
 $ProgressPreference = 'SilentlyContinue'
 
-## Variables
+#endregion
+
+#region ------------------------------ Path Variables
 
 $architecture = 'x86_64'
 if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture.Contains("64") -eq $false) {
 	$architecture = 'x86'
 }
-
-# Paths & URLs
 
 $gitUrl = "https://github.com/ch3vr0n5/Steamu.git"
 $gitBranches = @('dev','beta','main')
@@ -80,7 +73,9 @@ $stringOutput = ""
 $fileLogName = 'Steamu_log.txt'
 $fileLog = "$pathLogs\$fileLogName"
 
-# Dependency information
+#endregion
+
+#region ------------------------------ Dependency Configuration
 
 $retroarchVersion = '1.10.3'
 $srmVersion = '2.3.36'
@@ -305,7 +300,6 @@ $dependencyArray = @(
 $directorySteamu = @(
 		'Logs'
 	,	'Downloads'
-	,	'Tools'
 	,	'Emulators'
 	,	'Apps'
 	,	'Shortcuts'
@@ -333,12 +327,20 @@ $directoryEmulation = @(
 	,	'roms'
 	,	'saves'
 	,	'states'
+	,	'storage'
 	)
 
 $directoryBios = @(
-	'ps2'
-	,'gba'
-	,'mame'
+	'pcsx2'
+	,'retroarch'
+	,'rpcs3'
+	,'xemu'
+)
+
+$directoryStorage = @(
+	'cemu'
+	,'ppsspp'
+	,'xemu'
 )
 
 $directoryRoms = @(
@@ -499,7 +501,9 @@ $directoryRoms = @(
 	,'zxspectrum'
 	)
 
-## Functions
+#endregion
+
+#region ------------------------------ Functions
 
 Function inputPause ($stringMessageArg)
 # https://stackoverflow.com/a/28237896
@@ -649,7 +653,9 @@ Function Write-Space {
 	Write-Host $space
 }
 
-## Steamu Log FIle
+#endregion
+
+#region ------------------------------ Start Steamu Log FIle
 
 if (Test-Path -path $fileLog -PathType Leaf) {
 	#Clear-Content -path $fileLog
@@ -669,29 +675,54 @@ if (Test-Path -path $fileLog -PathType Leaf) {
 
 }
 
-## set up installation parameters
+#endregion
+
+#region ------------------------------ Validate CLI parameters
+
+if ( !$gitBranches -contains $branch ) {
+	$stringOutput = "Invalid branch $branch. Valid parameters include: $gitBranches. Press any key to exit."
+	inputPause $stringOutput
+	exit
+}
+else {
+	$stringOutput = "Valid branch: $branch"
+	Write-Log $stringOutput $false
+}
+
+#endregion
+
+#region ------------------------------ Gather installation parameters
 
 # Set automated installation parameters
 $doDownload = $true
 $doCustomRomDirectory = $false
 $doRomSubFolders = $true
 
-$title = 'Welcome'
-$question = 'Welcome to Steamu!
+$title = 'Welcome to Steamu!'
+$question = @"
 
 This program is designed to simplify the process of
 downloading, installing and configuring emulation
-to get you retro gaming in a matter of minutes. At the
-end of the installation process you will be presented
-with information on where things are located as well
-as shortcuts to installed apps and emulators.
-Additionally you will be given instructions on 
-further emulator setup that cannot be done via this
-program as well as a quick walk-through on how to
-use Steam ROM Manager to quickly add your games directly
-to Steam!
+to get you retro gaming in a matter of minutes. 
 
-Enjoy!'
+You will have the option to use an entirely automated
+installation using defaults or a customized installation
+for more advanced configurations.
+
+Default installation path for Steamu, Apps and Emulators:
+$pathSteamu
+
+Default path for ROMs, Bios files, saves, states and misc storage:
+$pathEmulation
+
+Default path for shortcuts to Apps and Emulators:
+$pathDesktopShortcuts
+
+Documentation is forthcoming, please be patient.
+
+Enjoy!
+
+"@
 $choices = @('&Continue','&Quit')
 $default = 0
 Write-Space
@@ -702,11 +733,108 @@ If ($continueInstallation -eq 1) {
 	exit
 }
 
-## Set up Steamu directory structure
+# ask here to install Steamu, apps, emulators to a different path
+
+$title = 'Installation Selection'
+$question = @"
+
+Would you like to proceed with an automated installation or do you wish to customize your install?
+
+"@
+$default = 0
+$choices = @('&Automated','&Custom')
+Write-Space
+$installChoice = Get-Choice $title $question $default $choices
+
+
+if ($installChoice -eq 0) {
+    Write-Log 'Automated install chosen' $true
+} else {
+    Write-Log 'Custom install chosen' $true
+
+	# choose a custom rom directory
+	$title = 'Custom ROM Directory Selection'
+	$question = @"
+
+Would you like to choose your own ROM path?
+
+Default path: $pathRoms
+
+If you choose yes, you will be prompted to select the proper path.
+
+"@
+	$default = 1
+	$choices = @('&Yes','&No')
+	Write-Space
+	$customRomDirectoryChoice = Get-Choice $title $question $default $choices
+	if ($customRomDirectoryChoice -eq 0) {
+    	
+		$doCustomRomDirectory = $true
+		$pathRoms = Get-Folder
+		Write-Log @"
+CUSTOM: Custom ROM directory chosen.
+
+Path: $pathRoms
+"@ $true
+	} else {
+    	Write-Log @"
+Using default ROM directory.
+
+Path: $pathRoms
+"@ $true
+		$doCustomRomDirectory = $false
+	}
+
+	# check to make sure custom path was selected, if it is the same as the default then reset $doCustomRomDirectory
+	If ($pathRoms = "$pathEmulation\roms") {
+		$doCustomRomDirectory = $false
+	}
+
+	# choose if you want to populate your custom rom path only if they chose custom
+	If ($doCustomRomDirectory) {
+		$title = 'Custom ROM Directory Sub-folders'
+		$question = @"
+
+Would you like ROM system sub-directories created in your custom ROM path?
+
+Custom path: $pathRoms
+
+This will create properly named directories at the destination for all the supported systems
+such as amiga, snes, mame, etc.
+
+Existing ROMs at the destination won't be moved or deleted.
+
+IMPORTANT: We use exact system directory names as defined in our documentation on Github.
+		You may need to move existing roms into properly named system folders in order for them
+		to be seen by the various apps and emulators.
+
+"@
+		$default = 0
+		$choices = @('&Yes','&No')
+		Write-Space
+		$subFolderChoice = Get-Choice $title $question $default $choices
+		
+		if ($subFolderChoice -eq 0) {
+    		Write-Log 'CUSTOM: Yes, ROM sub-directories will be created, if missing.'
+			$doRomSubFolders = $true
+		} else {
+    		Write-Log 'CUSTOM: No, ROM sub-directories will NOT be created. You will need to do this manually.'
+			$doRomSubFolders = $false
+		}
+	}
+
+	#further custom options here
+
+}
+
+#endregion
+
+#region ------------------------------ Build directory structure
 
 $stringOutput = @"
 Creating Steamu directory structure
 Path: $pathSteamu
+
 "@
 Write-Log $stringOutput $true
 
@@ -786,6 +914,7 @@ Write-Log $stringOutput $true
 $stringOutput = @"
 Creating user's home Emulation directory structure
 Path: $pathEmulation
+
 "@
 Write-Log $stringOutput $true
 
@@ -813,84 +942,6 @@ ForEach ($sub in $directoryEmulation) {
 			$stringOutput = "$pathEmulation\$sub directory created"
 			Write-Log $stringOutput $false
 		}
-}
-
-# now that basic folders are set up, get advanced installation parameters if needed
-$title = 'Installation'
-$question = 'Would you like to proceed with an automated installation or do you wish to customize your install?'
-$default = 0
-$choices = @('&Automated','&Custom')
-Write-Space
-$installChoice = Get-Choice $title $question $default $choices
-
-
-if ($installChoice -eq 0) {
-    Write-Log 'Automated install chosen' $true
-} else {
-    Write-Log 'Custom install chosen' $true
-
-	# choose a custom rom directory
-	$title = 'Custom ROM Directory'
-	$question = @"
-Would you like to choose your own ROM path?
-
-Default path: $pathRoms
-
-If you choose yes, you will be prompted to select the proper path.
-"@
-	$default = 1
-	$choices = @('&Yes','&No')
-	Write-Space
-	$customRomDirectoryChoice = Get-Choice $title $question $default $choices
-	if ($customRomDirectoryChoice -eq 0) {
-    	
-		$doCustomRomDirectory = $true
-		$pathRoms = Get-Folder
-		Write-Log @"
-CUSTOM: Custom ROM directory chosen.
-
-Path: $pathRoms
-"@ $true
-	} else {
-    	Write-Log @"
-Using default ROM directory.
-
-Path: $pathRoms
-"@ $true
-		$doCustomRomDirectory = $false
-	}
-
-	# choose if you want to populate your custom rom path only if they chose custom
-	If ($doCustomRomDirectory) {
-		$title = 'Custom ROM Directory Sub-folders'
-		$question = "Would you like ROM system sub-directories created in your custom ROM path?
-
-					Custom path: $pathRoms
-
-					This will create properly named directories at the destination for all the supported systems
-					such as amiga, snes, mame, etc.
-
-					Existing ROMs at the destination won't be moved or deleted.
-
-					IMPORTANT: We use exact system directory names as defined in our documentation on Github.
-						You may need to move existing roms into properly named system folders in order for them
-						to be seen by the various apps and emulators."
-		$default = 0
-		$choices = @('&Yes','&No')
-		Write-Space
-		$subFolderChoice = Get-Choice $title $question $default $choices
-		
-		if ($subFolderChoice -eq 0) {
-    		Write-Log 'CUSTOM: Yes, ROM sub-directories will be created, if missing.'
-			$doRomSubFolders = $true
-		} else {
-    		Write-Log 'CUSTOM: No, ROM sub-directories will NOT be created. You will need to do this manually.'
-			$doRomSubFolders = $false
-		}
-	}
-
-	#further custom options here
-
 }
 
 # %HOMEPATH%\Emulation\roms sub-directories
@@ -923,19 +974,23 @@ ForEach ($system in $directoryBios) {
 		}
 }
 
-## Set Branch
+# %HOMEPATH#\Emulation\storage sub-directories
+ForEach ($system in $directoryStorage) {
+	IF (Test-Path -path "$directoryStorage\$system") {
+			$stringOutput = "$directoryStorage\$system directory already exists"
+			Write-Log $stringOutput $false
+		}
+		else {
+			New-Item -path "$directoryStorage\$system" -ItemType "directory" | Out-Null
 
-if ( !$gitBranches -contains $branch ) {
-	$stringOutput = "Invalid branch $branch. Valid parameters include: $gitBranches. Press any key to exit."
-	inputPause $stringOutput
-	exit
-}
-else {
-	$stringOutput = "Valid branch: $branch"
-	Write-Log $stringOutput $false
+			$stringOutput = "$directoryStorage\$system directory created"
+			Write-Log $stringOutput $false
+		}
 }
 
-## Download required files
+#endregion
+
+#region ------------------------------ Download required files
 IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	if (test-path -path $pathDownloads) {
 		$stringOutput = 'Beginning downloads.'
@@ -996,9 +1051,11 @@ devSkip: $devSkip
 	Write-Log $stringOutput $true
 }
 
+#endregion
+
 ## TODO backup any existing configs
 
-## Install all-the-things
+#region ------------------------------ Install all-the-things
 	
 	if (Get-Module -ListAvailable -Name '7Zip4PowerShell') {
 		$stringOutput = '7z Powershell Module exists. Skipping.'
@@ -1142,7 +1199,9 @@ devSkip: $devSkip
 	Write-Log $stringOutput $true
 }
 
-## Set up symlinks
+#endregion
+
+#region ------------------------------ Set up junctions (symlinks)
 
 $stringOutput = 'Creating Junctions (symlinks)...'
 Write-Log $stringOutput $true
@@ -1238,10 +1297,12 @@ Write-Log $stringOutput $true
 
 		}
 
-		$stringOutput = 'Created Junctions (symlinks).'
-		Write-Log $stringOutput $true
+$stringOutput = 'Created Junctions (symlinks).'
+Write-Log $stringOutput $true
 
-## Copy configs
+#endregion
+
+#region ------------------------------ Copy configs
 		If ($doDownload) {
 			$stringOutput = "Backing up existing configs..."
 			Write-Log $stringOutput $true
@@ -1316,6 +1377,10 @@ Write-Log $stringOutput $true
 
 		#need to replace paths in SRM most likely
 
+#endregion
+
+#region ------------------------------ Set up exe shortcuts
+
 ## TODO use New-Shortcut to make shortcuts on Desktop
 	$stringOutput = "Setting up shortcuts in $pathDesktopShortcuts..."
 	Write-Log $stringOutput $true
@@ -1360,6 +1425,7 @@ Write-Log $stringOutput $true
 		Write-Log $stringOutput $true
 	}
 
+#endregion
 
 ## TODO if existing configs exit, replace, else, copy new configs
 
