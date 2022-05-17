@@ -1368,6 +1368,7 @@ Write-Log $stringOutput $true
 
 
 ##### FINISH ######
+Write-Space
 $stringOutput = 'All Done =) Press any key to exit.'
 inputPause $stringOutput
 exit
