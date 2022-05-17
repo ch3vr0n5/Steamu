@@ -22,20 +22,6 @@ $ProgressPreference = 'SilentlyContinue'
 
 #endregion
 
-#region ------------------------------ Validate CLI parameters
-
-if ( !$gitBranches -contains $branch ) {
-	$stringOutput = "Invalid branch $branch. Valid parameters include: $gitBranches. Press any key to exit."
-	inputPause $stringOutput
-	exit
-}
-else {
-	$stringOutput = "Valid branch: $branch"
-	Write-Log $stringOutput $false
-}
-
-#endregion
-
 #region ------------------------------ Path Variables
 
 $architecture = 'x86_64'
@@ -687,6 +673,20 @@ if (Test-Path -path $fileLog -PathType Leaf) {
 	$stringOutput = "Created Log File at $pathLogs"
 	Write-Log $stringOutput $false
 
+}
+
+#endregion
+
+#region ------------------------------ Validate CLI parameters
+
+if ( !$gitBranches -contains $branch ) {
+	$stringOutput = "Invalid branch $branch. Valid parameters include: $gitBranches. Press any key to exit."
+	inputPause $stringOutput
+	exit
+}
+else {
+	$stringOutput = "Valid branch: $branch"
+	Write-Log $stringOutput $false
 }
 
 #endregion
