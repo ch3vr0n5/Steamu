@@ -314,7 +314,6 @@ $dependencyArray = @(
 $directorySteamu = @(
 		'Logs'
 	,	'Downloads'
-	,	'Tools'
 	,	'Emulators'
 	,	'Apps'
 	,	'Shortcuts'
@@ -342,12 +341,20 @@ $directoryEmulation = @(
 	,	'roms'
 	,	'saves'
 	,	'states'
+	,	'storage'
 	)
 
 $directoryBios = @(
-	'ps2'
-	,'gba'
-	,'mame'
+	'pcsx2'
+	,'retroarch'
+	,'rpcs3'
+	,'xemu'
+)
+
+$directoryStorage = @(
+	'cemu'
+	,'ppsspp'
+	,'xemu'
 )
 
 $directoryRoms = @(
@@ -803,6 +810,7 @@ Path: $pathRoms
 $stringOutput = @"
 Creating Steamu directory structure
 Path: $pathSteamu
+
 "@
 Write-Log $stringOutput $true
 
@@ -882,6 +890,7 @@ Write-Log $stringOutput $true
 $stringOutput = @"
 Creating user's home Emulation directory structure
 Path: $pathEmulation
+
 "@
 Write-Log $stringOutput $true
 
@@ -937,6 +946,20 @@ ForEach ($system in $directoryBios) {
 			New-Item -path "$pathBios\$system" -ItemType "directory" | Out-Null
 
 			$stringOutput = "$pathBios\$system directory created"
+			Write-Log $stringOutput $false
+		}
+}
+
+# %HOMEPATH#\Emulation\storage sub-directories
+ForEach ($system in $directoryStorage) {
+	IF (Test-Path -path "$directoryStorage\$system") {
+			$stringOutput = "$directoryStorage\$system directory already exists"
+			Write-Log $stringOutput $false
+		}
+		else {
+			New-Item -path "$directoryStorage\$system" -ItemType "directory" | Out-Null
+
+			$stringOutput = "$directoryStorage\$system directory created"
 			Write-Log $stringOutput $false
 		}
 }
