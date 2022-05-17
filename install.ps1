@@ -22,6 +22,20 @@ $ProgressPreference = 'SilentlyContinue'
 
 #endregion
 
+#region ------------------------------ Validate CLI parameters
+
+if ( !$gitBranches -contains $branch ) {
+	$stringOutput = "Invalid branch $branch. Valid parameters include: $gitBranches. Press any key to exit."
+	inputPause $stringOutput
+	exit
+}
+else {
+	$stringOutput = "Valid branch: $branch"
+	Write-Log $stringOutput $false
+}
+
+#endregion
+
 #region ------------------------------ Path Variables
 
 $architecture = 'x86_64'
@@ -925,20 +939,6 @@ ForEach ($system in $directoryBios) {
 			$stringOutput = "$pathBios\$system directory created"
 			Write-Log $stringOutput $false
 		}
-}
-
-#endregion
-
-#region ------------------------------ Validate Branch selection
-
-if ( !$gitBranches -contains $branch ) {
-	$stringOutput = "Invalid branch $branch. Valid parameters include: $gitBranches. Press any key to exit."
-	inputPause $stringOutput
-	exit
-}
-else {
-	$stringOutput = "Valid branch: $branch"
-	Write-Log $stringOutput $false
 }
 
 #endregion
