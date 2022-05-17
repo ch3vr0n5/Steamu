@@ -1,18 +1,20 @@
 # Steamu
 This project is based on the idea and methodology of [EmuDeck](https://github.com/dragoonDorise/EmuDeck). It was originally a fork but being based on a different OS and different scripting language it has since be re-imported.
 
-# <img src="replace_me.png">
+# <img src="https://i.ibb.co/HT2DdDC/Screenshot-BP.png">
 
-Steamu is a collection of scripts for Windows that automatically downloads, installs, and configures popular emulators for painless integration within the Steam library wether you use it exclusively on the desktop or prefer Big Picture Mode. It creates your roms directory structure and downloads all of the needed Emulators for you along with the recommended configurations for each of them. Steamu uses [Steam Rom Manager](https://github.com/SteamGridDB/steam-rom-manager) for this integration but is configured "out of the box" to work with [EmulationStation Desktop Edition (ES-DE)](https://es-de.org/) as well.
+Steamu is a collection of scripts for Windows that automatically downloads, installs, and configures popular emulators for painless integration within the Steam library whether you use it exclusively on the desktop or prefer Big Picture Mode. It creates your roms directory structure and downloads all of the needed Emulators for you along with the recommended configurations for each of them. Steamu uses [Steam Rom Manager](https://github.com/SteamGridDB/steam-rom-manager) for this integration but is configured "out of the box" to work with [EmulationStation Desktop Edition (ES-DE)](https://es-de.org/) as well.
 
 There are two ways of using Steamu:
 
 ## Using Steam Rom Manager
 
-<img src="https://www.emudeck.com/img/ss1.png">
+<img src="https://i.ibb.co/8dz5zQj/Screenshot-SRM.png">
 
 This option gives you all your games presented with their box arts as if they were a regular Steam Game.
 Steamu has preloaded configurations for Steam Rom Manager for the following systems:
+
+PLEASE NOTE: Emulators listed below with an asterisk* have not yet been configured but may download. This are currently being worked on.
 
 | System                    | Emulator                             | Roms format                                                          |
 | ------------------------- | ------------------------------------ | -------------------------------------------------------------------- |
@@ -27,21 +29,21 @@ Steamu has preloaded configurations for Steam Rom Manager for the following syst
 | Mame 2010                 | Retroarch Mame 2010 core             | .zip                                                                 |
 | Mame Current              | Retroarch Mame Current core          | .zip                                                                 |
 | Neo Geo Pocket & Color    | Retroarch Beetle NeoPop              | .7z .ngp .ngc .bin .zip                                              |
-| Nintendo GameCube         | Dolphin Standalone                   | .ciso .dol .elf .gcm .gcz .iso .nkit .iso .rvz .wad .wia             |
+| Nintendo GameCube         | Dolphin Standalone*                  | .ciso .dol .elf .gcm .gcz .iso .nkit .iso .rvz .wad .wia             |
 | Nintendo DS               | Retroarch melonDS core               | .7z .nds .zip                                                        |
-| Nintendo 3DS              | Citra                                | .3ds .3dsx .app .axf .cii .cxi .elf .cia                             |
+| Nintendo 3DS              | Citra*                               | .3ds .3dsx .app .axf .cii .cxi .elf .cia                             |
 | Nintendo NES              | Retroarch Nestopia core              | .7z .nes .fds .unf .unif .zip                                        |
-| Nintendo 64               | Mupen64plus FZ                       | .7z .bin .n64 .ndd u1 .v64 .z64 .zip                                 |
-| Nintendo GameCube         | Dolphin Standalone                   | .ciso .dol .elf .gcm .gcz .iso .nkit .iso .rvz .wad .wia .wbfs       |
-| Nintendo Wii              | Dolphin Standalone                   | .ciso .dol .elf .gcm .gcz .iso .json .nkit .iso .rvz .wad .wia .wbfs |
-| Nintendo Wii U            | Cemu                                 | .rpx .wud .wux .elf .iso .wad                                        |
-| Nintendo Switch           | Yuzu                                 | .kp .nca .nro .nso .nsp .xci                                         |
+| Nintendo 64               | Retroarch Mupen64plus core           | .7z .bin .n64 .ndd u1 .v64 .z64 .zip                                 |
+| Nintendo GameCube         | Dolphin Standalone*                  | .ciso .dol .elf .gcm .gcz .iso .nkit .iso .rvz .wad .wia .wbfs       |
+| Nintendo Wii              | Dolphin Standalone*                  | .ciso .dol .elf .gcm .gcz .iso .json .nkit .iso .rvz .wad .wia .wbfs |
+| Nintendo Wii U            | Cemu*                                | .rpx .wud .wux .elf .iso .wad                                        |
+| Nintendo Switch           | Yuzu*                                | .kp .nca .nro .nso .nsp .xci                                         |
 | Super Nintendo            | Retroarch Snes9x Current core        | .7z .bs .fig .sfc .smc .swx .zip                                     |
 | Super Nintendo Widescreen | Retroarch bsnes hd beta Current core | .7z .bs .fig .sfc .smc .swx .zip                                     |
-| PrimeHacks                | Dolphin PrimeHacks                   | .ciso .dol .elf .gcm .gcz .iso .json .nkit .iso .rvz .wad .wia .wbfs |
-| Playstation               | DuckStation                          | .cue .chd .ecm .iso .m3u .mds .pbp                                   |
-| Playstation 2             | RPCSX2                               | .bin chd .cso .dump .gz .img .iso .mdf .nrg                          |
-| Playstation 3             | RPCS3                                | /PS3_GAME/USRDIR/eboot.bin                                           |
+| PrimeHacks                | Dolphin PrimeHacks*                  | .ciso .dol .elf .gcm .gcz .iso .json .nkit .iso .rvz .wad .wia .wbfs |
+| Playstation               | DuckStation*                         | .cue .chd .ecm .iso .m3u .mds .pbp                                   |
+| Playstation 2             | RPCSX2*                              | .bin chd .cso .dump .gz .img .iso .mdf .nrg                          |
+| Playstation 3             | RPCS3*                               | /PS3_GAME/USRDIR/eboot.bin                                           |
 | PSP                       | PPSSPP & PPSSPP Retroarch core       | .7z .elf .cso .iso .pbp .prx                                         |
 | Sega 32X                  | Retroarch PicoDrive core             | .7z .32x .bin .zip                                                   |
 | Sega CD                   | Retroarch Genesis Plus GX core       | .7z .32x .cue .chd .iso .zip                                         |
@@ -60,7 +62,7 @@ Steamu configures EmulationStation DE to use the same rom folders that Steamu cr
 
 # Hotkeys
 
-We try to use the same hotkeys for every emulator but some of them has its own different Hotkeys, check the following table:
+We try to use the same hotkeys for every emulator but some of them have their own that cannot be changed. Not all hotkeys are currently configured. This is being worked on.
 
 |  Hotkey         | RetroArch      | Dolphin        | Citra \* | Cemu \*        | Yuzu           | PCSX2 \*     | RPCS3        |
 | --------------- | -------------- | -------------- | -------- | -------------- | -------------- | ------------ | ------------ |
