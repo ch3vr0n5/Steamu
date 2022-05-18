@@ -1266,7 +1266,11 @@ Write-Log $stringOutput $true
 			$target = "$pathPcsx2\$junction"
 
 			Switch ($junction.ToString()) {
-					'bios' {$source = "$pathBios\ps2"} 
+					'bios' {$source = "$pathBios\pcsx2"} 
+			}
+
+			If ((Test-Path -Path "$pathPcsx2\bios") -eq $false) {
+				New-Item -Path "$pathPcsx2\bios"
 			}
 	
 			New-Junction -source $source -target $target
