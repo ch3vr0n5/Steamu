@@ -786,7 +786,7 @@ Path: $pathRoms
 	}
 
 	# check to make sure custom path was selected, if it is the same as the default then reset $doCustomRomDirectory
-	If ($pathRoms = "$pathEmulation\roms") {
+	If ($pathRoms -eq "$pathEmulation\roms") {
 		$doCustomRomDirectory = $false
 	}
 
