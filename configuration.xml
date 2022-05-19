@@ -31,6 +31,31 @@
 		</Download>
 		<CreateSteamShortcut>$false</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
+		<Junction>
+			<Name>roms</Name>
+			<TargetBasePath>$pathSrm</TargetBasePath>
+			<Source>$pathRoms</Source>
+		</Junction>
+		<Junction>
+			<Name>steam</Name>
+			<TargetBasePath>$pathSrm</TargetBasePath>
+			<Source>$pathSteam</Source>
+		</Junction>
+		<Junction>
+			<Name>retroarch</Name>
+			<TargetBasePath>$pathSrm</TargetBasePath>
+			<Source>$pathRetroarch</Source>
+		</Junction>
+		<Junction>
+			<Name>emulationstation</Name>
+			<TargetBasePath>$pathSrm</TargetBasePath>
+			<Source>$pathEs</Source>
+		</Junction>
+		<Junction>
+			<Name>shortcuts</Name>
+			<TargetBasePath>$pathSrm</TargetBasePath>
+			<Source>$pathShortcuts</Source>
+		</Junction>
 	</App>
 	<App>
 		<Name>Emulation Station DE</Name>
@@ -46,6 +71,16 @@
 			</Destination>
 		<CreateSteamShortcut>$true</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
+		<Junction>
+			<Name>ROMs</Name>
+			<TargetBasePath>$pathEs</TargetBasePath>
+			<Source>$pathRoms</Source>
+		</Junction>
+		<Junction>
+			<Name>Emulators</Name>
+			<TargetBasePath>$pathEs</TargetBasePath>
+			<Source>$pathEmulators</Source>
+		</Junction>
 	</App>
 	<Emulator>
 		<Name>Retroarch</Name>
@@ -75,6 +110,26 @@
 		</Download>
 		<CreateSteamShortcut>$true</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
+		<Junction>
+			<Name>roms</Name>
+			<TargetBasePath>$pathRetroarch</TargetBasePath>
+			<Source>$pathRoms</Source>
+		</Junction>
+				<Junction>
+			<Name>saves</Name>
+			<TargetBasePath>$pathRetroarch</TargetBasePath>
+			<Source>$pathSaves</Source>
+		</Junction>
+				<Junction>
+			<Name>states</Name>
+			<TargetBasePath>$pathRetroarch</TargetBasePath>
+			<Source>$pathStates</Source>
+		</Junction>
+				<Junction>
+			<Name>bios</Name>
+			<TargetBasePath>$pathRetroarch</TargetBasePath>
+			<Source>$pathBios</Source>
+		</Junction>
 	</Emulator>
 	<Emulator>
 		<Name>Xemu</Name>
@@ -143,6 +198,11 @@
 		</Download>
 		<CreateSteamShortcut>$true</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
+		<Junction>
+			<Name>bios</Name>
+			<TargetBasePath>$pathPcsx2</TargetBasePath>
+			<Source>$pathBios</Source>
+		</Junction>
 	</Emulator>
 	<Emulator>
 		<Name>Cemu</Name>
