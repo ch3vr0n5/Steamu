@@ -1,25 +1,20 @@
-<config>
-    <>
-		Name = 'Steamu';
-		Url = "https://github.com/ch3vr0n5/Steamu/archive/refs/heads/$branch.zip";
-		Output = 'steamu.zip';
-		DirectToPath = $false;
-		DestinationPath = "$pathLocalAppData";
-		DestinationName = 'Steamu';
-		ExtractFolder = "Steamu-$branch";
-		Type = 'zip';
-		Extras = $false;
-		ExtrasName = '';
-		ExtrasUrl = '';
-		ExtrasOutput = '';
-		ExtrasDirectToPath = $false;
-		ExtrasDestinationPath = "";
-		ExtrasDestinationName = '';
-		ExtrasExtractFolder = "";
-		Exe = '';
-		CreateSteamShortcut = $false;
-		CreateDesktopShortcut = $false
-	}
+<Config>
+    <App>
+		<Name>Steamu</Name>
+			<Download>
+				<Url>https://github.com/ch3vr0n5/Steamu/archive/refs/heads/$branch.zip</Url>
+				<SaveAs>steamu.zip</SaveAS>
+				<DirectToPath>$false</DirectToPath>
+				<Destination>
+					<Path>$pathLocalAppData</Path>
+					<DestinationName>Steamu</DestinationName>
+					<ExtractFolder>Steamu-$branch</ExtractFolder>
+				</Destination>
+				<Type>zip</type>
+			</Download>
+			<CreateSteamShortcut>$false</>
+			<CreateDesktopShortcut>$$false</>
+	</App>>
 	[PSCustomObject]@{
 		Name = 'Retroarch';
 		Url = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch.7z";
