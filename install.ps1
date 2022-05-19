@@ -503,42 +503,7 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 		$stringOutput = 'Beginning downloads.'
 		Write-Log $stringOutput $true
 
-		ForEach ($dependency in $dependencyArray) {
-			$name = $dependency.Name
-			$file = $dependency.Output
-			$url = $dependency.Url
-			$extras = $dependency.Extras
-
-			#If(testUrl($url)){
-				$stringOutput = "Downloading $name"
-				Write-Log $stringOutput $true
-				Invoke-WebRequest -Uri $Url -Outfile "$pathDownloads\$file."	
-			#} else {
-			#	$stringOutput = "Unable to download $name. URL invalid."
-			#	Write-Log $stringOutput
-			#	Write-Host $stringOutput
-			#}
-
-			IF ($extras) {
-				$name = $dependency.ExtrasName
-				$file = $dependency.ExtrasOutput
-				$url = $dependency.ExtrasUrl
-
-				
-				try {
-					$stringOutput = "Downloading $name"
-					Write-Log $stringOutput $true
-					Invoke-WebRequest -Uri $Url -Outfile "$pathDownloads\$file."
-				}
-				catch {
-					$stringOutput = "Unable to continue. Error downloading $name."
-					inputPause $stringOutput
-					exit
-				}
-					
-			}
-					
-		}
+# new foreach logic here for downloads from xml, add foreach for extras, select url node
 
 		$stringOutput = 'Downloads complete'
 		Write-Log $stringOutput $true
