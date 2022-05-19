@@ -1270,7 +1270,7 @@ Write-Log $stringOutput $true
 			}
 
 			If ((Test-Path -Path "$pathPcsx2\bios") -eq $false) {
-				New-Item -Path "$pathPcsx2\bios"
+				New-Item -Path "$pathPcsx2\bios" -ItemType "directory"
 			}
 	
 			New-Junction -source $source -target $target
