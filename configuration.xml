@@ -1,0 +1,212 @@
+<config>
+    <>
+		Name = 'Steamu';
+		Url = "https://github.com/ch3vr0n5/Steamu/archive/refs/heads/$branch.zip";
+		Output = 'steamu.zip';
+		DirectToPath = $false;
+		DestinationPath = "$pathLocalAppData";
+		DestinationName = 'Steamu';
+		ExtractFolder = "Steamu-$branch";
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
+		ExtrasExtractFolder = "";
+		Exe = '';
+		CreateSteamShortcut = $false;
+		CreateDesktopShortcut = $false
+	}
+	[PSCustomObject]@{
+		Name = 'Retroarch';
+		Url = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch.7z";
+		Output = 'retroarch.7z';
+		DirectToPath = $false;
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'Retroarch';
+		ExtractFolder = IF ($architecture -eq 'x86_64') {'RetroArch-Win64'} else {'RetroArch-Win32'};
+		Type = 'zip';
+		Extras = $true;
+		ExtrasName = 'Retroarch Cores';
+		ExtrasUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch_cores.7z";
+		ExtrasOutput = 'retroarch_cores.7z';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "$pathEmulators";
+		ExtrasDestinationName = 'Retroarch';
+		ExtrasExtractFolder = IF ($architecture -eq 'x86_64') {'RetroArch-Win64'} else {'RetroArch-Win32'};
+		Exe = 'retroarch.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+	}
+	[PSCustomObject]@{
+		Name = 'Steam Rom Manager';
+		Url = "https://github.com/SteamGridDB/steam-rom-manager/releases/download/v$srmVersion/Steam-ROM-Manager-portable-$srmVersion.exe"; #https://github.com/SteamGridDB/steam-rom-manager/releases/download/v2.3.35/Steam-ROM-Manager-portable-2.3.35.exe
+		Output = 'steam_rom_manager.exe';
+		DirectToPath = $false;
+		DestinationPath = "$pathApps";
+		DestinationName = 'SteamRomManager';
+		ExtractFolder = '';
+		Type = 'exe';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
+		ExtrasExtractFolder = "";
+		Exe = 'steam_rom_manager.exe'
+		CreateSteamShortcut = $false;
+		CreateDesktopShortcut = $true
+	}
+	[PSCustomObject]@{
+		Name = 'Emulation Station DE';
+		Url = "https://gitlab.com/es-de/emulationstation-de/-/package_files/36880305/download";
+		Output = 'emulationstation.zip';
+		DirectToPath = $false;
+		DestinationPath = "$pathApps";
+		DestinationName = 'EmulationStation';
+		ExtractFolder = 'EmulationStation-DE';
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
+		ExtrasExtractFolder = "";
+		Exe = 'emulationstation.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+	}
+	[PSCustomObject]@{
+		Name = 'Xemu';
+		Url = "https://github.com/mborgerson/xemu/releases/latest/download/xemu-win-release.zip";
+		Output = 'xemu.zip';
+		DirectToPath = $true;
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'Xemu';
+		ExtractFolder = 'Xemu';
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
+		ExtrasExtractFolder = "";
+		Exe = 'xemu.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+	}
+	[PSCustomObject]@{
+		Name = 'PPSSPP';
+		Url = "https://www.ppsspp.org/files/$ppssppVersion/ppsspp_win.zip";
+		Output = 'ppsspp.zip';
+		DirectToPath = $true;
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'PPSSPP';
+		ExtractFolder = 'PPSSPP';
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
+		ExtrasExtractFolder = "";
+		Exe = IF ($architecture -eq 'x86_64') {'PPSSPPWindows64.exe'} else {'PPSSPPWindows.exe'};
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+	}
+	[PSCustomObject]@{
+		Name = 'RPCS3';
+		Url = "https://github.com/RPCS3/rpcs3-binaries-win/releases/download/build-5ae9de4e3b7f4aa59ede098796c08e128783989a/rpcs3-v0.0.22-13592-5ae9de4e_win64.7z";
+		Output = 'rpcs3.zip';
+		DirectToPath = $true;
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'RPCS3';
+		ExtractFolder = 'RPCS3';
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
+		ExtrasExtractFolder = "";
+		Exe = 'rpcs3.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+	}
+	[PSCustomObject]@{
+		Name = 'PCSX2';
+		Url = "https://github.com/PCSX2/pcsx2/releases/download/v$pcsx2Version/pcsx2-v$pcsx2Version-windows-32bit-portable.7z";
+		Output = 'pcsx2.zip';
+		DirectToPath = $false;
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'PCSX2';
+		ExtractFolder = "PCSX2 $pcsx2Version";
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
+		ExtrasExtractFolder = "";
+		Exe = 'pcsx2.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+	}
+	[PSCustomObject]@{
+		Name = 'Cemu';
+		Url = "https://cemu.info/releases/cemu_$cemuVersion.zip";
+		Output = 'cemu.zip';
+		DirectToPath = $false;
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'Cemu';
+		ExtractFolder = "Cemu_$cemuVersion";
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
+		ExtrasExtractFolder = "";
+		Exe = 'Cemu.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+	}
+	[PSCustomObject]@{
+		Name = 'Yuzu';
+		Url = "https://github.com/yuzu-emu/yuzu-mainline/releases/download/mainline-0-1014/yuzu-windows-msvc-20220512-4d5eaaf3f.zip";
+		Output = 'yuzu.zip';
+		DirectToPath = $false;
+		DestinationPath = "$pathEmulators";
+		DestinationName = 'Yuzu';
+		ExtractFolder = "yuzu-windows-msvc";
+		Type = 'zip';
+		Extras = $false;
+		ExtrasName = '';
+		ExtrasUrl = '';
+		ExtrasOutput = '';
+		ExtrasDirectToPath = $false;
+		ExtrasDestinationPath = "";
+		ExtrasDestinationName = '';
+		ExtrasExtractFolder = "";
+		Exe = 'yuzu.exe';
+		CreateSteamShortcut = $true;
+		CreateDesktopShortcut = $true
+	}
+</config>
