@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<directories>
+    <directory>
+        <name>Steamu</name>
+        <basePath>$pathLocalAppData</basePath>
+        <sub-directory>
+            <name>Apps</name>
+        </sub-directory>
+        <sub-directory>
+            <name>Emulators</name>
+        </sub-directory>
+    </directory>
+    <directory>
+        <name>Emulation</name>
+        <basePath>$pathHome</basePath>
+        <sub-directory>
+            <name>roms</name>
+        </sub-directory>
+        <sub-directory>
+            <name>bios</name>
+        </sub-directory>
+    </directory>
+</directories>
