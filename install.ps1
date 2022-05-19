@@ -469,63 +469,7 @@ Path: $pathSteamu
 "@
 Write-Log $stringOutput $true
 
-# %LOCALAPPDATA%\Steamu directory
-IF (Test-Path -path $pathSteamu) {
-	$stringOutput = "$pathSteamu directory already exists"
-	Write-Log $stringOutput $false
-}
-else {
-	New-Item -path $pathSteamu -ItemType "directory" | Out-Null
-
-	$stringOutput = "$pathSteamu directory created"
-	Write-Log $stringOutput $false
-}
-
-# %LOCALAPPDATA%\Steamu sub-directories
-ForEach ($sub in $directorySteamu) {
-	IF (Test-Path -path "$pathSteamu\$sub") {
-			$stringOutput = "$pathSteamu\$sub directory already exists"
-			Write-Log $stringOutput $false
-		}
-		else {
-			New-Item -path "$pathSteamu\$sub" -ItemType "directory" | Out-Null
-
-			$stringOutput = "$pathSteamu\$sub directory created"
-			Write-Log $stringOutput $false
-		}
-}
-
-# %LOCALAPPDATA%\Steamu\Emulators sub-directories
-ForEach ($dependency in $dependencyArray) {
-	$testPathType = $dependency.DestinationPath
-	IF ($testPathType -eq $pathEmulators) {
-		$pathName = $dependency.DestinationName
-		IF (Test-Path -path "$pathEmulators\$pathName") {
-				$stringOutput = "$pathEmulators\$pathName directory already exists"
-				Write-Log $stringOutput $false
-			}
-			else {
-				New-Item -path "$pathEmulators\$pathName" -ItemType "directory" | Out-Null
-
-				$stringOutput = "$pathEmulators\$pathName directory created"
-				Write-Log $stringOutput $false
-			}
-		}
-}
-
-# %LOCALAPPDATA%\Steamu\Apps sub-directories
-ForEach ($sub in $directoryApps) {
-	IF (Test-Path -path "$pathApps\$sub") {
-			$stringOutput = "$pathApps\$sub directory already exists"
-			Write-Log $stringOutput $false
-		}
-		else {
-			New-Item -path "$pathApps\$sub" -ItemType "directory" | Out-Null
-
-			$stringOutput = "$pathApps\$sub directory created"
-			Write-Log $stringOutput $false
-		}
-}
+# foreach logic here to create directories from xml, perhaps where-object parentnode.name = 'Steamu', etc.
 
 	IF (Test-Path -path $pathSrmData) {
 			$stringOutput = "$pathSrmData directory already exists"
@@ -549,75 +493,7 @@ Path: $pathEmulation
 "@
 Write-Log $stringOutput $true
 
-# %HOMEPATH%\Emulation
-IF (Test-Path -path $pathEmulation) {
-		$stringOutput = "$pathEmulation directory already exists"
-		Write-Log $stringOutput $false
-	}
-	else {
-		New-Item -path $pathEmulation -ItemType "directory" | Out-Null
 
-		$stringOutput = "$pathEmulation directory created"
-		Write-Log $stringOutput $false
-	}
-
-# %HOMEPATH%\Emulation sub-directories
-ForEach ($sub in $directoryEmulation) {
-	IF (Test-Path -path "$pathEmulation\$sub") {
-			$stringOutput = "$pathEmulation\$sub directory already exists"
-			Write-Log $stringOutput $false
-		}
-		else {
-			New-Item -path "$pathEmulation\$sub" -ItemType "directory" | Out-Null
-
-			$stringOutput = "$pathEmulation\$sub directory created"
-			Write-Log $stringOutput $false
-		}
-}
-
-# %HOMEPATH%\Emulation\roms sub-directories
-If ($doRomSubfolders -eq $true) {
-	ForEach ($rom in $directoryRoms) {
-		IF (Test-Path -path "$pathRoms\$rom") {
-				$stringOutput = "$pathRoms\$rom directory already exists"
-				Write-Log $stringOutput $false
-			}
-			else {
-				New-Item -path "$pathRoms\$rom" -ItemType "directory" | Out-Null
-
-				$stringOutput = "$pathRoms\$rom directory created"
-				Write-Log $stringOutput $false
-			}
-	}
-}
-
-# %HOMEPATH#\Emulation\bios sub-directories
-ForEach ($system in $directoryBios) {
-	IF (Test-Path -path "$pathBios\$system") {
-			$stringOutput = "$pathBios\$system directory already exists"
-			Write-Log $stringOutput $false
-		}
-		else {
-			New-Item -path "$pathBios\$system" -ItemType "directory" | Out-Null
-
-			$stringOutput = "$pathBios\$system directory created"
-			Write-Log $stringOutput $false
-		}
-}
-
-# %HOMEPATH#\Emulation\storage sub-directories
-ForEach ($system in $directoryStorage) {
-	IF (Test-Path -path "$directoryStorage\$system") {
-			$stringOutput = "$directoryStorage\$system directory already exists"
-			Write-Log $stringOutput $false
-		}
-		else {
-			New-Item -path "$directoryStorage\$system" -ItemType "directory" | Out-Null
-
-			$stringOutput = "$directoryStorage\$system directory created"
-			Write-Log $stringOutput $false
-		}
-}
 
 #endregion
 
