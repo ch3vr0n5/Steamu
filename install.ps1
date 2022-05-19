@@ -221,14 +221,31 @@ Function New-Junction([string]$source,[string]$target){
 	}
 
 	If ($isJunction) {
-		$stringOutput = "$target is an existing junction. Removing..."
-		Write-Log $stringOutput $false
-		Remove-Item -Path $target -Force -Recurse | Out-Null
+		Try {
+			Remove-Item -Path $target -Force -Recurse | Out-Null
+			$stringOutput = "JUNCTIONS: Already exists, removed: $target"
+			Write-Log $stringOutput $false
+		} Catch {
+			$stringOutput = @"
+JUNCTIONS: An error occured while trying to remove junction: $target
+ERROR: $_
+"@
+			Write-Log $stringOutput $true
+		}
+		
 	}
-
-		New-Item -ItemType Junction -Path $target -Target $source | Out-Null
-		$stringOutput = "Junction created at $target pointing to $source"
-		Write-Log $stringOutput $false
+		Try {
+			New-Item -ItemType Junction -Path $target -Target $source | Out-Null
+			$stringOutput = "JUNCTIONS: Junction created: $target -> $source"
+			Write-Log $stringOutput $false
+		} Catch {
+			$stringOutput = @"
+JUNCTIONS: An error occured while creating a junction: $target -> $source
+ERROR: $_
+"@
+			Write-Log $stringOutput $true
+		}
+		
 }
 
 Function Write-Space {
@@ -245,6 +262,26 @@ Function Write-Space {
 
 "@
 	Write-Host $space
+}
+
+Function New-Directory([string]$path) {
+	If ((Test-Path -Path $path) -eq $false) {
+		Try {
+			New-Item -ItemType "directory" -Path $path
+			$stringOutput = "DIRECTORIES: Created directory: $path"
+			Write-Log $stringOutput $false
+		} Catch {
+			$stringOutput = @"
+DIRECTORIES: An error occured while trying to create path: $path
+ERROR: $_
+"@
+			Write-Log $stringOutput $true
+		}
+			
+	} else {
+		$stringOutput = "DIRECTORIES: Already exists: $path"
+		Write-Log $stringOutput $false
+	}
 }
 
 #endregion
