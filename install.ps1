@@ -37,7 +37,8 @@ $pathRoamingAppData = $env:APPDATA
 $pathHome = $env:USERPROFILE
 $pathSteam = If ($architecture -eq 'x86_64') {Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\WOW6432Node\Valve\Steam' -Name InstallPath} else {Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\Valve\Steam' -Name InstallPath}
 
-$pathSteamu = "$pathLocalAppData\Steamu"
+$pathSteamuBase = "$pathLocalAppData" # can be custom
+$pathSteamu = "$pathSteamuBase\Steamu"
 $pathLogs = "$pathSteamu\Logs"
 $pathDownloads = "$pathSteamu\Downloads"
 $pathShortcuts = "$pathSteamu\Shortcuts"
@@ -53,6 +54,7 @@ $pathRpcs3 = "$pathEmulators\RPCS3"
 $pathPpsspp = "$pathEmulators\PPSSPP"
 $pathDolphin = "$pathEmulators\Dolphin"
 $pathYuzu = "$pathEmulators\Yuzu"
+$pathDuckstation = "$pathEmulators\Duckstation"
 
 $pathApps = "$pathSteamu\Apps"
 $pathSrm = "$pathApps\SteamRomManager"
@@ -60,11 +62,12 @@ $pathSrmData = "$pathApps\SteamRomManager\userData"
 $pathEs = "$pathApps\EmulationStation"
 $pathEsData = "$pathEs\resources\systems\windows"
 
-$pathEmulation = "$pathHome\Emulation"
-$pathRoms = "$pathEmulation\roms"
-$pathBios = "$pathEmulation\bios"
-$pathSaves = "$pathEmulation\saves"
-$pathStates = "$pathEmulation\states"
+$pathEmulationBase = "$pathHome" # can be custom
+$pathEmulation = "$pathEmulationBase\Emulation"
+$pathRoms = "$pathEmulation\roms" # can be custom
+$pathBios = "$pathEmulation\bios" 
+$pathSaves = "$pathEmulation\saves" # can be custom
+$pathStates = "$pathEmulation\states" # can be custom
 
 $pathDesktopShortcuts = "$pathHome\Desktop\Emulation"
 
