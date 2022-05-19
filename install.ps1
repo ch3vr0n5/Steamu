@@ -543,24 +543,6 @@ devSkip: $devSkip
 		Install-Module -Name 7Zip4PowerShell -Force -Scope CurrentUser | Out-Null
 	}
 
-
-	
-	<#
-	If(Test-Path -Path $pathTools) {
-		# Extract Peazip
-		
-		$stringOutput = "Extracting Peazip to $pathTools"
-		Write-Log $stringOutput
-		Write-Host $stringOutput
-		Expand-Archive -Path "$pathDownloads\$filePeazip" -DestinationPath "$pathTools"
-
-		Copy-Item -path "$pathTools\$peazipFolder" -Destination "$pathTools\Peazip"
-		Remove-Item -path "$pathTools\$peazipFolder" 
-		
-
-		# Extract 7zip
-	}
-	#>
 If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 	ForEach ($dependency in $dependencyArray) {
@@ -597,39 +579,9 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 		If ($type -eq 'zip'){
 			IF (Test-Path -Path $sourcePath -PathType Leaf) {
+					# new foreach logic here from xml
 
-				$stringOutput = "Extracting $name to $extractPath"
-				Write-Log $stringOutput $false
 
-				Expand-7Zip -ArchiveFileName $sourcePath -TargetPath $targetPath | Out-Null
-
-				$stringOutput = "Moving $name to $DestinationPath from $extractPath"
-				Write-Log $stringOutput $false
-		
-				Copy-Item -Path "$extractPath\*" -Destination $destinationPath -Recurse -Force | Out-Null
-
-				$stringOutput = "Removing temp $name folder from $extractPath"
-				Write-Log $stringOutput $false
-				
-				Remove-Item -Path $extractPath -Recurse -Force | Out-Null
-
-				IF ($extras) {
-
-					$stringOutput = "Extracting $extrasName to $extrasExtractPath"
-					Write-Log $stringOutput $false
-
-					Expand-7Zip -ArchiveFileName $extrasSourcePath -TargetPath $extrasTargetPath | Out-Null
-
-					$stringOutput = "Moving $extrasName to $extrasDestinationPath from $extrasExtractPath"
-					Write-Log $stringOutput $false
-		
-					Copy-Item -Path "$extrasExtractPath\*" -Destination $extrasDestinationPath -Recurse -Force | Out-Null
-
-					$stringOutput = "Removing temp $extrasName folder from $extrasExtractPath"
-					Write-Log $stringOutput $false
-
-					Remove-Item -Path $extrasExtractPath -Recurse -Force | Out-Null
-				}
 
 			} else {
 				$stringOutput = "Unable to extract $Name. Cannot continue. Press any key to exit"
@@ -637,20 +589,8 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 				exit
 			}
 		} elseif ($type -eq 'exe') {
-			IF (Test-Path -Path $sourcePath -PathType Leaf) {
-				$stringOutput = "Moving $name to $DestinationPath from $sourcePath"
-				Write-Log $stringOutput $false
-				IF (Test-Path "$destinationPath\$sourceFileName" -PathType Leaf){
-					Remove-Item "$destinationPath\$sourceFileName" -Force | Out-Null
-				}
-				Copy-Item -Path $sourcePath -Destination $DestinationPath -Force | Out-Null
+					# new foreach logic here from xml
 
-				Remove-Item -Path $sourcePath -Recurse -Force | Out-Null
-			} else {
-				$stringOutput = "Unable to extract $Name. Cannot continue. Press any key to exit"
-				inputPause $stringOutput
-				exit
-			}
 		} else {
 			$stringOutput = "Extraction type not handled for $Name! Type: $type"
 			inputPause $stringOutput
