@@ -220,6 +220,8 @@ Function New-Junction([string]$source,[string]$target){
 		$isJunction = $true
 	}
 
+	#test if target is path, and empty
+
 	If ($isJunction) {
 		Try {
 			Remove-Item -Path $target -Force -Recurse | Out-Null
@@ -620,73 +622,7 @@ Write-Log $stringOutput $true
 
 		# RetroArch links
 
-		$junctionsRetroarch = @('roms','saves','states','bios')
-
-		ForEach ($junction in $junctionsRetroarch) {
-			$target = "$pathRetroarch\$junction"
-
-			Switch ($junction.ToString()) {
-				'roms' {$source = $pathRoms}
-				 'saves' {$source = "$pathSaves"}
-				 'states' {$source = "$pathStates"}
-				 'bios' {$source = "$pathBios"}
-			}
-			
-			New-Junction -source $source -target $target
-
-		}
-
-		# EmulationStation DE links
-
-		$junctionsEs = @('ROMs','Emulators')
-
-		ForEach ($junction in $junctionsEs) {
-			$target = "$pathEs\$junction"
-
-			Switch ($junction.ToString()) {
-					'ROMs' {$source = $pathRoms} 
-					 'Emulators' {$source = $pathEmulators}
-			}
-			
-			New-Junction -source $source -target $target
-
-		}
-
-		# Steam Rom Manager links
-
-		$junctionsSrm = @('steam', 'roms', 'retroarch', 'emulationstation', 'shortcuts')
-
-		ForEach ($junction in $junctionsSrm) {
-			$target = "$pathSrm\$junction"
-
-			Switch ($junction.ToString()) {
-					'steam' {$source = $pathSteam} 
-					 'roms' {$source = $pathRoms}
-					 'retroarch' {$source = $pathRetroarch}
-					 'emulationstation' {$source = $pathEs}
-					 'shortcuts' {$source = $pathShortcuts}
-			}
-	
-			New-Junction -source $source -target $target
-		}
-
-		# pcsx2 symlinks
-
-		$junctionsPcsx2 = @('bios')
-
-		ForEach ($junction in $junctionsPcsx2) {
-			$target = "$pathPcsx2\$junction"
-
-			Switch ($junction.ToString()) {
-					'bios' {$source = "$pathBios\pcsx2"} 
-			}
-
-			If ((Test-Path -Path "$pathPcsx2\bios") -eq $false) {
-				New-Item -Path "$pathPcsx2\bios"
-			}
-	
-			New-Junction -source $source -target $target
-		}
+		# for each loop here from xml
 		
 		# %HOMEPATH%\Emulation symlinks
 		If ($doCustomRomDirectory) {
