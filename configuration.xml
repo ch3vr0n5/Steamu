@@ -1,34 +1,40 @@
-<Config>
-    <App>
+<Settings>
+	<Paths>
+	</Paths>
+    <Program>
 		<Name>Steamu</Name>
 		<Download>
 			<Url>https://github.com/ch3vr0n5/Steamu/archive/refs/heads/$branch.zip</Url>
-			<Type>zip</type>
-			<SaveAs>steamu.zip</SaveAS>
+			<Type>zip</Type>
+			<SaveAs>steamu.zip</SaveAs>
+		</Download>
+		<Extract>
 			<ExtractFolder>Steamu-$branch</ExtractFolder>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>$pathLocalAppData</BasePath>
 				<DirectoryName>Steamu</DirectoryName>
 			</Destination>
-		</Download>
+		</Extract>
 		<CreateSteamShortcut>$false</CreateSteamShortcut>
 		<CreateDesktopShortcut>$false</CreateDesktopShortcut>
-	</App>
-	<App>
+	</Program>
+	<Program>
 		<Name>Steam Rom Manager</Name>
 		<Exe>steam_rom_manager.exe</Exe>
 		<Download>
 			<Url>https://github.com/SteamGridDB/steam-rom-manager/releases/download/v$srmVersion/Steam-ROM-Manager-portable-$srmVersion.exe</Url>
 			<Type>exe</Type>
 			<SaveAs>steam_rom_manager.exe</SaveAs>
+		</Download>
+		<Extract>
 			<ExtractFolder>SteamRomManager</ExtractFolder>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>"$pathApps</BasePath>
 				<DirectoryName>SteamRomManager</DirectoryName>
 			</Destination>
-		</Download>
+		</Extract>
 		<CreateSteamShortcut>$false</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
 		<Junction>
@@ -56,19 +62,23 @@
 			<TargetBasePath>$pathSrm</TargetBasePath>
 			<Source>$pathShortcuts</Source>
 		</Junction>
-	</App>
-	<App>
+	</Program>
+	<Program>
 		<Name>Emulation Station DE</Name>
 		<Exe>emulationstation.exe</Exe>
+		<Download>
 			<Url>https://gitlab.com/es-de/emulationstation-de/-/package_files/36880305/download</Url>
 			<Type>zip</Type>
 			<SaveAs>emulationstation.zip</SaveAs>
+		</Download>
+		<Extract>
 			<ExtractFolder>EmulationStation-DE</ExtractFolder>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>$pathApps</BasePath>
 				<DirectoryName>EmulationStation</DirectoryName>
 			</Destination>
+		</Extract>
 		<CreateSteamShortcut>$true</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
 		<Junction>
@@ -81,33 +91,43 @@
 			<TargetBasePath>$pathEs</TargetBasePath>
 			<Source>$pathEmulators</Source>
 		</Junction>
-	</App>
-	<Emulator>
+	</Program>
+	<Program>
 		<Name>Retroarch</Name>
-		<Exe>retroarch.exe</exe>
+		<Exe>retroarch.exe</Exe>
 		<Download>
 			<Url>https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch.7z</Url>
 			<Type>zip</Type>
 			<SaveAs>retroarch.7z</SaveAs>
-			<ExtractFolder>IF ($architecture -eq 'x86_64') {'RetroArch-Win64'} else {'RetroArch-Win32'}</ExtractFolder>
+		</Download>
+		<Extract>
+			<ExtractFolder Arch='x86'>RetroArch-Win32</ExtractFolder>
+			<ExtractFolder Arch='x86_64'>RetroArch-Win64</ExtractFolder>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
 				<DirectoryName>Retroarch</DirectoryName>
 			</Destination>
-			<Extras>
-				<Name>Retroarch Cores</Name>
+		</Extract>
+		<Extra>
+			<Name>Retroarch Cores</Name>
+			<Download>
 				<Url>https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch_cores.7z</Url>
 				<Type>zip</Type>
 				<SaveAs>retroarch_cores.7z</SaveAs>
-				<ExtractFolder>IF ($architecture -eq 'x86_64') {'RetroArch-Win64'} else {'RetroArch-Win32'}</ExtractFolder>
+			</Download>
+			<Extract>
+				<ExtractFolder Arch='x86'>RetroArch-Win32</ExtractFolder>
+				<ExtractFolder Arch='x86_64'>RetroArch-Win64</ExtractFolder>
 				<DirectToPath>$false</DirectToPath>
 				<Destination>
 					<BasePath>$pathEmulators</BasePath>
 					<DirectoryName>Retroarch</DirectoryName>
 				</Destination>
-			</Extras>
-		</Download>
+			</Extract>
+		</Extra>
+		<Configs>
+		</Configs>
 		<CreateSteamShortcut>$true</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
 		<Junction>
@@ -130,72 +150,81 @@
 			<TargetBasePath>$pathRetroarch</TargetBasePath>
 			<Source>$pathBios</Source>
 		</Junction>
-	</Emulator>
-	<Emulator>
+	</Program>
+	<Program>
 		<Name>Xemu</Name>
 		<Exe>xemu.exe</Exe>
 		<Download>
 			<Url>https://github.com/mborgerson/xemu/releases/latest/download/xemu-win-release.zip</Url>
 			<Type>zip</Type>
 			<SaveAs>xemu.zip</SaveAs>
+		</Download>
+		<Extract>
 			<ExtractFolder>Xemu</ExtractFolder>
 			<DirectToPath>$true</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
 				<DirectoryName>Xemu</DirectoryName>
 			</Destination>
-		</Download>
+		</Extract>			
 		<CreateSteamShortcut>$true</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
-	</Emulator>
-	<Emulator>
+	</Program>
+	<Program>
 		<Name>PPSSPP</Name>
-		<Exe>IF ($architecture -eq 'x86_64') {'PPSSPPWindows64.exe'} else {'PPSSPPWindows.exe'}</Exe>
+		<Exe Arch='x86'>PPSSPPWindows.exe</Exe>
+		<Exe Arch='x86_64'>PPSSPPWindows64.exe</Exe>
 		<Download>
 			<Url>https://www.ppsspp.org/files/$ppssppVersion/ppsspp_win.zip</Url>
 			<Type>zip</Type>
 			<SaveAs>ppsspp.zip</SaveAs>
+		</Download>
+		<Extract>
 			<ExtractFolder>PPSSPP</ExtractFolder>
 			<DirectToPath>$true</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
 				<DirectoryName>PPSSPP</DirectoryName>
 			</Destination>
-		</Download>
+		</Extract>
 		<CreateSteamShortcut>$true</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
-	</Emulator>
-	<Emulator>
+	</Program>
+	<Program>
 		<Name>RPCS3</Name>
 		<Exe>rpcs3.exe</Exe>
 		<Download>
 			<Url>https://github.com/RPCS3/rpcs3-binaries-win/releases/download/build-5ae9de4e3b7f4aa59ede098796c08e128783989a/rpcs3-v0.0.22-13592-5ae9de4e_win64.7z</Url>
 			<Type>zip</Type>
 			<SaveAs>rpcs3.zip</SaveAs>
+		</Download>
+		<Extract>
 			<ExtractFolder>RPCS3</ExtractFolder>
 			<DirectToPath>$true</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
 				<DirectoryName>RPCS3</DirectoryName>
 			</Destination>
-		</Download>
+		</Extract>
 		<CreateSteamShortcut>$true</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
-	</Emulator>
-	<Emulator>
+	</Program>
+	<Program>
 		<Name>PCSX2</Name>
 		<Exe>pcsx2.exe</Exe>
 		<Download>
 			<Url>https://github.com/PCSX2/pcsx2/releases/download/v$pcsx2Version/pcsx2-v$pcsx2Version-windows-32bit-portable.7z</Url>
 			<Type>zip</Type>
 			<SaveAs>pcsx2.zip</SaveAs>
+		</Download>
+		<Extract>
 			<ExtractFolder>PCSX2 $pcsx2Version</ExtractFolder>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
 				<DirectoryName>PCSX2</DirectoryName>
 			</Destination>
-		</Download>
+		</Extract>
 		<CreateSteamShortcut>$true</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
 		<Junction>
@@ -203,39 +232,43 @@
 			<TargetBasePath>$pathPcsx2</TargetBasePath>
 			<Source>$pathBios</Source>
 		</Junction>
-	</Emulator>
-	<Emulator>
+	</Program>
+	<Program>
 		<Name>Cemu</Name>
 		<Exe>Cemu.exe</Exe>
 		<Download>
 			<Url>https://cemu.info/releases/cemu_$cemuVersion.zip</Url>
 			<Type>zip</Type>
 			<SaveAs>cemu.zip</SaveAs>
+		</Download>
+		<Extract>
 			<ExtractFolder>Cemu_$cemuVersion</ExtractFolder>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
 				<DirectoryName>Cemu</DirectoryName>
 			</Destination>
-		</Download>
+		</Extract>
 		<CreateSteamShortcut>$true</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
-	</Emulator>
-	<Emulator>
+	</Program>
+	<Program>
 		<Name>Yuzu</Name>
 		<Exe>yuzu.exe</Exe>
 		<Download>
 			<Url>https://github.com/yuzu-emu/yuzu-mainline/releases/download/mainline-0-1014/yuzu-windows-msvc-20220512-4d5eaaf3f.zip</Url>
 			<Type>zip</Type>
 			<SaveAs>yuzu.zip</SaveAs>
+		</Download>
+		<Extract>
 			<ExtractFolder>yuzu-windows-msvc</ExtractFolder>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
 				<DirectoryName>Yuzu</DirectoryName>
 			</Destination>
-		</Download>
+		</Extract>
 		<CreateSteamShortcut>$true</CreateSteamShortcut>
 		<CreateDesktopShortcut>$true</CreateDesktopShortcut>
-	</Emulator>
-</config>
+	</Program>
+</Settings>
