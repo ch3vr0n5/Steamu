@@ -127,7 +127,8 @@ function Write-Log ($stringMessageArg, [bool]$toHost)
 		Write-Host $stringMessageArg
 	}
 }
-function DownloadFile($url, $targetFile)
+<#
+function New-Download($URL, $TargetFile)
 # https://stackoverflow.com/a/21422517 -- replaces regular invoke-webrequest progress tracking since it severly reduces download speed
 {
    $uri = New-Object "System.Uri" "$url"
@@ -153,17 +154,57 @@ function DownloadFile($url, $targetFile)
    $targetStream.Dispose()
    $responseStream.Dispose()
 }
+#>
+
+Function New-Download ([string]$URI, [string]$TargetFile, [string]$Name) {
+
+		Try {
+			Invoke-WebRequest -URI $URI -OutFile $TargetFile
+			$stringOutput = "DOWNLOADS: $Name Complete - $TargetFile"
+			Write-Log $stringOutput $false
+		} Catch {
+			$stringOutput = @"
+DOWNLOADS: An error occured while attempting download: $Name -> $TargetFile
+ERROR: $_
+"@
+			Write-Log $stringOutput $true
+		} 
+}
 
 function New-Shortcut([string]$SourceExe, [string]$DestinationPath){
 # https://stackoverflow.com/a/9701907
 	If(Test-Path -Path $DestinationPath -PathType Leaf) {
-		Remove-Item -Path $DestinationPath -Force | Out-Null
+		try {
+			Remove-Item -Path $DestinationPath -Force | Out-Null
+			$stringOutput = "SHORTCUTS: Already exists. Removed - $DestinationPath"
+			Write-Log $stringOutput $false
+		}
+		catch {
+			$stringOutput = @"
+SHORTCUTS: An error occured while attempting to remove shortcut: $DestinationPath
+ERROR: $_
+"@
+			Write-Log $stringOutput $true
+		}
+		
 	}
 
-	$WshShell = New-Object -comObject WScript.Shell
-	$Shortcut = $WshShell.CreateShortcut($DestinationPath)
-	$Shortcut.TargetPath = $SourceExe
-	$Shortcut.Save() | Out-Null
+	try {
+		$WshShell = New-Object -comObject WScript.Shell
+		$Shortcut = $WshShell.CreateShortcut($DestinationPath)
+		$Shortcut.TargetPath = $SourceExe
+		$Shortcut.Save() | Out-Null
+		$stringOutput = "SHORTCUTS: Created shortcut - $DestinationPath"
+		Write-Log $stringOutput $false
+	}
+	catch {
+		$stringOutput = @"
+SHORTCUTS: An error occured while attempting to create shortcut: $DestinationPath
+ERROR: $_
+"@
+		Write-Log $stringOutput $true
+	}
+	
 }
 
 function testUrl([string]$testUrl){
