@@ -538,8 +538,6 @@ Steamu directory structure created.
 "@
 Write-Log $stringOutput $true
 
-
-
 #endregion
 
 #region ------------------------------ Download required files
