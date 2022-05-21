@@ -514,24 +514,26 @@ Write-Log $stringOutput $true
 
 # foreach logic here to create directories from xml, perhaps where-object parentnode.name = 'Steamu', etc.
 
-	IF (Test-Path -path $pathSrmData) {
-			$stringOutput = "$pathSrmData directory already exists"
-			Write-Log $stringOutput $false
-		}
-		else {
-			New-Item -path $pathSrmData -ItemType "directory" | Out-Null
+$dirXml.SelectNodes('//sub-directory') | ForEach-Object{
+    $basePath = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Path)
+    $name = $_.parentnode.name
+    $subDirectoryName = $_.name
 
-			$stringOutput = "$pathSrmData directory created"
-			Write-Log $stringOutput $false
-		}
+    $fullPath = "$basePath\$subDirectoryName"
 
-$stringOutput = 'Steamu directory structure created.'
-Write-Log $stringOutput $true
+    If ($name -ne 'Roms') {
+        New-Directory -Path $fullPath
+        #Write-Host "DIRECTORIES: $name - $fullPath"
+    }
 
-## Set up emulation directory structure
+    If (($name -eq 'Roms') -and ($doRomSubFolders)) {
+        New-Directory -Path $fullPath
+        #Write-Host "DIRECTORIES: $name - $fullPath"
+    }
+}
+
 $stringOutput = @"
-Creating user's home Emulation directory structure
-Path: $pathEmulation
+Steamu directory structure created.
 
 "@
 Write-Log $stringOutput $true
