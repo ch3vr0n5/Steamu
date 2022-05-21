@@ -598,37 +598,39 @@ devSkip: $devSkip
 
 If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
-	ForEach ($dependency in $dependencyArray) {
-		$name = $dependency.Name
-		$directtopath = $dependency.DirectToPath
-		$type = $dependency.Type
-		$extractFolder = $dependency.ExtractFolder
-		$extractPath = "$pathTemp\$extractFolder"
-		$sourceFileName = $dependency.Output
-		$sourcePath = "$pathDownloads\$sourceFileName"
-		$targetPath = $pathTemp
-		$destinationPathBase = $dependency.DestinationPath
-		$destinationName = $dependency.DestinationName
-		$destinationPath = "$destinationPathBase\$DestinationName"
+	$configXml.SelectNodes('//Extract') | ForEach-Object  {
+		$name = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Name)
+		$type = $ExecutionContext.InvokeCommand.ExpandString($_.Type)
+	    $destinationBasePath = $ExecutionContext.InvokeCommand.ExpandString($_.Destination.BasePath)
+	    $destinationDirectoryName = $ExecutionContext.InvokeCommand.ExpandString($_.Destination.DirectoryName)
+		$directToPath = $ExecutionContext.InvokeCommand.ExpandString($_.DirectToPath)
+		$extractToPath = $pathTemp
 
-		$extras = $dependency.Extras
-		$extrasName = $dependency.ExtrasName
-		$extrasExtractFolder = $dependency.ExtrasExtractFolder
-		$extrasExtractPath = "$pathTemp\$extrasExtractFolder"
-		$extrasSourceFileName = $dependency.ExtrasOutput
-		$extrasSourcePath = "$pathDownloads\$extrasSourceFileName"
-		$extrasTargetPath = $pathTemp
-		$extrasPathBase = $dependency.ExtrasDestinationPath
-		$extrasPathName = $dependency.ExtrasDestinationName
-		$extrasDestinationPath = "$extrasPathBase\$extrasPathName"
+		<# this is for shortcuts
+	    $exe = IF ($_.parentnode.Exe.Count -gt 1) { 
+	        $_.parentnode.SelectSingleNode("//Exe[@Arch = '$architecture']").InnerText 
+	    } else { 
+	        $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.exe)
+	    }
+		#>
+
+	    $extractFolder = IF ($_.ExtractFolder.Count -gt 1) { 
+	        $_.SelectSingleNode("//ExtractFolder[@Arch = '$architecture']").InnerText 
+	    } else { 
+	        $ExecutionContext.InvokeCommand.ExpandString($_.ExtractFolder)
+	    }
+
+		$copyFromPath = "$pathTemp\$extractFolder"
 
 		$stringOutput = "Extracting $name..."
 		Write-Log $stringOutput $true
 
 		If ($directtopath) {
-			$targetPath = $extractPath
-			New-Item -ItemType "directory" -Path $targetPath | Out-Null
+			$extractToPath = "$pathTemp\$destinationDirectoryName"
+			New-Directory -path $targetPath
 		}
+
+
 
 		If ($type -eq 'zip'){
 			IF (Test-Path -Path $sourcePath -PathType Leaf) {
