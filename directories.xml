@@ -35,6 +35,14 @@
     </directory>
 
     <directory>
+        <name>Steam Rom Manager</name>
+        <Path>$pathSrm</Path>
+		<sub-directory>
+            <name>userData</name>
+        </sub-directory>
+    </directory>
+
+    <directory>
         <name>Emulators</name>
         <Path>$pathEmulators</Path>
 		<sub-directory>
