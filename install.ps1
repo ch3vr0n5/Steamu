@@ -549,6 +549,14 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 		Write-Log $stringOutput $true
 
 # new foreach logic here for downloads from xml, add foreach for extras, select url node
+	$configXml.SelectNodes('//Download') | ForEach-Object{
+	    $name = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Name)
+	    $url = $ExecutionContext.InvokeCommand.ExpandString($_.Url)
+	    $saveAs = $ExecutionContext.InvokeCommand.ExpandString($_.SaveAs)
+
+		New-Download -URI $url -TargetFile "$pathTemp\$saveAs" -Name $name
+
+	}
 
 		$stringOutput = 'Downloads complete'
 		Write-Log $stringOutput $true
