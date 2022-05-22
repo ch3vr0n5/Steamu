@@ -650,6 +650,8 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	    $destinationDirectoryName = $ExecutionContext.InvokeCommand.ExpandString($_.Destination.DirectoryName)
 		$directToPath = $ExecutionContext.InvokeCommand.ExpandString($_.DirectToPath)
 		$extractToPath = $pathTemp
+		$saveAs = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Download.SaveAs)
+		$archiveLocation = "$pathTemp\$saveAs"
 
 		<# this is for shortcuts
 	    $exe = IF ($_.parentnode.Exe.Count -gt 1) { 
@@ -666,10 +668,8 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	    }
 
 		$copyFromPath = "$pathTemp\$extractFolder"
-
-		$stringOutput = "Extracting $name..."
-		Write-Log $stringOutput $true
-
+		$moveToPath = "$destinationBasePath\$DestinationDirectoryName"
+		
 		If ($directtopath) {
 			$extractToPath = "$pathTemp\$destinationDirectoryName"
 			$copyFromPath = $extractToPath
