@@ -681,7 +681,7 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 		$copyFromPath = "$pathTemp\$extractFolder"
 		$moveToPath = "$destinationBasePath\$DestinationDirectoryName"
 		
-		If ($directtopath) {
+		If ($directtopath -eq 'True') {
 			$extractToPath = "$pathTemp\$destinationDirectoryName"
 			$copyFromPath = $extractToPath
 			New-Directory -path $extractToPath
