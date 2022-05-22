@@ -87,16 +87,6 @@ $cemuVersion = '1.27.0'
 
 #endregion
 
-#region ------------------------------ Load XML
-
-# config
-[xml]$configXml = Get-Content -Path "$pathSteamu\configuration.xml"
-
-# directories
-[xml]$dirXml = Get-Content -Path "$pathSteamu\directories.xml"
-
-#endregion
-
 #region ------------------------------ Functions
 
 Function inputPause ($stringMessageArg)
@@ -371,6 +361,27 @@ $_
 	}
 }
 
+#endregion
+
+#region ------------------------------ Load XML
+
+# config
+If (Test-Path -Path .\configuration.xml -PathType Leaf) {
+	[xml]$configXml = Get-Content -Path .\configuration.xml	
+} else {
+	$stringOutput = "XML: Unable to load configuration.xml"
+	Pause-Console $stringOutput 
+	exit
+}
+
+# directories
+If (Test-Path -Path .\directories.xml -PathType Leaf) {
+	[xml]$dirXml = Get-Content -Path .\directories.xml
+} else {
+	$stringOutput = "XML: Unable to load configuration.xml"
+	Pause-Console $stringOutput 
+	exit
+}
 #endregion
 
 #region ------------------------------ Start Steamu Log FIle
