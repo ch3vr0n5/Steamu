@@ -720,7 +720,16 @@ Write-Log $stringOutput $true
 
 		# RetroArch links
 
-		# for each loop here from xml
+		$configXml.SelectNodes('//Junction') | ForEach-Object {
+			$name = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Name)
+			$junctionName = $ExecutionContext.InvokeCommand.ExpandString($_.Name)
+			$targetBasePath = $ExecutionContext.InvokeCommand.ExpandString($_.TargetBasePath)
+			$sourcePath = $ExecutionContext.InvokeCommand.ExpandString($_.Source)
+
+			$targetFullPath = "$targetBasePath\$junctionName"
+
+			New-Junction -Source $sourcePath -Target $targetFullPath Name $name
+		}
 		
 		# %HOMEPATH%\Emulation symlinks
 		If ($doCustomRomDirectory) {
