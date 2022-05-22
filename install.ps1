@@ -329,6 +329,48 @@ ERROR: $_
 	}
 }
 
+Function Extract-Archive([string]$Source, [string]$Destination, [string]$Name) {
+	If (Test-Path -Path $Source -PathType Leaf) {
+		try {
+			$stringOutput = "EXTRACTS: Extracting archive for $Name - $Source -> $Destination"
+			Write-Log $stringOutput $true
+			Expand-7Zip -ArchiveFileName $Source -TargetPath $Destination
+			$stringOutput = "EXTRACTS: Extracted archive for $Name"
+			Write-Log $stringOutput $true
+		}
+		catch {
+			$stringOutput = @"
+EXTRACTS: An error occured while trying to extract archive for $Name
+ERROR: $_
+"@
+			Write-Log $stringOutput $true
+		}
+	} else {
+		$stringOutput = @"
+EXTRACTS: An error occured while trying to extract archive for $Name.
+Source archive doesn't exist: $Source
+"@
+			Write-Log $stringOutput $true
+	}
+}
+
+Function Move-Directory ([string]$Source, [string]$Destination, [string]$Name) {
+	try {
+		$stringOutput = "EXTRACTS: Moving files for $Name - $Source -> $Destination"
+		Write-Log $stringOutput $true
+		Copy-Item -Path "$Source\*" -Destination $Destination
+		$stringOutput = "EXTRACTS: Moved files for $Name"
+		Write-Log $stringOutput $true
+	}
+	catch {
+		$stringOutput = @"
+EXTRACTS: An error occured while trying to move files for $Name
+$_
+"@
+			Write-Log $stringOutput $true
+	}
+}
+
 #endregion
 
 #region ------------------------------ Start Steamu Log FIle
