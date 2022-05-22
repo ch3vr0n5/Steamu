@@ -5,11 +5,11 @@
 		<Name>Steamu</Name>
 		<Download>
 			<Url>https://github.com/ch3vr0n5/Steamu/archive/refs/heads/$branch.zip</Url>
-			<Type>zip</Type>
 			<SaveAs>steamu.zip</SaveAs>
 		</Download>
 		<Extract>
 			<ExtractFolder>Steamu-$branch</ExtractFolder>
+			<Type>zip</Type>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>$pathLocalAppData</BasePath>
@@ -24,11 +24,11 @@
 		<Exe>steam_rom_manager.exe</Exe>
 		<Download>
 			<Url>https://github.com/SteamGridDB/steam-rom-manager/releases/download/v$srmVersion/Steam-ROM-Manager-portable-$srmVersion.exe</Url>
-			<Type>exe</Type>
 			<SaveAs>steam_rom_manager.exe</SaveAs>
 		</Download>
 		<Extract>
 			<ExtractFolder>SteamRomManager</ExtractFolder>
+			<Type>exe</Type>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>"$pathApps</BasePath>
@@ -68,11 +68,11 @@
 		<Exe>emulationstation.exe</Exe>
 		<Download>
 			<Url>https://gitlab.com/es-de/emulationstation-de/-/package_files/36880305/download</Url>
-			<Type>zip</Type>
 			<SaveAs>emulationstation.zip</SaveAs>
 		</Download>
 		<Extract>
 			<ExtractFolder>EmulationStation-DE</ExtractFolder>
+			<Type>zip</Type>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>$pathApps</BasePath>
@@ -97,12 +97,12 @@
 		<Exe>retroarch.exe</Exe>
 		<Download>
 			<Url>https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch.7z</Url>
-			<Type>zip</Type>
 			<SaveAs>retroarch.7z</SaveAs>
 		</Download>
 		<Extract>
 			<ExtractFolder Arch='x86'>RetroArch-Win32</ExtractFolder>
 			<ExtractFolder Arch='x86_64'>RetroArch-Win64</ExtractFolder>
+			<Type>zip</Type>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
@@ -113,12 +113,12 @@
 			<Name>Retroarch Cores</Name>
 			<Download>
 				<Url>https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch_cores.7z</Url>
-				<Type>zip</Type>
 				<SaveAs>retroarch_cores.7z</SaveAs>
 			</Download>
 			<Extract>
 				<ExtractFolder Arch='x86'>RetroArch-Win32</ExtractFolder>
 				<ExtractFolder Arch='x86_64'>RetroArch-Win64</ExtractFolder>
+				<Type>zip</Type>
 				<DirectToPath>$false</DirectToPath>
 				<Destination>
 					<BasePath>$pathEmulators</BasePath>
@@ -156,11 +156,11 @@
 		<Exe>xemu.exe</Exe>
 		<Download>
 			<Url>https://github.com/mborgerson/xemu/releases/latest/download/xemu-win-release.zip</Url>
-			<Type>zip</Type>
 			<SaveAs>xemu.zip</SaveAs>
 		</Download>
 		<Extract>
 			<ExtractFolder>Xemu</ExtractFolder>
+			<Type>zip</Type>
 			<DirectToPath>$true</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
@@ -176,11 +176,11 @@
 		<Exe Arch='x86_64'>PPSSPPWindows64.exe</Exe>
 		<Download>
 			<Url>https://www.ppsspp.org/files/$ppssppVersion/ppsspp_win.zip</Url>
-			<Type>zip</Type>
 			<SaveAs>ppsspp.zip</SaveAs>
 		</Download>
 		<Extract>
 			<ExtractFolder>PPSSPP</ExtractFolder>
+			<Type>zip</Type>
 			<DirectToPath>$true</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
@@ -195,11 +195,11 @@
 		<Exe>rpcs3.exe</Exe>
 		<Download>
 			<Url>https://github.com/RPCS3/rpcs3-binaries-win/releases/download/build-5ae9de4e3b7f4aa59ede098796c08e128783989a/rpcs3-v0.0.22-13592-5ae9de4e_win64.7z</Url>
-			<Type>zip</Type>
 			<SaveAs>rpcs3.zip</SaveAs>
 		</Download>
 		<Extract>
 			<ExtractFolder>RPCS3</ExtractFolder>
+			<Type>zip</Type>
 			<DirectToPath>$true</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
@@ -214,11 +214,11 @@
 		<Exe>pcsx2.exe</Exe>
 		<Download>
 			<Url>https://github.com/PCSX2/pcsx2/releases/download/v$pcsx2Version/pcsx2-v$pcsx2Version-windows-32bit-portable.7z</Url>
-			<Type>zip</Type>
 			<SaveAs>pcsx2.zip</SaveAs>
 		</Download>
 		<Extract>
 			<ExtractFolder>PCSX2 $pcsx2Version</ExtractFolder>
+			<Type>zip</Type>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
@@ -238,11 +238,11 @@
 		<Exe>Cemu.exe</Exe>
 		<Download>
 			<Url>https://cemu.info/releases/cemu_$cemuVersion.zip</Url>
-			<Type>zip</Type>
 			<SaveAs>cemu.zip</SaveAs>
 		</Download>
 		<Extract>
 			<ExtractFolder>Cemu_$cemuVersion</ExtractFolder>
+			<Type>zip</Type>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
@@ -257,11 +257,11 @@
 		<Exe>yuzu.exe</Exe>
 		<Download>
 			<Url>https://github.com/yuzu-emu/yuzu-mainline/releases/download/mainline-0-1014/yuzu-windows-msvc-20220512-4d5eaaf3f.zip</Url>
-			<Type>zip</Type>
 			<SaveAs>yuzu.zip</SaveAs>
 		</Download>
 		<Extract>
 			<ExtractFolder>yuzu-windows-msvc</ExtractFolder>
+			<Type>zip</Type>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
 				<BasePath>$pathEmulators</BasePath>
