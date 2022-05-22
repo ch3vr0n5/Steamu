@@ -31,7 +31,7 @@
 			<Type>exe</Type>
 			<DirectToPath>$false</DirectToPath>
 			<Destination>
-				<BasePath>"$pathApps</BasePath>
+				<BasePath>$pathApps</BasePath>
 				<DirectoryName>SteamRomManager</DirectoryName>
 			</Destination>
 		</Extract>
