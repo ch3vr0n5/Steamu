@@ -689,11 +689,13 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 		If ($type -eq 'zip'){
 
-				Extract-Archive -Source $archiveLocation -Destination $extractToPath -Name $Name
+				Extract-Archive -Source $archiveLocation -Destination $extractToPath -Name $name
+
+				Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $name
 				
 		} elseif ($type -eq 'exe') {
 				
-				Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $Name
+				Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $name
 
 		} else {
 			$stringOutput = "EXTRACTS: Extraction type not handled for $Name! Type: $type"
