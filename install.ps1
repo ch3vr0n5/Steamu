@@ -159,6 +159,8 @@ function New-Download($URL, $TargetFile)
 Function New-Download ([string]$URI, [string]$TargetFile, [string]$Name) {
 
 		Try {
+			$stringOutput = "DOWNLOADS: Downloading $Name - $TargetFile"
+			Write-Log $stringOutput $True
 			Invoke-WebRequest -URI $URI -OutFile $TargetFile
 			$stringOutput = "DOWNLOADS: $Name Complete - $TargetFile"
 			Write-Log $stringOutput $false
@@ -279,11 +281,11 @@ ERROR: $_
 	}
 		Try {
 			New-Item -ItemType Junction -Path $target -Target $source | Out-Null
-			$stringOutput = "JUNCTIONS: Junction created: $target -> $source"
+			$stringOutput = "JUNCTIONS: Junction created for $Name - $target -> $source"
 			Write-Log $stringOutput $false
 		} Catch {
 			$stringOutput = @"
-JUNCTIONS: An error occured while creating a junction: $target -> $source
+JUNCTIONS: An error occured while creating a junction for $Name - $target -> $source
 ERROR: $_
 "@
 			Write-Log $stringOutput $true
@@ -596,6 +598,9 @@ devSkip: $devSkip
 
 If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
+	$stringOutput = "EXTRACTS: Beginning etraction"
+	Write-Log $stringOutput $true
+
 	$configXml.SelectNodes('//Extract') | ForEach-Object  {
 		$name = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Name)
 		$type = $ExecutionContext.InvokeCommand.ExpandString($_.Type)
@@ -651,12 +656,12 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 	}
 
-		$stringOutput = 'Extraction complete'
+		$stringOutput = 'EXTRACTS: Extraction complete!'
 		Write-Log $stringOutput $true
 
 } else {
 	$stringOutput = @"
-Extraction is skipped due to configuration.
+EXTRACTS: Extraction is skipped due to configuration.
 
 doDownload: $doDownload
 devSkip: $devSkip
@@ -668,7 +673,7 @@ devSkip: $devSkip
 
 #region ------------------------------ Set up junctions (symlinks)
 
-$stringOutput = 'Creating Junctions (symlinks)...'
+$stringOutput = 'JUNCTIONS: Creating Junctions (symlinks)...'
 Write-Log $stringOutput $true
 
 		# RetroArch links
