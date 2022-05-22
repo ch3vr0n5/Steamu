@@ -672,29 +672,27 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 		If ($directtopath) {
 			$extractToPath = "$pathTemp\$destinationDirectoryName"
-			New-Directory -path $targetPath
+			$copyFromPath = $extractToPath
+			New-Directory -path $extractToPath
 		}
-
-
 
 		If ($type -eq 'zip'){
-			IF (Test-Path -Path $sourcePath -PathType Leaf) {
-					# new foreach logic here from xml
 
-
-
-			} else {
-				$stringOutput = "Unable to extract $Name. Cannot continue. Press any key to exit"
-				inputPause $stringOutput
-				exit
-			}
+				Extract-Archive -Source $archiveLocation -Destination $extractToPath -Name $Name
+				
 		} elseif ($type -eq 'exe') {
-					# new foreach logic here from xml
+				
+				Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $Name
 
 		} else {
-			$stringOutput = "Extraction type not handled for $Name! Type: $type"
-			inputPause $stringOutput
+			$stringOutput = "EXTRACTS: Extraction type not handled for $Name! Type: $type"
+			Write-Log $stringOutput $True
 		}
+
+		#Clean up temp folder
+		$stringOutput = "EXTRACTS: Cleaning up temp folder..."
+		Write-Log $stringOutput $True
+		Remove-Item -Path "$pathTemp\*" -Recurse -Force
 
 	}
 
