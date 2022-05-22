@@ -302,7 +302,7 @@ Function Write-Space {
 Function New-Directory([string]$path) {
 	If ((Test-Path -Path $path) -eq $false) {
 		Try {
-			New-Item -ItemType "directory" -Path $path
+			New-Item -ItemType "directory" -Path $path | Out-Null
 			$stringOutput = "DIRECTORIES: Created directory: $path"
 			Write-Log $stringOutput $false
 		} Catch {
@@ -324,7 +324,7 @@ Function Extract-Archive([string]$Source, [string]$Destination, [string]$Name) {
 		try {
 			$stringOutput = "EXTRACTS: Extracting archive for $Name - $Source -> $Destination"
 			Write-Log $stringOutput $true
-			Expand-7Zip -ArchiveFileName $Source -TargetPath $Destination
+			Expand-7Zip -ArchiveFileName $Source -TargetPath $Destination | Out-Null
 			$stringOutput = "EXTRACTS: Extracted archive for $Name"
 			Write-Log $stringOutput $true
 		}
@@ -348,7 +348,7 @@ Function Move-Directory ([string]$Source, [string]$Destination, [string]$Name) {
 	try {
 		$stringOutput = "EXTRACTS: Moving files for $Name - $Source -> $Destination"
 		Write-Log $stringOutput $true
-		Copy-Item -Path "$Source\*" -Destination $Destination
+		Copy-Item -Path "$Source\*" -Destination $Destination | Out-Null
 		$stringOutput = "EXTRACTS: Moved files for $Name"
 		Write-Log $stringOutput $true
 	}
