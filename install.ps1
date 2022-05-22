@@ -255,7 +255,7 @@ Function Get-Choice([string]$title,[string]$question,[int]$default,[string[]]$ch
 	Return $decision
 }
 
-Function New-Junction([string]$source,[string]$target){
+Function New-Junction([string]$Source, [string]$Target, [string]$Name){
 	[bool]$isJunction = $false
 	$pathLinkType = (Get-Item -Path $target -Force).LinkType
 
