@@ -22,7 +22,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 #endregion
 
-#region ------------------------------ Path Variables
+#region ------------------------------ Global Variables
 
 $architecture = 'x86_64'
 if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture.Contains("64") -eq $false) {
