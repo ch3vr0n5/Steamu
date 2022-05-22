@@ -700,12 +700,12 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 			Write-Log $stringOutput $True
 		}
 
+	}
+
 		#Clean up temp folder
 		$stringOutput = "EXTRACTS: Cleaning up temp folder..."
 		Write-Log $stringOutput $True
 		Remove-Item -Path "$pathTemp\*" -Recurse -Force
-
-	}
 
 		$stringOutput = 'EXTRACTS: Extraction complete!'
 		Write-Log $stringOutput $true
