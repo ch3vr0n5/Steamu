@@ -89,7 +89,7 @@ $cemuVersion = '1.27.0'
 
 #region ------------------------------ Functions
 
-Function inputPause ($stringMessageArg)
+Function Pause-Console ($stringMessageArg)
 # https://stackoverflow.com/a/28237896
 {
     # Check if running Powershell ISE
@@ -410,7 +410,7 @@ if (Test-Path -path $fileLog -PathType Leaf) {
 
 if ( !$gitBranches -contains $branch ) {
 	$stringOutput = "Invalid branch $branch. Valid parameters include: $gitBranches. Press any key to exit."
-	inputPause $stringOutput
+	Pause-Console $stringOutput
 	exit
 }
 else {
@@ -458,7 +458,7 @@ Write-Space
 $continueInstallation = Get-Choice $title $question $default $choices
 
 If ($continueInstallation -eq 1) {
-	inputPause 'Installation cancelled. Press any key to exit.'
+	Pause-Console 'Installation cancelled. Press any key to exit.'
 	exit
 }
 
@@ -616,7 +616,7 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 	} Else {
 		$stringOutput = "Unable to continue. $pathDownloads does not exist! Press any key to exit."
-		inputPause $stringOutput
+		Pause-Console $stringOutput
 		exit
 	}
 } else {
@@ -903,5 +903,5 @@ Write-Log $stringOutput $true
 ##### FINISH ######
 Write-Space
 $stringOutput = 'All Done =) Press any key to exit.'
-inputPause $stringOutput
+Pause-Console $stringOutput
 exit
