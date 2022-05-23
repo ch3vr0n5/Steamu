@@ -774,7 +774,9 @@ Write-Log $stringOutput $true
 
 #region ------------------------------ Copy configs
 		If ($doDownload) {
-			$stringOutput = "Backing up existing configs..."
+#make backup function
+
+			$stringOutput = "CONFIGS: Backing up existing configs..."
 			Write-Log $stringOutput $true
 
 			$backupDateTime = $(get-date -f yyyyMMddHHmm)
@@ -803,29 +805,36 @@ Write-Log $stringOutput $true
 				Write-Log $stringOutput $false
 			}
 
-			$stringOutput = "Existing configs backed up."
+			$stringOutput = "CONFIGS: Existing configs backed up."
 			Write-Log $stringOutput $true
 
-			$stringOutput = "Updating existing configs..."
+			$stringOutput = "CONFIGS: Updating existing configs..."
 			Write-Log $stringOutput $true
 
 			# Copy default configs
-			ForEach ($dependency in $dependencyArray){
-				$destinationPath = $dependency.DestinationPath
-				If (@($pathEmulators, $pathApps) -contains $destinationPath) {
+			$configXml.SelectNodes('//Program') | ForEach-Object {
+				$name = $ExecutionContext.InvokeCommand.ExpandString($_.Name)
+				$destinationPath = $ExecutionContext.InvokeCommand.ExpandString($_.BasePath)
+				$destinationName = $ExecutionContext.InvokeCommand.ExpandString($_.DirectoryName)
 
-					$name = $dependency.Name
-					$destinationName = $dependency.DestinationName
-					If (Test-Path -Path "$pathConfigs\$DestinationName") {
-						Copy-Item -Path "$pathConfigs\$DestinationName\*" -Destination "$destinationPath\$destinationName\" -Force -Recurse | Out-Null
+				$copyConfigs = IF ($_.CopyConfigs -ne $null) {$true} else {$false}
 
-						$stringOutput = "Copied configs for $name"
+				$copyFromPath = "$pathConfigs\$destinationName"
+				$copyToPath = "$destinationPath\$destinationName"
+				
+				IF ($copyConfigs) {
+					If (Test-Path -Path $copyFromPath) {
+						$copyFromPath + "\*"
+
+						$stringOutput = "CONFIGS: Overwriting configs for $name"
 						Write-Log $stringOutput $true
-					}
+
+						Move-Directory -Source $copyfromPath -Destination $copyToPath -Name $name
+						}
 				}
 			}
 
-			$stringOutput = "Existing configs updated."
+			$stringOutput = "CONFIGS: Existing configs updated."
 			Write-Log $stringOutput $true
 
 			<# moved to ForEach
