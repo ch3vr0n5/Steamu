@@ -860,19 +860,18 @@ Write-Log $stringOutput $true
 	}
 
 	If (Test-Path -Path "$pathDesktopShortcuts") {
-		ForEach ($dependency in $dependencyArray){
-			$name = $dependency.Name
-			
-			$createShortcutDesktop = $dependency.CreateDesktopShortcut
-			$createShortcutSteam = $dependency.CreateSteamShortcut
-			
-			$shortcutName = $name
-			$exePath = $dependency.DestinationPath
-			$exePathName = $dependency.DestinationName
-			$exeName = $dependency.Exe
+		$configXml.SelectNodes('//Program') | ForEach-Object {
+			$name = $ExecutionContext.InvokeCommand.ExpandString($_.Name)
+
+			$exePath = $ExecutionContext.InvokeCommand.ExpandString($_.BasePath)
+			$exePathName = $ExecutionContext.InvokeCommand.ExpandString($_.DirectoryName)
+			$exeName = $ExecutionContext.InvokeCommand.ExpandString($_.Exe)
 			$exeFullPath = "$exePath\$exePathName\$exeName"
-			$shortcutDesktopPath = "$pathDesktopShortcuts\$shortcutName.lnk"
-			$shortcutSteamPath = "$pathShortcuts\$shortcutName.lnk"
+			$shortcutDesktopPath = "$pathDesktopShortcuts\$name.lnk"
+			$shortcutSteamPath = "$pathShortcuts\$name.lnk"
+
+			$createShortcutDesktop = IF ($_.CreateDesktopShortcut -ne $null) {$true} else {$false}
+			$createShortcutSteam = IF ($_.CreateSteamShortcut -ne $null) {$true} else {$false}
 
 
 			IF ($createShortcutDesktop){
