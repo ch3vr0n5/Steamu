@@ -694,7 +694,7 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 				New-Directory -path $extractToPath
 			}
 
-			$copyFromPath + "\*"
+			$copyFromPath += "\*"
 
 			Extract-Archive -Source $downloadFileLocation -Destination $extractToPath -Name $name
 
@@ -826,7 +826,7 @@ Write-Log $stringOutput $true
 				
 				IF ($copyConfigs) {
 					If (Test-Path -Path $copyFromPath) {
-						$copyFromPath + "\*"
+						$copyFromPath += "\*"
 
 						$stringOutput = "CONFIGS: Overwriting configs for $name"
 						Write-Log $stringOutput $true
