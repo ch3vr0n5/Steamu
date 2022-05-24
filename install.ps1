@@ -492,7 +492,7 @@ if ($installChoice -eq 0) {
 } else {
     Write-Log 'Custom install chosen' $true
 
-	# choose a custom rom directory
+########## choose a custom rom directory
 	$title = 'Custom ROM Directory Selection'
 	$question = @"
 
@@ -572,7 +572,90 @@ IMPORTANT: We use exact system directory names as defined in our documentation o
 		}
 	}
 
-	#further custom options here
+########## custom saves directory selection
+	$title = 'Custom Saves Directory Selection'
+	$question = @"
+
+Would you like to choose your own Saves path?
+
+Default path: $pathSaves
+
+If you choose yes, you will be prompted to select the proper path.
+
+"@
+	$default = 1
+	$choices = @('&Yes','&No')
+	Write-Space
+	$customSavesDirectoryChoice = Get-Choice $title $question $default $choices
+	if ($customSavesDirectoryChoice -eq 0) {
+		
+		$doCustomSavesDirectory = $true
+		$pathSaves = Get-Folder
+
+		# if get-folder is cancelled then revert to default path
+		If ($null -eq $pathSaves) {
+			$stringOutput = "CUSTOM: No custom Saves folder selected. Reverting to default."
+			Write-Log $stringOutput $true
+			$pathSaves = "$pathEmulation\saves"
+			$doCustomSavesDirectory = $false
+		}
+
+		Write-Log @"
+CUSTOM: Custom Saves directory chosen.
+
+Path: $pathSaves
+"@ $true
+	} else {
+		Write-Log @"
+Using default Saves directory.
+
+Path: $pathSaves
+"@ $true
+		$doCustomSavesDirectory = $false
+	}
+
+########## custom states directory selection
+$title = 'Custom States Directory Selection'
+$question = @"
+
+Would you like to choose your own States path?
+This folder stores save states if an emulator supports them.
+
+Default path: $pathStates
+
+If you choose yes, you will be prompted to select the proper path.
+
+"@
+$default = 1
+$choices = @('&Yes','&No')
+Write-Space
+$customStatesDirectoryChoice = Get-Choice $title $question $default $choices
+if ($customStatesDirectoryChoice -eq 0) {
+	
+	$doCustomStatesDirectory = $true
+	$pathStates = Get-Folder
+
+	# if get-folder is cancelled then revert to default path
+	If ($null -eq $pathStates) {
+		$stringOutput = "CUSTOM: No custom States folder selected. Reverting to default."
+		Write-Log $stringOutput $true
+		$pathStates = "$pathEmulation\states"
+		$doCustomStatesDirectory = $false
+	}
+
+	Write-Log @"
+CUSTOM: Custom States directory chosen.
+
+Path: $pathStates
+"@ $true
+} else {
+	Write-Log @"
+Using default States directory.
+
+Path: $pathStates
+"@ $true
+	$doCustomStatesDirectory = $false
+	}
 
 }
 
