@@ -917,6 +917,9 @@ Write-Log $stringOutput $true
 						Write-Log $stringOutput $true
 
 						Move-Directory -Source $copyfromPath -Destination $copyToPath -Name $name
+						} else {
+							$stringOutput = "CONFIGS: Unable to overwrite configs for $name. Path does not exist: $copyFromPath"
+							Write-Log $stringOutput $true
 						}
 				}
 			}
