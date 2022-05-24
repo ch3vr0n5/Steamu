@@ -882,16 +882,17 @@ Write-Log $stringOutput $true
 				Write-Log $stringOutput $false
 			}
 
-			If (Test-Path -Path "$pathEsData\es_find_rules.xml" -PathType Leaf) {
-				Rename-Item -Path "$pathEsData\es_find_rules.xml" -NewName "es_find_rules-$backupDateTime.xml" -Force | Out-Null
-				$stringOutput = "$pathEsData\es_find_rules.xml backed up to es_find_rules-$backupDateTime.xml"
-				Write-Log $stringOutput $false
-			}
-			If (Test-Path -Path "$pathEsData\es_systems.xml" -PathType Leaf) {
-				Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems-$backupDateTime.xml" -Force | Out-Null
-				$stringOutput = "$pathEsData\es_systems.xml backed up to es_systems-$backupDateTime.xml"
-				Write-Log $stringOutput $false
-			}
+			#If (Test-Path -Path "$pathEsData\es_find_rules.xml" -PathType Leaf) {
+			#	Rename-Item -Path "$pathEsData\es_find_rules.xml" -NewName "es_find_rules-$backupDateTime.xml" -Force | Out-Null
+			#	$stringOutput = "$pathEsData\es_find_rules.xml backed up to es_find_rules-$backupDateTime.xml"
+			#	Write-Log $stringOutput $false
+			#}
+			
+			#If (Test-Path -Path "$pathEsData\es_systems.xml" -PathType Leaf) {
+			#	Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems-$backupDateTime.xml" -Force | Out-Null
+			#	$stringOutput = "$pathEsData\es_systems.xml backed up to es_systems-$backupDateTime.xml"
+			#	Write-Log $stringOutput $false
+			#}
 
 			$stringOutput = "CONFIGS: Existing configs backed up."
 			Write-Log $stringOutput $true
