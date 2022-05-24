@@ -676,13 +676,6 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 		$extractToPath = $pathTemp
 		$saveAs = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Download.SaveAs)
 		$downloadFileLocation = "$pathDownloads\$saveAs"
-		<# this is for shortcuts
-	    $exe = IF ($_.parentnode.Exe.Count -gt 1) { 
-	        $_.parentnode.SelectSingleNode("//Exe[@Arch = '$architecture']").InnerText 
-	    } else { 
-	        $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.exe)
-	    }
-		#>
 
 	    $extractFolder = IF ($_.ExtractFolder.Count -gt 1) { 
 	        $_.SelectSingleNode("//ExtractFolder[@Arch = '$architecture']").InnerText 
@@ -846,21 +839,6 @@ Write-Log $stringOutput $true
 			$stringOutput = "CONFIGS: Existing configs updated."
 			Write-Log $stringOutput $true
 
-			<# moved to ForEach
-
-			If (Test-Path -Path "$pathConfigs\RetroArch") {
-				Copy-Item -Path "$pathConfigs\RetroArch\*" -Destination "$pathRetroarch\" -Force -Recurse
-			}
-			If (Test-Path -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -PathType Leaf) {
-				If ((Test-Path -Path "$pathSrmData\") -eq $false) {
-					New-Item -ItemType "directory" -path "$pathSrmData\"
-				}
-				Copy-Item -Path "$pathConfigs\SteamRomManager\*" -Destination "$pathSrm" -Force
-			}
-			If (Test-Path -Path "$pathConfigs\EmulationStation\es_systems.xml" -PathType Leaf) {
-				Copy-Item -Path "$pathConfigs\EmulationStation\*" -Destination "$pathEs" -Force
-			}
-			#>
 		}
 
 		#need to replace paths in SRM most likely
@@ -869,8 +847,7 @@ Write-Log $stringOutput $true
 
 #region ------------------------------ Set up exe shortcuts
 
-## TODO use New-Shortcut to make shortcuts on Desktop
-	$stringOutput = "Setting up shortcuts in $pathDesktopShortcuts..."
+	$stringOutput = "SHORTCUTS: Setting up application shortcuts in $pathDesktopShortcuts..."
 	Write-Log $stringOutput $true
 
 	If ((Test-Path -Path "$pathDesktopShortcuts") -eq $false) {
