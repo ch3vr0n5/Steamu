@@ -670,8 +670,8 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	$configXml.SelectNodes('//Extract') | ForEach-Object  {
 		$name = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Name)
 		$type = $ExecutionContext.InvokeCommand.ExpandString($_.Type)
-	    $destinationBasePath = $ExecutionContext.InvokeCommand.ExpandString($_.Destination.BasePath)
-	    $destinationDirectoryName = $ExecutionContext.InvokeCommand.ExpandString($_.Destination.DirectoryName)
+	    $destinationBasePath = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.BasePath)
+	    $destinationDirectoryName = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.DirectoryName)
 		$directToPath = $ExecutionContext.InvokeCommand.ExpandString($_.DirectToPath)
 		$extractToPath = $pathTemp
 		$saveAs = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Download.SaveAs)
