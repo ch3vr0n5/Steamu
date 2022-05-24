@@ -860,7 +860,11 @@ Write-Log $stringOutput $true
 
 			$exePath = $ExecutionContext.InvokeCommand.ExpandString($_.BasePath)
 			$exePathName = $ExecutionContext.InvokeCommand.ExpandString($_.DirectoryName)
-			$exeName = $ExecutionContext.InvokeCommand.ExpandString($_.Exe)
+			$exeName = IF ($_.Exe.Count -gt 1) { 
+					$_.SelectSingleNode("//Exe[@Arch = '$architecture']").InnerText 
+				} else { 
+					$ExecutionContext.InvokeCommand.ExpandString($_.exe)
+				}
 			$exeFullPath = "$exePath\$exePathName\$exeName"
 			$shortcutDesktopPath = "$pathDesktopShortcuts\$name.lnk"
 			$shortcutSteamPath = "$pathShortcuts\$name.lnk"
@@ -871,21 +875,17 @@ Write-Log $stringOutput $true
 
 			IF ($createShortcutDesktop){
 
-					New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutDesktopPath
-					$stringOutput = "$shortcutDesktopPath created."
-					Write-Log $stringOutput $false
+				New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutDesktopPath
 
 			} 
 			If ($createShortcutSteam) {
 
-					New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutSteamPath
-					$stringOutput = "$shortcutSteamPath created."
-					Write-Log $stringOutput $false
+				New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutSteamPath
 
 			}
 		}
 	} else {
-		$stringOutput = "Unable to create shortcuts. Directory $pathDesktopShortcuts does not exist!"
+		$stringOutput = "SHORTCUTS: Unable to create shortcuts. Directory $pathDesktopShortcuts does not exist!"
 		Write-Log $stringOutput $true
 	}
 
