@@ -511,6 +511,15 @@ If you choose yes, you will be prompted to select the proper path.
     	
 		$doCustomRomDirectory = $true
 		$pathRoms = Get-Folder
+
+		# if get-folder is cancelled then revert to default path
+		If ($null -eq $pathRoms) {
+			$stringOutput = "CUSTOM: No custom rom folder selected. Reverting to default."
+			Write-Log $stringOutput $true
+			$pathRoms = "$pathEmulation\roms"
+			$doCustomRomDirectory = $false
+		}
+
 		Write-Log @"
 CUSTOM: Custom ROM directory chosen.
 
