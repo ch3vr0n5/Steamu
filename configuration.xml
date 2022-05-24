@@ -12,7 +12,6 @@
 		<Extract>
 			<ExtractFolder>Steamu-$branch</ExtractFolder>
 			<Type>zip</Type>
-			<DirectToPath>$false</DirectToPath>
 		</Extract>
 	</Program>
 	<Program>
@@ -28,7 +27,6 @@
 		<Extract>
 			<ExtractFolder>SteamRomManager</ExtractFolder>
 			<Type>exe</Type>
-			<DirectToPath>$false</DirectToPath>
 		</Extract>
 		<CreateDesktopShortcut/>
 		<Junction>
@@ -70,7 +68,6 @@
 		<Extract>
 			<ExtractFolder>EmulationStation-DE</ExtractFolder>
 			<Type>zip</Type>
-			<DirectToPath>$false</DirectToPath>
 		</Extract>
 		<CreateSteamShortcut/>
 		<CreateDesktopShortcut/>
@@ -99,7 +96,6 @@
 			<ExtractFolder Arch='x86'>RetroArch-Win32</ExtractFolder>
 			<ExtractFolder Arch='x86_64'>RetroArch-Win64</ExtractFolder>
 			<Type>zip</Type>
-			<DirectToPath>$false</DirectToPath>
 		</Extract>
 		<Extra>
 			<Name>Retroarch Cores</Name>
@@ -113,7 +109,6 @@
 				<ExtractFolder Arch='x86'>RetroArch-Win32</ExtractFolder>
 				<ExtractFolder Arch='x86_64'>RetroArch-Win64</ExtractFolder>
 				<Type>zip</Type>
-				<DirectToPath>$false</DirectToPath>
 			</Extract>
 		</Extra>
 		<Configs>
@@ -153,7 +148,7 @@
 		<Extract>
 			<ExtractFolder>Xemu</ExtractFolder>
 			<Type>zip</Type>
-			<DirectToPath>$true</DirectToPath>
+			<DirectToPath/>
 		</Extract>			
 		<CreateSteamShortcut/>
 		<CreateDesktopShortcut/>
@@ -172,7 +167,7 @@
 		<Extract>
 			<ExtractFolder>PPSSPP</ExtractFolder>
 			<Type>zip</Type>
-			<DirectToPath>$true</DirectToPath>
+			<DirectToPath/>
 		</Extract>
 		<CreateSteamShortcut/>
 		<CreateDesktopShortcut/>
@@ -189,7 +184,7 @@
 		<Extract>
 			<ExtractFolder>RPCS3</ExtractFolder>
 			<Type>zip</Type>
-			<DirectToPath>$true</DirectToPath>
+			<DirectToPath/>
 		</Extract>
 		<CreateSteamShortcut/>
 		<CreateDesktopShortcut/>
@@ -206,7 +201,6 @@
 		<Extract>
 			<ExtractFolder>PCSX2 $pcsx2Version</ExtractFolder>
 			<Type>zip</Type>
-			<DirectToPath>$false</DirectToPath>
 		</Extract>
 		<CreateSteamShortcut/>
 		<CreateDesktopShortcut/>
@@ -228,7 +222,6 @@
 		<Extract>
 			<ExtractFolder>Cemu_$cemuVersion</ExtractFolder>
 			<Type>zip</Type>
-			<DirectToPath>$false</DirectToPath>
 		</Extract>
 		<CreateSteamShortcut/>
 		<CreateDesktopShortcut/>
@@ -245,7 +238,6 @@
 		<Extract>
 			<ExtractFolder>yuzu-windows-msvc</ExtractFolder>
 			<Type>zip</Type>
-			<DirectToPath>$false</DirectToPath>
 		</Extract>
 		<CreateSteamShortcut/>
 		<CreateDesktopShortcut/>
