@@ -133,7 +133,7 @@
 				<Junction>
 			<Name>bios</Name>
 			<TargetBasePath>$pathRetroarch</TargetBasePath>
-			<Source>$pathBios</Source>
+			<Source>$pathBios\retroarch</Source>
 		</Junction>
 	</Program>
 	<Program>
@@ -207,7 +207,7 @@
 		<Junction>
 			<Name>bios</Name>
 			<TargetBasePath>$pathPcsx2</TargetBasePath>
-			<Source>$pathBios</Source>
+			<Source>$pathBios\pcsx2</Source>
 		</Junction>
 	</Program>
 	<Program>
