@@ -22,7 +22,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 #endregion
 
-#region ------------------------------ Path Variables
+#region ------------------------------ Global Variables
 
 $architecture = 'x86_64'
 if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture.Contains("64") -eq $false) {
@@ -37,7 +37,8 @@ $pathRoamingAppData = $env:APPDATA
 $pathHome = $env:USERPROFILE
 $pathSteam = If ($architecture -eq 'x86_64') {Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\WOW6432Node\Valve\Steam' -Name InstallPath} else {Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\Valve\Steam' -Name InstallPath}
 
-$pathSteamu = "$pathLocalAppData\Steamu"
+$pathSteamuBase = "$pathLocalAppData" # can be custom
+$pathSteamu = "$pathSteamuBase\Steamu"
 $pathLogs = "$pathSteamu\Logs"
 $pathDownloads = "$pathSteamu\Downloads"
 $pathShortcuts = "$pathSteamu\Shortcuts"
@@ -53,6 +54,7 @@ $pathRpcs3 = "$pathEmulators\RPCS3"
 $pathPpsspp = "$pathEmulators\PPSSPP"
 $pathDolphin = "$pathEmulators\Dolphin"
 $pathYuzu = "$pathEmulators\Yuzu"
+$pathDuckstation = "$pathEmulators\Duckstation"
 
 $pathApps = "$pathSteamu\Apps"
 $pathSrm = "$pathApps\SteamRomManager"
@@ -60,11 +62,13 @@ $pathSrmData = "$pathApps\SteamRomManager\userData"
 $pathEs = "$pathApps\EmulationStation"
 $pathEsData = "$pathEs\resources\systems\windows"
 
-$pathEmulation = "$pathHome\Emulation"
-$pathRoms = "$pathEmulation\roms"
-$pathBios = "$pathEmulation\bios"
-$pathSaves = "$pathEmulation\saves"
-$pathStates = "$pathEmulation\states"
+$pathEmulationBase = "$pathHome" # can be custom
+$pathEmulation = "$pathEmulationBase\Emulation"
+$pathRoms = "$pathEmulation\roms" # can be custom
+$pathBios = "$pathEmulation\bios" 
+$pathSaves = "$pathEmulation\saves" # can be custom
+$pathStates = "$pathEmulation\states" # can be custom
+$pathStorage = "$pathEmulation\storage" # can be custom
 
 $pathDesktopShortcuts = "$pathHome\Desktop\Emulation"
 
@@ -73,9 +77,7 @@ $stringOutput = ""
 $fileLogName = 'Steamu_log.txt'
 $fileLog = "$pathLogs\$fileLogName"
 
-#endregion
-
-#region ------------------------------ Dependency Configuration
+# dependency version
 
 $retroarchVersion = '1.10.3'
 $srmVersion = '2.3.36'
@@ -83,429 +85,11 @@ $ppssppVersion = '1_12_3'
 $pcsx2Version = '1.6.0'
 $cemuVersion = '1.27.0'
 
-$dependencyArray = @(
-	[PSCustomObject]@{
-		Name = 'Steamu';
-		Url = "https://github.com/ch3vr0n5/Steamu/archive/refs/heads/$branch.zip";
-		Output = 'steamu.zip';
-		DirectToPath = $false;
-		DestinationPath = "$pathLocalAppData";
-		DestinationName = 'Steamu';
-		ExtractFolder = "Steamu-$branch";
-		Type = 'zip';
-		Extras = $false;
-		ExtrasName = '';
-		ExtrasUrl = '';
-		ExtrasOutput = '';
-		ExtrasDirectToPath = $false;
-		ExtrasDestinationPath = "";
-		ExtrasDestinationName = '';
-		ExtrasExtractFolder = "";
-		Exe = '';
-		CreateSteamShortcut = $false;
-		CreateDesktopShortcut = $false
-	}
-	[PSCustomObject]@{
-		Name = 'Retroarch';
-		Url = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch.7z";
-		Output = 'retroarch.7z';
-		DirectToPath = $false;
-		DestinationPath = "$pathEmulators";
-		DestinationName = 'Retroarch';
-		ExtractFolder = IF ($architecture -eq 'x86_64') {'RetroArch-Win64'} else {'RetroArch-Win32'};
-		Type = 'zip';
-		Extras = $true;
-		ExtrasName = 'Retroarch Cores';
-		ExtrasUrl = "https://buildbot.libretro.com/stable/$retroarchVersion/windows/$architecture/RetroArch_cores.7z";
-		ExtrasOutput = 'retroarch_cores.7z';
-		ExtrasDirectToPath = $false;
-		ExtrasDestinationPath = "$pathEmulators";
-		ExtrasDestinationName = 'Retroarch';
-		ExtrasExtractFolder = IF ($architecture -eq 'x86_64') {'RetroArch-Win64'} else {'RetroArch-Win32'};
-		Exe = 'retroarch.exe';
-		CreateSteamShortcut = $true;
-		CreateDesktopShortcut = $true
-	}
-	[PSCustomObject]@{
-		Name = 'Steam Rom Manager';
-		Url = "https://github.com/SteamGridDB/steam-rom-manager/releases/download/v$srmVersion/Steam-ROM-Manager-portable-$srmVersion.exe"; #https://github.com/SteamGridDB/steam-rom-manager/releases/download/v2.3.35/Steam-ROM-Manager-portable-2.3.35.exe
-		Output = 'steam_rom_manager.exe';
-		DirectToPath = $false;
-		DestinationPath = "$pathApps";
-		DestinationName = 'SteamRomManager';
-		ExtractFolder = '';
-		Type = 'exe';
-		Extras = $false;
-		ExtrasName = '';
-		ExtrasUrl = '';
-		ExtrasOutput = '';
-		ExtrasDirectToPath = $false;
-		ExtrasDestinationPath = "";
-		ExtrasDestinationName = '';
-		ExtrasExtractFolder = "";
-		Exe = 'steam_rom_manager.exe'
-		CreateSteamShortcut = $false;
-		CreateDesktopShortcut = $true
-	}
-	[PSCustomObject]@{
-		Name = 'Emulation Station DE';
-		Url = "https://gitlab.com/es-de/emulationstation-de/-/package_files/36880305/download";
-		Output = 'emulationstation.zip';
-		DirectToPath = $false;
-		DestinationPath = "$pathApps";
-		DestinationName = 'EmulationStation';
-		ExtractFolder = 'EmulationStation-DE';
-		Type = 'zip';
-		Extras = $false;
-		ExtrasName = '';
-		ExtrasUrl = '';
-		ExtrasOutput = '';
-		ExtrasDirectToPath = $false;
-		ExtrasDestinationPath = "";
-		ExtrasDestinationName = '';
-		ExtrasExtractFolder = "";
-		Exe = 'emulationstation.exe';
-		CreateSteamShortcut = $true;
-		CreateDesktopShortcut = $true
-	}
-	[PSCustomObject]@{
-		Name = 'Xemu';
-		Url = "https://github.com/mborgerson/xemu/releases/latest/download/xemu-win-release.zip";
-		Output = 'xemu.zip';
-		DirectToPath = $true;
-		DestinationPath = "$pathEmulators";
-		DestinationName = 'Xemu';
-		ExtractFolder = 'Xemu';
-		Type = 'zip';
-		Extras = $false;
-		ExtrasName = '';
-		ExtrasUrl = '';
-		ExtrasOutput = '';
-		ExtrasDirectToPath = $false;
-		ExtrasDestinationPath = "";
-		ExtrasDestinationName = '';
-		ExtrasExtractFolder = "";
-		Exe = 'xemu.exe';
-		CreateSteamShortcut = $true;
-		CreateDesktopShortcut = $true
-	}
-	[PSCustomObject]@{
-		Name = 'PPSSPP';
-		Url = "https://www.ppsspp.org/files/$ppssppVersion/ppsspp_win.zip";
-		Output = 'ppsspp.zip';
-		DirectToPath = $true;
-		DestinationPath = "$pathEmulators";
-		DestinationName = 'PPSSPP';
-		ExtractFolder = 'PPSSPP';
-		Type = 'zip';
-		Extras = $false;
-		ExtrasName = '';
-		ExtrasUrl = '';
-		ExtrasOutput = '';
-		ExtrasDirectToPath = $false;
-		ExtrasDestinationPath = "";
-		ExtrasDestinationName = '';
-		ExtrasExtractFolder = "";
-		Exe = IF ($architecture -eq 'x86_64') {'PPSSPPWindows64.exe'} else {'PPSSPPWindows.exe'};
-		CreateSteamShortcut = $true;
-		CreateDesktopShortcut = $true
-	}
-	[PSCustomObject]@{
-		Name = 'RPCS3';
-		Url = "https://github.com/RPCS3/rpcs3-binaries-win/releases/download/build-5ae9de4e3b7f4aa59ede098796c08e128783989a/rpcs3-v0.0.22-13592-5ae9de4e_win64.7z";
-		Output = 'rpcs3.zip';
-		DirectToPath = $true;
-		DestinationPath = "$pathEmulators";
-		DestinationName = 'RPCS3';
-		ExtractFolder = 'RPCS3';
-		Type = 'zip';
-		Extras = $false;
-		ExtrasName = '';
-		ExtrasUrl = '';
-		ExtrasOutput = '';
-		ExtrasDirectToPath = $false;
-		ExtrasDestinationPath = "";
-		ExtrasDestinationName = '';
-		ExtrasExtractFolder = "";
-		Exe = 'rpcs3.exe';
-		CreateSteamShortcut = $true;
-		CreateDesktopShortcut = $true
-	}
-	[PSCustomObject]@{
-		Name = 'PCSX2';
-		Url = "https://github.com/PCSX2/pcsx2/releases/download/v$pcsx2Version/pcsx2-v$pcsx2Version-windows-32bit-portable.7z";
-		Output = 'pcsx2.zip';
-		DirectToPath = $false;
-		DestinationPath = "$pathEmulators";
-		DestinationName = 'PCSX2';
-		ExtractFolder = "PCSX2 $pcsx2Version";
-		Type = 'zip';
-		Extras = $false;
-		ExtrasName = '';
-		ExtrasUrl = '';
-		ExtrasOutput = '';
-		ExtrasDirectToPath = $false;
-		ExtrasDestinationPath = "";
-		ExtrasDestinationName = '';
-		ExtrasExtractFolder = "";
-		Exe = 'pcsx2.exe';
-		CreateSteamShortcut = $true;
-		CreateDesktopShortcut = $true
-	}
-	[PSCustomObject]@{
-		Name = 'Cemu';
-		Url = "https://cemu.info/releases/cemu_$cemuVersion.zip";
-		Output = 'cemu.zip';
-		DirectToPath = $false;
-		DestinationPath = "$pathEmulators";
-		DestinationName = 'Cemu';
-		ExtractFolder = "Cemu_$cemuVersion";
-		Type = 'zip';
-		Extras = $false;
-		ExtrasName = '';
-		ExtrasUrl = '';
-		ExtrasOutput = '';
-		ExtrasDirectToPath = $false;
-		ExtrasDestinationPath = "";
-		ExtrasDestinationName = '';
-		ExtrasExtractFolder = "";
-		Exe = 'Cemu.exe';
-		CreateSteamShortcut = $true;
-		CreateDesktopShortcut = $true
-	}
-	[PSCustomObject]@{
-		Name = 'Yuzu';
-		Url = "https://github.com/yuzu-emu/yuzu-mainline/releases/download/mainline-0-1014/yuzu-windows-msvc-20220512-4d5eaaf3f.zip";
-		Output = 'yuzu.zip';
-		DirectToPath = $false;
-		DestinationPath = "$pathEmulators";
-		DestinationName = 'Yuzu';
-		ExtractFolder = "yuzu-windows-msvc";
-		Type = 'zip';
-		Extras = $false;
-		ExtrasName = '';
-		ExtrasUrl = '';
-		ExtrasOutput = '';
-		ExtrasDirectToPath = $false;
-		ExtrasDestinationPath = "";
-		ExtrasDestinationName = '';
-		ExtrasExtractFolder = "";
-		Exe = 'yuzu.exe';
-		CreateSteamShortcut = $true;
-		CreateDesktopShortcut = $true
-	}
-)
-
-# directories
-$directorySteamu = @(
-		'Logs'
-	,	'Downloads'
-	,	'Emulators'
-	,	'Apps'
-	,	'Shortcuts'
-	,	'Temp'
-	)
-
-$directoryApps = @(
-		'SteamRomManager'
-	,	'EmulationStation'
-	)
-
-<# replaced in favor of foreach loop
-$directoryEmulators = @(
-		'Retroarch'
-	,	'Xemu'
-	,	'PPSSPP'
-	,	'RPCS3'
-	,	'PCSX2'
-	)
-#>
-
-$directoryEmulation = @(
-		'bios'
-	,	'configs'
-	,	'roms'
-	,	'saves'
-	,	'states'
-	,	'storage'
-	)
-
-$directoryBios = @(
-	'pcsx2'
-	,'retroarch'
-	,'rpcs3'
-	,'xemu'
-)
-
-$directoryStorage = @(
-	'cemu'
-	,'ppsspp'
-	,'xemu'
-)
-
-$directoryRoms = @(
-	'3do'
-	,'3ds'
-	,'64dd'
-	,'ags'
-	,'amiga'
-	,'amiga600'
-	,'amiga1200'
-	,'amigacd32'
-	,'amstradcpc'
-	,'android'
-	,'apple2'
-	,'apple2gs'
-	,'arcade'
-	,'astrocade'
-	,'atari800'
-	,'atari2600'
-	,'atari5200'
-	,'atari7800'
-	,'atarijaguar'
-	,'atarijaguarcd'
-	,'atarist'
-	,'atarixe'
-	,'atomiswave'
-	,'bbcmicro'
-	,'c64'
-	,'cavestory'
-	,'cdimono1'
-	,'cdtv'
-	,'chailove'
-	,'channelf'
-	,'coco'
-	,'coleco'
-	,'colecovision'
-	,'cps1'
-	,'cps2'
-	,'cps3'
-	,'daphne'
-	,'desktop'
-	,'doom'
-	,'dos'
-	,'dragon32'
-	,'dreamcast'
-	,'epic'
-	,'famicom'
-	,'fba'
-	,'fbneo'
-	,'fds'
-	,'gameandwatch'
-	,'gamecube'
-	,'gamegear'
-	,'gb'
-	,'gba'
-	,'gbc'
-	,'genesis'
-	,'genesiswide'
-	,'gx4000'
-	,'intellivision'
-	,'j2me'
-	,'kodi'
-	,'lutris'
-	,'lutro'
-	,'lynx'
-	,'macintosh'
-	,'mame'
-	,'mame2010'
-	,'mame-advmame'
-	,'mame-mame4all'
-	,'mastersystem'
-	,'megacd'
-	,'megacdjp'
-	,'megadrive'
-	,'mess'
-	,'moonlight'
-	,'moto'
-	,'msx'
-	,'msx1'
-	,'msx2'
-	,'msxturbor'
-	,'multivision'
-	,'n64'
-	,'naomi'
-	,'naomigd'
-	,'nds'
-	,'neogeo'
-	,'neogeocd'
-	,'neogeocdjp'
-	,'nes'
-	,'ngp'
-	,'ngpc'
-	,'odyssey2'
-	,'openbor'
-	,'oric'
-	,'palm'
-	,'pc'
-	,'pc88'
-	,'pc98'
-	,'pcengine'
-	,'pcenginecd'
-	,'pcfx'
-	,'pico8'
-	,'pokemini'
-	,'ports'
-	,'primehacks'
-	,'ps2'
-	,'ps3'
-	,'ps4'
-	,'psp'
-	,'psvita'
-	,'psx'
-	,'quake_1'
-	,'samcoupe'
-	,'satellaview'
-	,'saturn'
-	,'saturnjp'
-	,'scripts'
-	,'scummvm'
-	,'sega32x'
-	,'sega32xjp'
-	,'sega32xna'
-	,'segacd'
-	,'sg-1000'
-	,'snes'
-	,'sneshd'
-	,'snesna'
-	,'solarus'
-	,'spectravideo'
-	,'steam'
-	,'stratagus'
-	,'sufami'
-	,'supergrafx'
-	,'switch'
-	,'symbian'
-	,'tanodragon'
-	,'tg16'
-	,'tg-cd'
-	,'ti99'
-	,'tic80'
-	,'to8'
-	,'trs-80'
-	,'uzebox'
-	,'vectrex'
-	,'vic20'
-	,'videopac'
-	,'virtualboy'
-	,'wii'
-	,'wiiu'
-	,'wonderswan'
-	,'wonderswancolor'
-	,'x1'
-	,'x68000'
-	,'xbox'
-	,'xbox360'
-	,'zmachine'
-	,'zx81'
-	,'zxspectrum'
-	)
-
 #endregion
 
 #region ------------------------------ Functions
 
-Function inputPause ($stringMessageArg)
+Function Pause-Console ($stringMessageArg)
 # https://stackoverflow.com/a/28237896
 {
     # Check if running Powershell ISE
@@ -533,7 +117,8 @@ function Write-Log ($stringMessageArg, [bool]$toHost)
 		Write-Host $stringMessageArg
 	}
 }
-function DownloadFile($url, $targetFile)
+<#
+function New-Download($URL, $TargetFile)
 # https://stackoverflow.com/a/21422517 -- replaces regular invoke-webrequest progress tracking since it severly reduces download speed
 {
    $uri = New-Object "System.Uri" "$url"
@@ -559,17 +144,59 @@ function DownloadFile($url, $targetFile)
    $targetStream.Dispose()
    $responseStream.Dispose()
 }
+#>
+
+Function New-Download ([string]$URI, [string]$TargetFile, [string]$Name) {
+
+		Try {
+			$stringOutput = "DOWNLOADS: Downloading $Name"
+			Write-Log $stringOutput $True
+			Invoke-WebRequest -URI $URI -OutFile $TargetFile
+			$stringOutput = "DOWNLOADS: $Name Complete - $TargetFile"
+			Write-Log $stringOutput $false
+		} Catch {
+			$stringOutput = @"
+DOWNLOADS: An error occured while attempting download: $Name -> $TargetFile
+ERROR: $_
+"@
+			Write-Log $stringOutput $true
+		} 
+}
 
 function New-Shortcut([string]$SourceExe, [string]$DestinationPath){
 # https://stackoverflow.com/a/9701907
 	If(Test-Path -Path $DestinationPath -PathType Leaf) {
-		Remove-Item -Path $DestinationPath -Force | Out-Null
+		try {
+			Remove-Item -Path $DestinationPath -Force | Out-Null
+			$stringOutput = "SHORTCUTS: Already exists. Removed - $DestinationPath"
+			Write-Log $stringOutput $false
+		}
+		catch {
+			$stringOutput = @"
+SHORTCUTS: An error occured while attempting to remove shortcut: $DestinationPath
+ERROR: $_
+"@
+			Write-Log $stringOutput $true
+		}
+		
 	}
 
-	$WshShell = New-Object -comObject WScript.Shell
-	$Shortcut = $WshShell.CreateShortcut($DestinationPath)
-	$Shortcut.TargetPath = $SourceExe
-	$Shortcut.Save() | Out-Null
+	try {
+		$WshShell = New-Object -comObject WScript.Shell
+		$Shortcut = $WshShell.CreateShortcut($DestinationPath)
+		$Shortcut.TargetPath = $SourceExe
+		$Shortcut.Save() | Out-Null
+		$stringOutput = "SHORTCUTS: Created shortcut - $DestinationPath"
+		Write-Log $stringOutput $false
+	}
+	catch {
+		$stringOutput = @"
+SHORTCUTS: An error occured while attempting to create shortcut: $DestinationPath
+ERROR: $_
+"@
+		Write-Log $stringOutput $true
+	}
+	
 }
 
 function testUrl([string]$testUrl){
@@ -618,23 +245,53 @@ Function Get-Choice([string]$title,[string]$question,[int]$default,[string[]]$ch
 	Return $decision
 }
 
-Function New-Junction([string]$source,[string]$target){
+Function New-Junction([string]$Source, [string]$Target, [string]$Name){
 	[bool]$isJunction = $false
+
+	# If a bad junction was created it may leave an extension-less file and will be confused for the target
+	If (Test-Path -Path $Target -PathType Leaf) {
+		Remove-Item -Path $target -Force
+	}
+
+	# make target if it doesn't exist
+	If ((Test-Path -Path $Target) -eq $false) {
+		New-Directory -path $Target
+	}
+
 	$pathLinkType = (Get-Item -Path $target -Force).LinkType
 
 	If ($pathLinkType -eq "Junction"){
 		$isJunction = $true
 	}
 
-	If ($isJunction) {
-		$stringOutput = "$target is an existing junction. Removing..."
-		Write-Log $stringOutput $false
-		Remove-Item -Path $target -Force -Recurse | Out-Null
-	}
+	#test if target is path, and empty
 
-		New-Item -ItemType Junction -Path $target -Target $source | Out-Null
-		$stringOutput = "Junction created at $target pointing to $source"
-		Write-Log $stringOutput $false
+	If ($isJunction) {
+		Try {
+			Remove-Item -Path $target -Force -Recurse | Out-Null
+			$stringOutput = "JUNCTIONS: Already exists, removed: $target"
+			Write-Log $stringOutput $false
+		} Catch {
+			$stringOutput = @"
+JUNCTIONS: An error occured while trying to remove junction: $target
+ERROR: $_
+"@
+			Write-Log $stringOutput $true
+		}
+		
+	}
+		Try {
+			New-Item -ItemType Junction -Path $target -Target $source | Out-Null
+			$stringOutput = "JUNCTIONS: Junction created for $Name - $target -> $source"
+			Write-Log $stringOutput $false
+		} Catch {
+			$stringOutput = @"
+JUNCTIONS: An error occured while creating a junction for $Name - $target -> $source
+ERROR: $_
+"@
+			Write-Log $stringOutput $true
+		}
+		
 }
 
 Function Write-Space {
@@ -653,6 +310,89 @@ Function Write-Space {
 	Write-Host $space
 }
 
+Function New-Directory([string]$path) {
+	If ((Test-Path -Path $path) -eq $false) {
+		Try {
+			New-Item -ItemType "directory" -Path $path | Out-Null
+			$stringOutput = "DIRECTORIES: Created directory: $path"
+			Write-Log $stringOutput $false
+		} Catch {
+			$stringOutput = @"
+DIRECTORIES: An error occured while trying to create path: $path
+ERROR: $_
+"@
+			Write-Log $stringOutput $true
+		}
+			
+	} else {
+		$stringOutput = "DIRECTORIES: Already exists: $path"
+		Write-Log $stringOutput $false
+	}
+}
+
+Function Extract-Archive([string]$Source, [string]$Destination, [string]$Name) {
+	If (Test-Path -Path $Source -PathType Leaf) {
+		try {
+			$stringOutput = "EXTRACTS: Extracting archive for $Name"
+			Write-Log $stringOutput $true
+			Expand-7Zip -ArchiveFileName $Source -TargetPath $Destination | Out-Null
+			$stringOutput = "EXTRACTS: Extracted archive for $Name - $Source -> $Destination"
+			Write-Log $stringOutput $false
+		}
+		catch {
+			$stringOutput = @"
+EXTRACTS: An error occured while trying to extract archive for $Name
+ERROR: $_
+"@
+			Write-Log $stringOutput $true
+		}
+	} else {
+		$stringOutput = @"
+EXTRACTS: An error occured while trying to extract archive for $Name.
+Source archive doesn't exist: $Source
+"@
+			Write-Log $stringOutput $true
+	}
+}
+
+Function Move-Directory ([string]$Source, [string]$Destination, [string]$Name) {
+	try {
+		$stringOutput = "EXTRACTS: Moving files for $Name"
+		Write-Log $stringOutput $true
+		Copy-Item -Path $Source -Destination $Destination -Force | Out-Null
+		$stringOutput = "EXTRACTS: Moved files for $Name - $Source -> $Destination"
+		Write-Log $stringOutput $false
+	}
+	catch {
+		$stringOutput = @"
+EXTRACTS: An error occured while trying to move files for $Name
+$_
+"@
+			Write-Log $stringOutput $true
+	}
+}
+
+#endregion
+
+#region ------------------------------ Load XML
+
+# config
+If (Test-Path -Path .\configuration.xml -PathType Leaf) {
+	[xml]$configXml = Get-Content -Path .\configuration.xml	
+} else {
+	$stringOutput = "XML: Unable to load configuration.xml"
+	Pause-Console $stringOutput 
+	exit
+}
+
+# directories
+If (Test-Path -Path .\directories.xml -PathType Leaf) {
+	[xml]$dirXml = Get-Content -Path .\directories.xml
+} else {
+	$stringOutput = "XML: Unable to load configuration.xml"
+	Pause-Console $stringOutput 
+	exit
+}
 #endregion
 
 #region ------------------------------ Start Steamu Log FIle
@@ -681,7 +421,7 @@ if (Test-Path -path $fileLog -PathType Leaf) {
 
 if ( !$gitBranches -contains $branch ) {
 	$stringOutput = "Invalid branch $branch. Valid parameters include: $gitBranches. Press any key to exit."
-	inputPause $stringOutput
+	Pause-Console $stringOutput
 	exit
 }
 else {
@@ -729,7 +469,7 @@ Write-Space
 $continueInstallation = Get-Choice $title $question $default $choices
 
 If ($continueInstallation -eq 1) {
-	inputPause 'Installation cancelled. Press any key to exit.'
+	Pause-Console 'Installation cancelled. Press any key to exit.'
 	exit
 }
 
@@ -831,214 +571,58 @@ IMPORTANT: We use exact system directory names as defined in our documentation o
 
 #region ------------------------------ Build directory structure
 
-$stringOutput = @"
-Creating Steamu directory structure
-Path: $pathSteamu
-
-"@
+$stringOutput = 'DIRECTORIES: Creating Steamu directory structure'
 Write-Log $stringOutput $true
 
-# %LOCALAPPDATA%\Steamu directory
-IF (Test-Path -path $pathSteamu) {
-	$stringOutput = "$pathSteamu directory already exists"
-	Write-Log $stringOutput $false
-}
-else {
-	New-Item -path $pathSteamu -ItemType "directory" | Out-Null
+# foreach logic here to create directories from xml, perhaps where-object parentnode.name = 'Steamu', etc.
 
-	$stringOutput = "$pathSteamu directory created"
-	Write-Log $stringOutput $false
-}
+$dirXml.SelectNodes('//sub-directory') | ForEach-Object{
+    $basePath = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Path)
+    $name = $_.parentnode.name
+    $subDirectoryName = $_.name
 
-# %LOCALAPPDATA%\Steamu sub-directories
-ForEach ($sub in $directorySteamu) {
-	IF (Test-Path -path "$pathSteamu\$sub") {
-			$stringOutput = "$pathSteamu\$sub directory already exists"
-			Write-Log $stringOutput $false
-		}
-		else {
-			New-Item -path "$pathSteamu\$sub" -ItemType "directory" | Out-Null
+    $fullPath = "$basePath\$subDirectoryName"
 
-			$stringOutput = "$pathSteamu\$sub directory created"
-			Write-Log $stringOutput $false
-		}
+    If ($name -ne 'Roms') {
+        New-Directory -Path $fullPath
+        #Write-Host "DIRECTORIES: $name - $fullPath"
+    }
+
+    If (($name -eq 'Roms') -and ($doRomSubFolders)) {
+        New-Directory -Path $fullPath
+        #Write-Host "DIRECTORIES: $name - $fullPath"
+    }
 }
 
-# %LOCALAPPDATA%\Steamu\Emulators sub-directories
-ForEach ($dependency in $dependencyArray) {
-	$testPathType = $dependency.DestinationPath
-	IF ($testPathType -eq $pathEmulators) {
-		$pathName = $dependency.DestinationName
-		IF (Test-Path -path "$pathEmulators\$pathName") {
-				$stringOutput = "$pathEmulators\$pathName directory already exists"
-				Write-Log $stringOutput $false
-			}
-			else {
-				New-Item -path "$pathEmulators\$pathName" -ItemType "directory" | Out-Null
-
-				$stringOutput = "$pathEmulators\$pathName directory created"
-				Write-Log $stringOutput $false
-			}
-		}
-}
-
-# %LOCALAPPDATA%\Steamu\Apps sub-directories
-ForEach ($sub in $directoryApps) {
-	IF (Test-Path -path "$pathApps\$sub") {
-			$stringOutput = "$pathApps\$sub directory already exists"
-			Write-Log $stringOutput $false
-		}
-		else {
-			New-Item -path "$pathApps\$sub" -ItemType "directory" | Out-Null
-
-			$stringOutput = "$pathApps\$sub directory created"
-			Write-Log $stringOutput $false
-		}
-}
-
-	IF (Test-Path -path $pathSrmData) {
-			$stringOutput = "$pathSrmData directory already exists"
-			Write-Log $stringOutput $false
-		}
-		else {
-			New-Item -path $pathSrmData -ItemType "directory" | Out-Null
-
-			$stringOutput = "$pathSrmData directory created"
-			Write-Log $stringOutput $false
-		}
-
-$stringOutput = 'Steamu directory structure created.'
+$stringOutput = 'DIRECTORIES: Steamu directory structure created.'
 Write-Log $stringOutput $true
-
-## Set up emulation directory structure
-$stringOutput = @"
-Creating user's home Emulation directory structure
-Path: $pathEmulation
-
-"@
-Write-Log $stringOutput $true
-
-# %HOMEPATH%\Emulation
-IF (Test-Path -path $pathEmulation) {
-		$stringOutput = "$pathEmulation directory already exists"
-		Write-Log $stringOutput $false
-	}
-	else {
-		New-Item -path $pathEmulation -ItemType "directory" | Out-Null
-
-		$stringOutput = "$pathEmulation directory created"
-		Write-Log $stringOutput $false
-	}
-
-# %HOMEPATH%\Emulation sub-directories
-ForEach ($sub in $directoryEmulation) {
-	IF (Test-Path -path "$pathEmulation\$sub") {
-			$stringOutput = "$pathEmulation\$sub directory already exists"
-			Write-Log $stringOutput $false
-		}
-		else {
-			New-Item -path "$pathEmulation\$sub" -ItemType "directory" | Out-Null
-
-			$stringOutput = "$pathEmulation\$sub directory created"
-			Write-Log $stringOutput $false
-		}
-}
-
-# %HOMEPATH%\Emulation\roms sub-directories
-If ($doRomSubfolders -eq $true) {
-	ForEach ($rom in $directoryRoms) {
-		IF (Test-Path -path "$pathRoms\$rom") {
-				$stringOutput = "$pathRoms\$rom directory already exists"
-				Write-Log $stringOutput $false
-			}
-			else {
-				New-Item -path "$pathRoms\$rom" -ItemType "directory" | Out-Null
-
-				$stringOutput = "$pathRoms\$rom directory created"
-				Write-Log $stringOutput $false
-			}
-	}
-}
-
-# %HOMEPATH#\Emulation\bios sub-directories
-ForEach ($system in $directoryBios) {
-	IF (Test-Path -path "$pathBios\$system") {
-			$stringOutput = "$pathBios\$system directory already exists"
-			Write-Log $stringOutput $false
-		}
-		else {
-			New-Item -path "$pathBios\$system" -ItemType "directory" | Out-Null
-
-			$stringOutput = "$pathBios\$system directory created"
-			Write-Log $stringOutput $false
-		}
-}
-
-# %HOMEPATH#\Emulation\storage sub-directories
-ForEach ($system in $directoryStorage) {
-	IF (Test-Path -path "$directoryStorage\$system") {
-			$stringOutput = "$directoryStorage\$system directory already exists"
-			Write-Log $stringOutput $false
-		}
-		else {
-			New-Item -path "$directoryStorage\$system" -ItemType "directory" | Out-Null
-
-			$stringOutput = "$directoryStorage\$system directory created"
-			Write-Log $stringOutput $false
-		}
-}
 
 #endregion
 
 #region ------------------------------ Download required files
 IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	if (test-path -path $pathDownloads) {
-		$stringOutput = 'Beginning downloads.'
+		$stringOutput = 'DOWNLOADS: Beginning downloads.'
 		Write-Log $stringOutput $true
 
-		ForEach ($dependency in $dependencyArray) {
-			$name = $dependency.Name
-			$file = $dependency.Output
-			$url = $dependency.Url
-			$extras = $dependency.Extras
+# new foreach logic here for downloads from xml, add foreach for extras, select url node
+	$configXml.SelectNodes('//Download') | ForEach-Object{
+	    $name = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Name)
+	    $url = $ExecutionContext.InvokeCommand.ExpandString($_.Url)
+	    $saveAs = $ExecutionContext.InvokeCommand.ExpandString($_.SaveAs)
 
-			#If(testUrl($url)){
-				$stringOutput = "Downloading $name"
-				Write-Log $stringOutput $true
-				Invoke-WebRequest -Uri $Url -Outfile "$pathDownloads\$file."	
-			#} else {
-			#	$stringOutput = "Unable to download $name. URL invalid."
-			#	Write-Log $stringOutput
-			#	Write-Host $stringOutput
-			#}
+		$fullTargetPath = "$pathDownloads\$saveAs"
 
-			IF ($extras) {
-				$name = $dependency.ExtrasName
-				$file = $dependency.ExtrasOutput
-				$url = $dependency.ExtrasUrl
+		New-Download -URI $url -TargetFile $fullTargetPath -Name $name
 
-				
-				try {
-					$stringOutput = "Downloading $name"
-					Write-Log $stringOutput $true
-					Invoke-WebRequest -Uri $Url -Outfile "$pathDownloads\$file."
-				}
-				catch {
-					$stringOutput = "Unable to continue. Error downloading $name."
-					inputPause $stringOutput
-					exit
-				}
-					
-			}
-					
-		}
+	}
 
-		$stringOutput = 'Downloads complete'
+		$stringOutput = 'DOWNLOADS: Downloads complete'
 		Write-Log $stringOutput $true
 
 	} Else {
-		$stringOutput = "Unable to continue. $pathDownloads does not exist! Press any key to exit."
-		inputPause $stringOutput
+		$stringOutput = "DOWNLOADS: Unable to continue. $pathDownloads does not exist! Press any key to exit."
+		Pause-Console $stringOutput
 		exit
 	}
 } else {
@@ -1071,127 +655,61 @@ devSkip: $devSkip
 		Install-Module -Name 7Zip4PowerShell -Force -Scope CurrentUser | Out-Null
 	}
 
-
-	
-	<#
-	If(Test-Path -Path $pathTools) {
-		# Extract Peazip
-		
-		$stringOutput = "Extracting Peazip to $pathTools"
-		Write-Log $stringOutput
-		Write-Host $stringOutput
-		Expand-Archive -Path "$pathDownloads\$filePeazip" -DestinationPath "$pathTools"
-
-		Copy-Item -path "$pathTools\$peazipFolder" -Destination "$pathTools\Peazip"
-		Remove-Item -path "$pathTools\$peazipFolder" 
-		
-
-		# Extract 7zip
-	}
-	#>
 If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
-	ForEach ($dependency in $dependencyArray) {
-		$name = $dependency.Name
-		$directtopath = $dependency.DirectToPath
-		$type = $dependency.Type
-		$extractFolder = $dependency.ExtractFolder
-		$extractPath = "$pathTemp\$extractFolder"
-		$sourceFileName = $dependency.Output
-		$sourcePath = "$pathDownloads\$sourceFileName"
-		$targetPath = $pathTemp
-		$destinationPathBase = $dependency.DestinationPath
-		$destinationName = $dependency.DestinationName
-		$destinationPath = "$destinationPathBase\$DestinationName"
+	$stringOutput = "EXTRACTS: Beginning extraction"
+	Write-Log $stringOutput $true
 
-		$extras = $dependency.Extras
-		$extrasName = $dependency.ExtrasName
-		$extrasExtractFolder = $dependency.ExtrasExtractFolder
-		$extrasExtractPath = "$pathTemp\$extrasExtractFolder"
-		$extrasSourceFileName = $dependency.ExtrasOutput
-		$extrasSourcePath = "$pathDownloads\$extrasSourceFileName"
-		$extrasTargetPath = $pathTemp
-		$extrasPathBase = $dependency.ExtrasDestinationPath
-		$extrasPathName = $dependency.ExtrasDestinationName
-		$extrasDestinationPath = "$extrasPathBase\$extrasPathName"
+	$configXml.SelectNodes('//Extract') | ForEach-Object  {
+		$name = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Name)
+		$type = $ExecutionContext.InvokeCommand.ExpandString($_.Type)
+	    $destinationBasePath = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.BasePath)
+	    $destinationDirectoryName = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.DirectoryName)
+		$directToPath = If ($_.DirectToPath -ne $null) {$true} else {$false}
+		$extractToPath = $pathTemp
+		$saveAs = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Download.SaveAs)
+		$downloadFileLocation = "$pathDownloads\$saveAs"
 
-		$stringOutput = "Extracting $name..."
-		Write-Log $stringOutput $true
+	    $extractFolder = IF ($_.ExtractFolder.Count -gt 1) { 
+	        $_.SelectSingleNode("//ExtractFolder[@Arch = '$architecture']").InnerText 
+	    } else { 
+	        $ExecutionContext.InvokeCommand.ExpandString($_.ExtractFolder)
+	    }
 
-		If ($directtopath) {
-			$targetPath = $extractPath
-			New-Item -ItemType "directory" -Path $targetPath | Out-Null
-		}
-
+		$copyFromPath = "$pathTemp\$extractFolder"
+		$moveToPath = "$destinationBasePath\$DestinationDirectoryName"
+		
 		If ($type -eq 'zip'){
-			IF (Test-Path -Path $sourcePath -PathType Leaf) {
 
-				$stringOutput = "Extracting $name to $extractPath"
-				Write-Log $stringOutput $false
+			If ($directToPath) {
+				$extractToPath = "$pathTemp\$destinationDirectoryName"
+				$copyFromPath = $extractToPath
+				New-Directory -path $extractToPath
+			}
 
-				Expand-7Zip -ArchiveFileName $sourcePath -TargetPath $targetPath | Out-Null
+			$copyFromPath += "\*"
 
-				$stringOutput = "Moving $name to $DestinationPath from $extractPath"
-				Write-Log $stringOutput $false
-		
-				Copy-Item -Path "$extractPath\*" -Destination $destinationPath -Recurse -Force | Out-Null
+			Extract-Archive -Source $downloadFileLocation -Destination $extractToPath -Name $name
 
-				$stringOutput = "Removing temp $name folder from $extractPath"
-				Write-Log $stringOutput $false
+			Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $name
 				
-				Remove-Item -Path $extractPath -Recurse -Force | Out-Null
-
-				IF ($extras) {
-
-					$stringOutput = "Extracting $extrasName to $extrasExtractPath"
-					Write-Log $stringOutput $false
-
-					Expand-7Zip -ArchiveFileName $extrasSourcePath -TargetPath $extrasTargetPath | Out-Null
-
-					$stringOutput = "Moving $extrasName to $extrasDestinationPath from $extrasExtractPath"
-					Write-Log $stringOutput $false
-		
-					Copy-Item -Path "$extrasExtractPath\*" -Destination $extrasDestinationPath -Recurse -Force | Out-Null
-
-					$stringOutput = "Removing temp $extrasName folder from $extrasExtractPath"
-					Write-Log $stringOutput $false
-
-					Remove-Item -Path $extrasExtractPath -Recurse -Force | Out-Null
-				}
-
-			} else {
-				$stringOutput = "Unable to extract $Name. Cannot continue. Press any key to exit"
-				inputPause $stringOutput
-				exit
-			}
 		} elseif ($type -eq 'exe') {
-			IF (Test-Path -Path $sourcePath -PathType Leaf) {
-				$stringOutput = "Moving $name to $DestinationPath from $sourcePath"
-				Write-Log $stringOutput $false
-				IF (Test-Path "$destinationPath\$sourceFileName" -PathType Leaf){
-					Remove-Item "$destinationPath\$sourceFileName" -Force | Out-Null
-				}
-				Copy-Item -Path $sourcePath -Destination $DestinationPath -Force | Out-Null
 
-				Remove-Item -Path $sourcePath -Recurse -Force | Out-Null
-			} else {
-				$stringOutput = "Unable to extract $Name. Cannot continue. Press any key to exit"
-				inputPause $stringOutput
-				exit
-			}
+			Move-Directory -Source $downloadFileLocation -Destination $moveToPath -Name $name
+
 		} else {
-			$stringOutput = "Extraction type not handled for $Name! Type: $type"
-			inputPause $stringOutput
+			$stringOutput = "EXTRACTS: Extraction type not handled for $Name! Type: $type"
+			Write-Log $stringOutput $True
 		}
 
 	}
 
-		$stringOutput = 'Extraction complete'
+		$stringOutput = 'EXTRACTS: Extraction complete!'
 		Write-Log $stringOutput $true
 
 } else {
 	$stringOutput = @"
-Extraction is skipped due to configuration.
+EXTRACTS: Extraction is skipped due to configuration.
 
 doDownload: $doDownload
 devSkip: $devSkip
@@ -1203,77 +721,20 @@ devSkip: $devSkip
 
 #region ------------------------------ Set up junctions (symlinks)
 
-$stringOutput = 'Creating Junctions (symlinks)...'
+$stringOutput = 'JUNCTIONS: Creating Junctions (symlinks)...'
 Write-Log $stringOutput $true
 
 		# RetroArch links
 
-		$junctionsRetroarch = @('roms','saves','states','bios')
+		$configXml.SelectNodes('//Junction') | ForEach-Object {
+			$name = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Name)
+			$junctionName = $ExecutionContext.InvokeCommand.ExpandString($_.Name)
+			$targetBasePath = $ExecutionContext.InvokeCommand.ExpandString($_.TargetBasePath)
+			$sourcePath = $ExecutionContext.InvokeCommand.ExpandString($_.Source)
 
-		ForEach ($junction in $junctionsRetroarch) {
-			$target = "$pathRetroarch\$junction"
+			$targetFullPath = "$targetBasePath\$junctionName"
 
-			Switch ($junction.ToString()) {
-				'roms' {$source = $pathRoms}
-				 'saves' {$source = "$pathSaves"}
-				 'states' {$source = "$pathStates"}
-				 'bios' {$source = "$pathBios"}
-			}
-			
-			New-Junction -source $source -target $target
-
-		}
-
-		# EmulationStation DE links
-
-		$junctionsEs = @('ROMs','Emulators')
-
-		ForEach ($junction in $junctionsEs) {
-			$target = "$pathEs\$junction"
-
-			Switch ($junction.ToString()) {
-					'ROMs' {$source = $pathRoms} 
-					 'Emulators' {$source = $pathEmulators}
-			}
-			
-			New-Junction -source $source -target $target
-
-		}
-
-		# Steam Rom Manager links
-
-		$junctionsSrm = @('steam', 'roms', 'retroarch', 'emulationstation', 'shortcuts')
-
-		ForEach ($junction in $junctionsSrm) {
-			$target = "$pathSrm\$junction"
-
-			Switch ($junction.ToString()) {
-					'steam' {$source = $pathSteam} 
-					 'roms' {$source = $pathRoms}
-					 'retroarch' {$source = $pathRetroarch}
-					 'emulationstation' {$source = $pathEs}
-					 'shortcuts' {$source = $pathShortcuts}
-			}
-	
-			New-Junction -source $source -target $target
-		}
-
-		# pcsx2 symlinks
-
-		$junctionsPcsx2 = @('bios')
-
-		ForEach ($junction in $junctionsPcsx2) {
-			$target = "$pathPcsx2\$junction"
-
-			Switch ($junction.ToString()) {
-					'bios' {$source = "$pathBios\pcsx2"} 
-			}
-
-			If ((Test-Path -Path "$pathPcsx2\bios") -eq $false) {
-				New-Item -Path "$pathPcsx2\bios" -ItemType "directory"
-			}
-	
-			New-Junction -source $source -target $target
+			New-Junction -Source $sourcePath -Target $targetFullPath Name $name
 		}
 		
 		# %HOMEPATH%\Emulation symlinks
@@ -1301,14 +762,16 @@ Write-Log $stringOutput $true
 
 		}
 
-$stringOutput = 'Created Junctions (symlinks).'
+$stringOutput = 'JUNCTIONS: Created Junctions (symlinks).'
 Write-Log $stringOutput $true
 
 #endregion
 
 #region ------------------------------ Copy configs
 		If ($doDownload) {
-			$stringOutput = "Backing up existing configs..."
+#make backup function
+
+			$stringOutput = "CONFIGS: Backing up existing configs..."
 			Write-Log $stringOutput $true
 
 			$backupDateTime = $(get-date -f yyyyMMddHHmm)
@@ -1337,46 +800,38 @@ Write-Log $stringOutput $true
 				Write-Log $stringOutput $false
 			}
 
-			$stringOutput = "Existing configs backed up."
+			$stringOutput = "CONFIGS: Existing configs backed up."
 			Write-Log $stringOutput $true
 
-			$stringOutput = "Updating existing configs..."
+			$stringOutput = "CONFIGS: Updating existing configs..."
 			Write-Log $stringOutput $true
 
 			# Copy default configs
-			ForEach ($dependency in $dependencyArray){
-				$destinationPath = $dependency.DestinationPath
-				If (@($pathEmulators, $pathApps) -contains $destinationPath) {
+			$configXml.SelectNodes('//Program') | ForEach-Object {
+				$name = $ExecutionContext.InvokeCommand.ExpandString($_.Name)
+				$destinationPath = $ExecutionContext.InvokeCommand.ExpandString($_.BasePath)
+				$destinationName = $ExecutionContext.InvokeCommand.ExpandString($_.DirectoryName)
 
-					$name = $dependency.Name
-					$destinationName = $dependency.DestinationName
-					If (Test-Path -Path "$pathConfigs\$DestinationName") {
-						Copy-Item -Path "$pathConfigs\$DestinationName\*" -Destination "$destinationPath\$destinationName\" -Force -Recurse | Out-Null
+				$copyConfigs = IF ($_.CopyConfigs -ne $null) {$true} else {$false}
 
-						$stringOutput = "Copied configs for $name"
+				$copyFromPath = "$pathConfigs\$destinationName"
+				$copyToPath = "$destinationPath\$destinationName"
+				
+				IF ($copyConfigs) {
+					If (Test-Path -Path $copyFromPath) {
+						$copyFromPath += "\*"
+
+						$stringOutput = "CONFIGS: Overwriting configs for $name"
 						Write-Log $stringOutput $true
-					}
+
+						Move-Directory -Source $copyfromPath -Destination $copyToPath -Name $name
+						}
 				}
 			}
 
-			$stringOutput = "Existing configs updated."
+			$stringOutput = "CONFIGS: Existing configs updated."
 			Write-Log $stringOutput $true
 
-			<# moved to ForEach
-
-			If (Test-Path -Path "$pathConfigs\RetroArch") {
-				Copy-Item -Path "$pathConfigs\RetroArch\*" -Destination "$pathRetroarch\" -Force -Recurse
-			}
-			If (Test-Path -Path "$pathConfigs\SteamRomManager\userConfigurations.json" -PathType Leaf) {
-				If ((Test-Path -Path "$pathSrmData\") -eq $false) {
-					New-Item -ItemType "directory" -path "$pathSrmData\"
-				}
-				Copy-Item -Path "$pathConfigs\SteamRomManager\*" -Destination "$pathSrm" -Force
-			}
-			If (Test-Path -Path "$pathConfigs\EmulationStation\es_systems.xml" -PathType Leaf) {
-				Copy-Item -Path "$pathConfigs\EmulationStation\*" -Destination "$pathEs" -Force
-			}
-			#>
 		}
 
 		#need to replace paths in SRM most likely
@@ -1385,8 +840,7 @@ Write-Log $stringOutput $true
 
 #region ------------------------------ Set up exe shortcuts
 
-## TODO use New-Shortcut to make shortcuts on Desktop
-	$stringOutput = "Setting up shortcuts in $pathDesktopShortcuts..."
+	$stringOutput = "SHORTCUTS: Setting up application shortcuts in $pathDesktopShortcuts..."
 	Write-Log $stringOutput $true
 
 	If ((Test-Path -Path "$pathDesktopShortcuts") -eq $false) {
@@ -1394,38 +848,37 @@ Write-Log $stringOutput $true
 	}
 
 	If (Test-Path -Path "$pathDesktopShortcuts") {
-		ForEach ($dependency in $dependencyArray){
-			$name = $dependency.Name
-			
-			$createShortcutDesktop = $dependency.CreateDesktopShortcut
-			$createShortcutSteam = $dependency.CreateSteamShortcut
-			
-			$shortcutName = $name
-			$exePath = $dependency.DestinationPath
-			$exePathName = $dependency.DestinationName
-			$exeName = $dependency.Exe
+		$configXml.SelectNodes('//Program') | ForEach-Object {
+			$name = $ExecutionContext.InvokeCommand.ExpandString($_.Name)
+
+			$exePath = $ExecutionContext.InvokeCommand.ExpandString($_.BasePath)
+			$exePathName = $ExecutionContext.InvokeCommand.ExpandString($_.DirectoryName)
+			$exeName = IF ($_.Exe.Count -gt 1) { 
+					$_.SelectSingleNode("//Exe[@Arch = '$architecture']").InnerText 
+				} else { 
+					$ExecutionContext.InvokeCommand.ExpandString($_.exe)
+				}
 			$exeFullPath = "$exePath\$exePathName\$exeName"
-			$shortcutDesktopPath = "$pathDesktopShortcuts\$shortcutName.lnk"
-			$shortcutSteamPath = "$pathShortcuts\$shortcutName.lnk"
+			$shortcutDesktopPath = "$pathDesktopShortcuts\$name.lnk"
+			$shortcutSteamPath = "$pathShortcuts\$name.lnk"
+
+			$createShortcutDesktop = IF ($_.CreateDesktopShortcut -ne $null) {$true} else {$false}
+			$createShortcutSteam = IF ($_.CreateSteamShortcut -ne $null) {$true} else {$false}
 
 
 			IF ($createShortcutDesktop){
 
-					New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutDesktopPath
-					$stringOutput = "$shortcutDesktopPath created."
-					Write-Log $stringOutput $false
+				New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutDesktopPath
 
 			} 
 			If ($createShortcutSteam) {
 
-					New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutSteamPath
-					$stringOutput = "$shortcutSteamPath created."
-					Write-Log $stringOutput $false
+				New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutSteamPath
 
 			}
 		}
 	} else {
-		$stringOutput = "Unable to create shortcuts. Directory $pathDesktopShortcuts does not exist!"
+		$stringOutput = "SHORTCUTS: Unable to create shortcuts. Directory $pathDesktopShortcuts does not exist!"
 		Write-Log $stringOutput $true
 	}
 
@@ -1435,9 +888,18 @@ Write-Log $stringOutput $true
 
 ## TODO if existing controller configs exist, replace, else, copy new configs
 
+#Clean up temp folder
+$stringOutput = "EXTRACTS: Cleaning up temp folder..."
+Write-Log $stringOutput $True
+Remove-Item -Path "$pathTemp\*" -Recurse -Force
+
+#Clean up temp folder
+$stringOutput = "DOWNLOADS: Cleaning up download folder..."
+Write-Log $stringOutput $True
+Remove-Item -Path "$pathDownloads\*" -Recurse -Force
 
 ##### FINISH ######
 Write-Space
 $stringOutput = 'All Done =) Press any key to exit.'
-inputPause $stringOutput
+Pause-Console $stringOutput
 exit
