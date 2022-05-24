@@ -718,11 +718,6 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 	}
 
-		#Clean up temp folder
-		$stringOutput = "EXTRACTS: Cleaning up temp folder..."
-		Write-Log $stringOutput $True
-		Remove-Item -Path "$pathTemp\*" -Recurse -Force
-
 		$stringOutput = 'EXTRACTS: Extraction complete!'
 		Write-Log $stringOutput $true
 
@@ -923,6 +918,15 @@ Write-Log $stringOutput $true
 
 ## TODO if existing controller configs exist, replace, else, copy new configs
 
+#Clean up temp folder
+$stringOutput = "EXTRACTS: Cleaning up temp folder..."
+Write-Log $stringOutput $True
+Remove-Item -Path "$pathTemp\*" -Recurse -Force
+
+#Clean up temp folder
+$stringOutput = "DOWNLOADS: Cleaning up download folder..."
+Write-Log $stringOutput $True
+Remove-Item -Path "$pathDownloads\*" -Recurse -Force
 
 ##### FINISH ######
 Write-Space
