@@ -357,11 +357,11 @@ Source archive doesn't exist: $Source
 
 Function Move-Directory ([string]$Source, [string]$Destination, [string]$Name) {
 	try {
-		$stringOutput = "EXTRACTS: Moving files for $Name - $Source -> $Destination"
+		$stringOutput = "EXTRACTS: Moving files for $Name"
 		Write-Log $stringOutput $true
 		Copy-Item -Path $Source -Destination $Destination -Force | Out-Null
-		$stringOutput = "EXTRACTS: Moved files for $Name"
-		Write-Log $stringOutput $true
+		$stringOutput = "EXTRACTS: Moved files for $Name - $Source -> $Destination"
+		Write-Log $stringOutput $false
 	}
 	catch {
 		$stringOutput = @"
