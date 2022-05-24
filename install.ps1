@@ -618,7 +618,9 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	    $url = $ExecutionContext.InvokeCommand.ExpandString($_.Url)
 	    $saveAs = $ExecutionContext.InvokeCommand.ExpandString($_.SaveAs)
 
-		New-Download -URI $url -TargetFile "$pathTemp\$saveAs" -Name $name
+		$fullTargetPath = "$pathDownloads\$saveAs"
+
+		New-Download -URI $url -TargetFile $fullTargetPath -Name $name
 
 	}
 
@@ -673,8 +675,7 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 		$directToPath = $ExecutionContext.InvokeCommand.ExpandString($_.DirectToPath)
 		$extractToPath = $pathTemp
 		$saveAs = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Download.SaveAs)
-		$archiveLocation = "$pathTemp\$saveAs"
-
+		$downloadFileLocation = "$pathDownloads\$saveAs"
 		<# this is for shortcuts
 	    $exe = IF ($_.parentnode.Exe.Count -gt 1) { 
 	        $_.parentnode.SelectSingleNode("//Exe[@Arch = '$architecture']").InnerText 
