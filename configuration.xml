@@ -50,6 +50,11 @@
 			<Source>$pathEs</Source>
 		</Junction>
 		<Junction>
+			<Name>cemu</Name>
+			<TargetBasePath>$pathSrm</TargetBasePath>
+			<Source>$pathCemu</Source>
+		</Junction>
+		<Junction>
 			<Name>shortcuts</Name>
 			<TargetBasePath>$pathSrm</TargetBasePath>
 			<Source>$pathShortcuts</Source>
