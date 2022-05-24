@@ -248,11 +248,6 @@
 			<Source>$pathStorage\cemu\mlc01</Source>
 		</Junction>
 		<Junction>
-			<Name>save</Name>
-			<TargetBasePath>$pathStorage\mlc01\usr</TargetBasePath>
-			<Source>$pathSaves\cemu\save</Source>
-		</Junction>
-		<Junction>
 			<Name>roms</Name>
 			<TargetBasePath>$pathCemu</TargetBasePath>
 			<Source>$pathRoms\wiiu</Source>
