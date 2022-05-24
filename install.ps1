@@ -333,11 +333,11 @@ ERROR: $_
 Function Extract-Archive([string]$Source, [string]$Destination, [string]$Name) {
 	If (Test-Path -Path $Source -PathType Leaf) {
 		try {
-			$stringOutput = "EXTRACTS: Extracting archive for $Name - $Source -> $Destination"
+			$stringOutput = "EXTRACTS: Extracting archive for $Name"
 			Write-Log $stringOutput $true
 			Expand-7Zip -ArchiveFileName $Source -TargetPath $Destination | Out-Null
-			$stringOutput = "EXTRACTS: Extracted archive for $Name"
-			Write-Log $stringOutput $true
+			$stringOutput = "EXTRACTS: Extracted archive for $Name - $Source -> $Destination"
+			Write-Log $stringOutput $false
 		}
 		catch {
 			$stringOutput = @"
