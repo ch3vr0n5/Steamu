@@ -215,6 +215,7 @@
 		<BasePath>$pathEmulators</BasePath>
 		<DirectoryName>Cemu</DirectoryName>
 		<Exe>Cemu.exe</Exe>
+		<CopyConfigs/>
 		<Download>
 			<Url>https://cemu.info/releases/cemu_$cemuVersion.zip</Url>
 			<SaveAs>cemu.zip</SaveAs>
@@ -241,5 +242,20 @@
 		</Extract>
 		<CreateSteamShortcut/>
 		<CreateDesktopShortcut/>
+		<Junction>
+			<Name>mlc01</Name>
+			<TargetBasePath>$pathCemu</TargetBasePath>
+			<Source>$pathStorage\cemu\mlc01</Source>
+		</Junction>
+		<Junction>
+			<Name>save</Name>
+			<TargetBasePath>$pathStorage\mlc01\usr</TargetBasePath>
+			<Source>$pathSaves\cemu\save</Source>
+		</Junction>
+		<Junction>
+			<Name>roms</Name>
+			<TargetBasePath>$pathCemu</TargetBasePath>
+			<Source>$pathRoms\wiiu</Source>
+		</Junction>
 	</Program>
 </Settings>

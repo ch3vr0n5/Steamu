@@ -98,6 +98,25 @@
     </directory>
 
     <directory>
+        <name>saves</name>
+        <Path>$pathSaves</Path>
+        <sub-directory>
+            <name>retroarch</name>
+        </sub-directory>
+        <sub-directory>
+            <name>cemu</name>
+        </sub-directory>
+    </directory>
+
+    <directory>
+        <name>cemu</name>
+        <Path>$pathSaves\cemu</Path>
+        <sub-directory>
+            <name>save</name>
+        </sub-directory>
+    </directory>
+
+    <directory>
         <name>bios</name>
         <Path>$pathBios</Path>
         <sub-directory>
@@ -125,6 +144,14 @@
         </sub-directory>
         <sub-directory>
             <name>xemu</name>
+        </sub-directory>
+    </directory>
+
+    <directory>
+        <name>cemu</name>
+        <Path>$pathStorage\cemu</Path>
+	    <sub-directory>
+            <name>mlc01</name>
         </sub-directory>
     </directory>
 

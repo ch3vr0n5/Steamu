@@ -1171,7 +1171,7 @@
     "steamCategory": "${WiiU}",
     "executableArgs": "-f -g \"Z:${filepath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}wiiu/roms/",
+    "romDirectory": "${srmdir}${/}roms${/}wiiu",
     "steamDirectory": "${srmdir}${/}steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
@@ -1191,7 +1191,7 @@
     "disabled": false,
     "advanced": false,
     "executable": {
-      "path": "${srmdir}${/}roms${/}wiiu/Cemu.exe",
+      "path": "${srmdir}${/}cemu${/}Cemu.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1224,7 +1224,7 @@
     "steamCategory": "${WiiU}",
     "executableArgs": "-f -g \"Z:${filepath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}wiiu/roms/",
+    "romDirectory": "${srmdir}${/}roms${/}wiiu",
     "steamDirectory": "${srmdir}${/}steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
@@ -1244,7 +1244,7 @@
     "disabled": false,
     "advanced": false,
     "executable": {
-      "path": "${srmdir}${/}roms${/}wiiu/Cemu.exe",
+      "path": "${srmdir}${/}cemu${/}Cemu.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
