@@ -672,7 +672,7 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 		$type = $ExecutionContext.InvokeCommand.ExpandString($_.Type)
 	    $destinationBasePath = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.BasePath)
 	    $destinationDirectoryName = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.DirectoryName)
-		$directToPath = $ExecutionContext.InvokeCommand.ExpandString($_.DirectToPath)
+		$directToPath = If ($_.DirectToPath -ne $null) {$true} else {$false}
 		$extractToPath = $pathTemp
 		$saveAs = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Download.SaveAs)
 		$downloadFileLocation = "$pathDownloads\$saveAs"
