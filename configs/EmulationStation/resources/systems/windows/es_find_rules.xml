@@ -10,6 +10,7 @@
             <entry>%ESPATH%\Emulators\RetroArch\retroarch.exe</entry>
             <entry>%ESPATH%\..\RetroArch-Win64\retroarch.exe</entry>
             <entry>%ESPATH%\..\RetroArch\retroarch.exe</entry>
+            <entry>C:\Emulation\emulators\Retroarch\retroarch.exe</entry>
         </rule>
     </emulator>
     <core name="RETROARCH">
@@ -23,6 +24,7 @@
             <entry>%ESPATH%\atari800\atari800.exe</entry>
             <entry>%ESPATH%\Emulators\atari800\atari800.exe</entry>
             <entry>%ESPATH%\..\atari800\atari800.exe</entry>
+            <entry>C:\Emulation\emulators\atari800\atari800.exe</entry>
         </rule>
     </emulator>
     <emulator name="CEMU">
@@ -31,6 +33,7 @@
             <entry>%ESPATH%\cemu\Cemu.exe</entry>
             <entry>%ESPATH%\Emulators\cemu\Cemu.exe</entry>
             <entry>%ESPATH%\..\cemu\Cemu.exe</entry>
+            <entry>C:\Emulation\emulators\Cemu\Cemu.exe</entry>
         </rule>
     </emulator>
     <emulator name="CITRA">
@@ -42,6 +45,7 @@
             <entry>%ESPATH%\Emulators\Citra\canary-mingw\citra.exe</entry>
             <entry>%ESPATH%\..\Citra\nightly-mingw\citra.exe</entry>
             <entry>%ESPATH%\..\Citra\canary-mingw\citra.exe</entry>
+            <entry>C:\Emulation\emulators\Citra\citra.exe</entry>
         </rule>
     </emulator>
     <emulator name="DOLPHIN">
@@ -50,6 +54,7 @@
             <entry>%ESPATH%\Dolphin-x64\Dolphin.exe</entry>
             <entry>%ESPATH%\Emulators\Dolphin-x64\Dolphin.exe</entry>
             <entry>%ESPATH%\..\Dolphin-x64\Dolphin.exe</entry>
+            <entry>C:\Emulation\emulators\Dolphin\Dolphin.exe</entry>
         </rule>
     </emulator>
     <emulator name="DOSBOX-STAGING">
@@ -58,6 +63,7 @@
             <entry>%ESPATH%\dosbox-staging\dosbox.exe</entry>
             <entry>%ESPATH%\Emulators\dosbox-staging\dosbox.exe</entry>
             <entry>%ESPATH%\..\dosbox-staging\dosbox.exe</entry>
+            <entry>C:\Emulation\emulators\Dosbox\dosbox.exe</entry>
         </rule>
     </emulator>
     <emulator name="DUCKSTATION">
@@ -69,6 +75,7 @@
             <entry>%ESPATH%\Emulators\duckstation\duckstation-qt-x64-ReleaseLTCG.exe</entry>
             <entry>%ESPATH%\..\duckstation\duckstation-nogui-x64-ReleaseLTCG.exe</entry>
             <entry>%ESPATH%\..\duckstation\duckstation-qt-x64-ReleaseLTCG.exe</entry>
+            <entry>C:\Emulation\emulators\Duckstation\duckstation-nogui-x64-ReleaseLTCG.exe</entry>
         </rule>
     </emulator>
     <emulator name="FLYCAST">
@@ -77,6 +84,7 @@
             <entry>%ESPATH%\flycast\flycast.exe</entry>
             <entry>%ESPATH%\Emulators\flycast\flycast.exe</entry>
             <entry>%ESPATH%\..\flycast\flycast.exe</entry>
+            <entry>C:\Emulation\emulators\Flycast\flycast.exe</entry>
         </rule>
     </emulator>
     <emulator name="FS-UAE">
@@ -85,6 +93,7 @@
             <entry>%ESPATH%\FS-UAE\Windows\x86-64\fs-uae.exe</entry>
             <entry>%ESPATH%\Emulators\FS-UAE\Windows\x86-64\fs-uae.exe</entry>
             <entry>%ESPATH%\..\FS-UAE\Windows\x86-64\fs-uae.exe</entry>
+            <entry>C:\Emulation\emulators\FS-UAE\Windows\x86-64\fs-uae.exe</entry>
         </rule>
     </emulator>
     <emulator name="MAME">
@@ -93,6 +102,7 @@
             <entry>%ESPATH%\mame\mame.exe</entry>
             <entry>%ESPATH%\Emulators\mame\mame.exe</entry>
             <entry>%ESPATH%\..\mame\mame.exe</entry>
+            <entry>C:\Emulation\emulators\Mame\mame.exe</entry>
         </rule>
     </emulator>
     <emulator name="MELONDS">
@@ -101,6 +111,7 @@
             <entry>%ESPATH%\melonDS\melonDS.exe</entry>
             <entry>%ESPATH%\Emulators\melonDS\melonDS.exe</entry>
             <entry>%ESPATH%\..\melonDS\melonDS.exe</entry>
+            <entry>C:\Emulation\emulators\MelonDS\melonDS.exe</entry>
         </rule>
     </emulator>
     <emulator name="MGBA">
@@ -109,6 +120,7 @@
             <entry>%ESPATH%\mGBA\mGBA.exe</entry>
             <entry>%ESPATH%\Emulators\mGBA\mGBA.exe</entry>
             <entry>%ESPATH%\..\mGBA\mGBA.exe</entry>
+            <entry>C:\Emulation\emulators\mGBA\mGBA.exe</entry>
         </rule>
     </emulator>
     <emulator name="MUPEN64PLUS">
@@ -117,6 +129,7 @@
             <entry>%ESPATH%\mupen64plus\mupen64plus-ui-console.exe</entry>
             <entry>%ESPATH%\Emulators\mupen64plus\mupen64plus-ui-console.exe</entry>
             <entry>%ESPATH%\..\mupen64plus\mupen64plus-ui-console.exe</entry>
+            <entry>C:\Emulation\emulators\mupen64plus\mupen64plus-ui-console.exe</entry>
         </rule>
     </emulator>
     <emulator name="PCSX2">
@@ -125,6 +138,7 @@
             <entry>%ESPATH%\PCSX2\pcsx2.exe</entry>
             <entry>%ESPATH%\Emulators\PCSX2\pcsx2.exe</entry>
             <entry>%ESPATH%\..\PCSX2\pcsx2.exe</entry>
+            <entry>C:\Emulation\emulators\PCSX2\pcsx2.exe</entry>
         </rule>
     </emulator>
     <emulator name="PLAY!">
@@ -133,6 +147,7 @@
             <entry>%ESPATH%\Play\Play.exe</entry>
             <entry>%ESPATH%\Emulators\Play\Play.exe</entry>
             <entry>%ESPATH%\..\Play\Play.exe</entry>
+            <entry>C:\Emulation\emulators\Play\Play.exe</entry>
         </rule>
     </emulator>
     <emulator name="PPSSPP">
@@ -141,6 +156,7 @@
             <entry>%ESPATH%\PPSSPP\PPSSPPWindows64.exe</entry>
             <entry>%ESPATH%\Emulators\PPSSPP\PPSSPPWindows64.exe</entry>
             <entry>%ESPATH%\..\PPSSPP\PPSSPPWindows64.exe</entry>
+            <entry>C:\Emulation\emulators\PPSSPP\PPSSPPWindows64.exe</entry>
         </rule>
     </emulator>
     <emulator name="REDREAM">
@@ -149,6 +165,7 @@
             <entry>%ESPATH%\redream\redream.exe</entry>
             <entry>%ESPATH%\Emulators\redream\redream.exe</entry>
             <entry>%ESPATH%\..\redream\redream.exe</entry>
+            <entry>C:\Emulation\emulators\redream\redream.exe</entry>
         </rule>
     </emulator>
     <emulator name="RPCS3">
@@ -157,6 +174,7 @@
             <entry>%ESPATH%\RPCS3\rpcs3.exe</entry>
             <entry>%ESPATH%\Emulators\RPCS3\rpcs3.exe</entry>
             <entry>%ESPATH%\..\RPCS3\rpcs3.exe</entry>
+            <entry>C:\Emulation\emulators\RPCS3\rpcs3.exe</entry>
         </rule>
     </emulator>
     <emulator name="RYUJINX">
@@ -165,6 +183,7 @@
             <entry>%ESPATH%\ryujinx\Ryujinx.exe</entry>
             <entry>%ESPATH%\Emulators\ryujinx\Ryujinx.exe</entry>
             <entry>%ESPATH%\..\ryujinx\Ryujinx.exe</entry>
+            <entry>C:\Emulation\emulators\ryujinx\Ryujinx.exe</entry>
         </rule>
     </emulator>
     <emulator name="SNES9X">
@@ -173,6 +192,7 @@
             <entry>%ESPATH%\snes9x\snes9x-x64.exe</entry>
             <entry>%ESPATH%\Emulators\snes9x\snes9x-x64.exe</entry>
             <entry>%ESPATH%\..\snes9x\snes9x-x64.exe</entry>
+            <entry>C:\Emulation\emulators\snes9x\snes9x-x64.exe</entry>
         </rule>
     </emulator>
     <emulator name="VBA-M">
@@ -181,6 +201,7 @@
             <entry>%ESPATH%\VBA-M\visualboyadvance-m.exe</entry>
             <entry>%ESPATH%\Emulators\VBA-M\visualboyadvance-m.exe</entry>
             <entry>%ESPATH%\..\VBA-M\visualboyadvance-m.exe</entry>
+            <entry>C:\Emulation\emulators\VBA-M\visualboyadvance-m.exe</entry>
         </rule>
     </emulator>
     <emulator name="XEMU">
@@ -189,6 +210,7 @@
             <entry>%ESPATH%\xemu\xemu.exe</entry>
             <entry>%ESPATH%\Emulators\xemu\xemu.exe</entry>
             <entry>%ESPATH%\..\xemu\xemu.exe</entry>
+            <entry>C:\Emulation\emulators\Xemu\xemu.exe</entry>
         </rule>
     </emulator>
     <emulator name="XENIA">
@@ -197,6 +219,7 @@
             <entry>%ESPATH%\xenia\xenia.exe</entry>
             <entry>%ESPATH%\Emulators\xenia\xenia.exe</entry>
             <entry>%ESPATH%\..\xenia\xenia.exe</entry>
+            <entry>C:\Emulation\emulators\Xenia\xenia.exe</entry>
         </rule>
     </emulator>
     <emulator name="YUZU">
@@ -205,6 +228,7 @@
             <entry>%ESPATH%\yuzu\yuzu-windows-msvc\yuzu.exe</entry>
             <entry>%ESPATH%\Emulators\yuzu\yuzu-windows-msvc\yuzu.exe</entry>
             <entry>%ESPATH%\..\yuzu\yuzu-windows-msvc\yuzu.exe</entry>
+            <entry>C:\Emulation\emulators\yuzu\yuzu.exe</entry>
         </rule>
     </emulator>
 </ruleList>

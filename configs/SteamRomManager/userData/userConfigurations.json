@@ -2,11 +2,11 @@
   {
     "parserType": "Glob",
     "configTitle": "Emulators",
-    "steamCategory": "${Emulation}",
+    "SteamCategory": "${Emulation}",
     "executableArgs": "",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}shortcuts",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}shortcuts",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
     "titleModifier": "${fuzzyTitle}",
@@ -55,10 +55,10 @@
   {
     "parserType": "Glob",
     "configTitle": "3DO",
-    "steamCategory": "${3DO}",
+    "SteamCategory": "${3DO}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}3do",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}3do",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}opera_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -98,7 +98,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -108,10 +108,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Arcade - MAME 2003 Plus",
-    "steamCategory": "${Arcade MAME 2003+}",
+    "SteamCategory": "${Arcade MAME 2003+}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}mame",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}mame",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}mame2003_plus_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -151,7 +151,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -161,10 +161,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Arcade - MAME 2010",
-    "steamCategory": "${Arcade MAME 2010}",
+    "SteamCategory": "${Arcade MAME 2010}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}mame2010",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}mame2010",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}mame2010_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -204,7 +204,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -214,10 +214,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Arcade - MAME Current",
-    "steamCategory": "${Arcade MAME Current}",
+    "SteamCategory": "${Arcade MAME Current}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}arcade",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}arcade",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}mame_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -257,7 +257,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -267,11 +267,11 @@
   {
     "parserType": "Glob",
     "configTitle": "Arcade FBNeo - Retroarch",
-    "steamCategory": "${Arcade - FBNeo}",
+    "SteamCategory": "${Arcade - FBNeo}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}fbneo_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}fbneo",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}fbneo",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
     "titleModifier": "${fuzzyTitle}",
@@ -290,7 +290,7 @@
     "disabled": false,
     "advanced": false,
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -320,10 +320,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Atari 2600 - Retroarch - Stella",
-    "steamCategory": "${Atari 2600}",
+    "SteamCategory": "${Atari 2600}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}atari2600",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}atari2600",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}stella_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -363,7 +363,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -373,10 +373,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Atari Lynx - Retroarch - Beetle Handy",
-    "steamCategory": "${Atari Lynx}",
+    "SteamCategory": "${Atari Lynx}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}lynx",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}lynx",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}mednafen_lynx_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -416,7 +416,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -426,10 +426,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Bandai WonderSwan/Color - Retroarch - Beetle Cygne",
-    "steamCategory": "${WonderSwan}",
+    "SteamCategory": "${WonderSwan}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}wonderswan",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}wonderswan",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}mednafen_wswan_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -469,7 +469,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -479,10 +479,10 @@
   {
     "parserType": "Glob",
     "configTitle": "SNK Neo Geo Pocket/Color - Retroarch - Beetle NeoPop",
-    "steamCategory": "${Neo Geo Pocket}",
+    "SteamCategory": "${Neo Geo Pocket}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}ngpc",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}ngpc",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}mednafen_ngp_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -522,7 +522,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -532,10 +532,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Nintendo 3DS - Citra",
-    "steamCategory": "${Nintendo 3DS}",
+    "SteamCategory": "${Nintendo 3DS}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}3ds",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}3ds",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "\"${filePath}\"",
@@ -585,10 +585,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Nintendo 64 - Retroarch - Mupen64Plus Next",
-    "steamCategory": "${Nintendo 64}",
+    "SteamCategory": "${Nintendo 64}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}n64",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}n64",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}mupen64plus_next_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -628,7 +628,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -638,10 +638,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Nintendo GameBoy - Retroarch - Gambatte",
-    "steamCategory": "${GameBoy}",
+    "SteamCategory": "${GameBoy}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}gb",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}gb",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}gambatte_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -681,7 +681,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -691,10 +691,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Nintendo GameBoy Color - Retroarch - Gambatte",
-    "steamCategory": "${GameBoy Color}",
+    "SteamCategory": "${GameBoy Color}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}gbc",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}gbc",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}gambatte_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -734,7 +734,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -744,10 +744,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Nintendo GameBoy Advance - Retroarch - mGBA",
-    "steamCategory": "${GameBoy Advance}",
+    "SteamCategory": "${GameBoy Advance}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}gba",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}gba",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}mgba_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -787,7 +787,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -797,11 +797,11 @@
   {
     "parserType": "Glob",
     "configTitle": "Nintendo GameCube - Dolphin",
-    "steamCategory": "${Gamecube}",
+    "SteamCategory": "${Gamecube}",
     "executableArgs": "-b -e \"${filepath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}gamecube",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}gamecube",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
     "titleModifier": "${fuzzyTitle}",
@@ -850,10 +850,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Nintendo NES - Retroarch - Nestopia UE",
-    "steamCategory": "${NES}",
+    "SteamCategory": "${NES}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}nes",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}nes",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}mesen_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -893,7 +893,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -903,11 +903,11 @@
   {
     "parserType": "Glob",
     "configTitle": "Nintendo DS - Retroarch - melonDS",
-    "steamCategory": "${DS}",
+    "SteamCategory": "${DS}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}melonds_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}nds",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}nds",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
     "titleModifier": "${fuzzyTitle}",
@@ -926,7 +926,7 @@
     "disabled": false,
     "advanced": false,
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -956,10 +956,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Nintendo SNES - Retroarch - Snes9x",
-    "steamCategory": "${Super Nintendo}",
+    "SteamCategory": "${Super Nintendo}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}snes",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}snes",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}snes9x_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -999,7 +999,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1009,10 +1009,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Nintendo SNES WideScreen - Retroarch - Snes9x",
-    "steamCategory": "${Super Nintendo WideScreen}",
+    "SteamCategory": "${Super Nintendo WideScreen}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}sneshd",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}sneshd",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}bsnes_hd_beta_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -1052,7 +1052,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1062,10 +1062,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Nintendo Switch - Yuzu",
-    "steamCategory": "${Nintendo Switch - Yuzu}",
+    "SteamCategory": "${Nintendo Switch - Yuzu}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}switch",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}switch",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-f -g \"${filePath}\"",
@@ -1115,11 +1115,11 @@
   {
     "parserType": "Glob",
     "configTitle": "Nintendo Wii - Dolphin",
-    "steamCategory": "${Wii}",
+    "SteamCategory": "${Wii}",
     "executableArgs": "-b -e \"${filepath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}wii",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}wii",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
     "titleModifier": "${fuzzyTitle}",
@@ -1168,11 +1168,11 @@
   {
     "parserType": "Glob",
     "configTitle": "WiiU - Cemu (.rpx)",
-    "steamCategory": "${WiiU}",
+    "SteamCategory": "${WiiU}",
     "executableArgs": "-f -g \"${filepath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}wiiu",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}wiiu",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
     "titleModifier": "${fuzzyTitle}",
@@ -1191,7 +1191,7 @@
     "disabled": false,
     "advanced": false,
     "executable": {
-      "path": "${srmdir}${/}cemu${/}Cemu.exe",
+      "path": "C:${/}Emulation${/}emulators${/}Cemu${/}Cemu.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1221,11 +1221,11 @@
   {
     "parserType": "Glob",
     "configTitle": "WiiU - Cemu (.wud, .wux, .wua)",
-    "steamCategory": "${WiiU}",
+    "SteamCategory": "${WiiU}",
     "executableArgs": "-f -g \"${filepath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}wiiu",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}wiiu",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
     "titleModifier": "${fuzzyTitle}",
@@ -1244,7 +1244,7 @@
     "disabled": false,
     "advanced": false,
     "executable": {
-      "path": "${srmdir}${/}cemu${/}Cemu.exe",
+      "path": "C:${/}Emulation${/}emulators${/}Cemu${/}Cemu.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1274,11 +1274,11 @@
   {
     "parserType": "Glob",
     "configTitle": "PrimeHack",
-    "steamCategory": "${PrimeHack}",
+    "SteamCategory": "${PrimeHack}",
     "executableArgs": "-b -e \"${filepath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}primehacks",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}primehacks",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
     "titleModifier": "${fuzzyTitle}",
@@ -1327,10 +1327,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Sega 32X - Retroarch - PicoDrive",
-    "steamCategory": "${Sega 32X}",
+    "SteamCategory": "${Sega 32X}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}sega32x",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}sega32x",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}picodrive_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -1370,7 +1370,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1380,10 +1380,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Sega CD/Mega CD - Retroarch - Genesis Plus GX",
-    "steamCategory": "${Sega CD}",
+    "SteamCategory": "${Sega CD}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}segacd",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}segacd",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}genesis_plus_gx_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -1423,7 +1423,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1433,10 +1433,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Sega Dreamcast - Retroarch - Flycast",
-    "steamCategory": "${Dreamcast}",
+    "SteamCategory": "${Dreamcast}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}dreamcast",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}dreamcast",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}flycast_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -1476,7 +1476,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1486,10 +1486,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Sega Game Gear - Retroarch - Genesis Plus GX",
-    "steamCategory": "${Game Gear}",
+    "SteamCategory": "${Game Gear}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}gamegear",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}gamegear",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}genesis_plus_gx_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -1529,7 +1529,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1539,11 +1539,11 @@
   {
     "parserType": "Glob",
     "configTitle": "Sega Genesis/Mega Drive - Retroarch - Genesis Plus GX",
-    "steamCategory": "${Genesis/Mega Drive}",
+    "SteamCategory": "${Genesis/Mega Drive}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}genesis_plus_gx_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}genesis",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}genesis",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
     "titleModifier": "${fuzzyTitle}",
@@ -1562,7 +1562,7 @@
     "disabled": false,
     "advanced": false,
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1592,11 +1592,11 @@
   {
     "parserType": "Glob",
     "configTitle": "Sega Genesis/Mega Drive WideScreen - Retroarch - Genesis Plus GX",
-    "steamCategory": "${Genesis WideScreen}",
+    "SteamCategory": "${Genesis WideScreen}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}genesis_plus_gx_wide_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}genesiswide",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}genesiswide",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
     "titleModifier": "${fuzzyTitle}",
@@ -1615,7 +1615,7 @@
     "disabled": false,
     "advanced": false,
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1645,10 +1645,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Sega Master System - Retroarch - Genesis Plus GX",
-    "steamCategory": "${Master System}",
+    "SteamCategory": "${Master System}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}mastersystem",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}mastersystem",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}genesis_plus_gx_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -1688,7 +1688,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1698,10 +1698,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Sega Saturn - Retroarch - Yabause",
-    "steamCategory": "${Saturn}",
+    "SteamCategory": "${Saturn}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}saturn",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}saturn",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}yabause_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -1741,7 +1741,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1751,10 +1751,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Sony PlayStation - DuckStation",
-    "steamCategory": "${PlayStation}",
+    "SteamCategory": "${PlayStation}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}psx",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}psx",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-batch -fullscreen \"${filePath}\"",
@@ -1804,10 +1804,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Sony PlayStation 2 - PCSX2",
-    "steamCategory": "${Playstation 2}",
+    "SteamCategory": "${Playstation 2}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}ps2",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}ps2",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "\"${filePath}\" --nogui --fullscreen",
@@ -1847,7 +1847,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}..${/}..${/}Emulators${/}PCSX2${/}pcsx2.exe",
+      "path": "C:${/}Emulation${/}emulators${/}PCSX2${/}pcsx2.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1857,10 +1857,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Sony PlayStation 3 - RPCS3 (Extracted ISO/PSN)",
-    "steamCategory": "${PlayStation 3}",
+    "SteamCategory": "${PlayStation 3}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}ps3",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}ps3",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "--no-gui \"${filePath}\"",
@@ -1900,7 +1900,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}..${/}..${/}Emulators${/}RPCS3${/}rpcs3.exe",
+      "path": "C:${/}Emulation${/}emulators${/}RPCS3${/}rpcs3.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1910,10 +1910,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Sony PlayStation Portable - Retroarch - PPSSPP",
-    "steamCategory": "${PSP}",
+    "SteamCategory": "${PSP}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}psp",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}psp",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}ppsspp_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
@@ -1953,7 +1953,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+      "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -1963,10 +1963,10 @@
   {
     "parserType": "Glob",
     "configTitle": "Sony PlayStation Portable - PPSSPP",
-    "steamCategory": "${PSP - Standalone PPSSPP}",
+    "SteamCategory": "${PSP - Standalone PPSSPP}",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}psp",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}psp",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "titleModifier": "${fuzzyTitle}",
     "executableArgs": "-f -g \"${filePath}\"",
@@ -2006,7 +2006,7 @@
       "removeBrackets": true
     },
     "executable": {
-      "path": "${srmdir}${/}..${/}..${/}Emulators${/}PPSSPP${/}PPSSPPWindows64.exe",
+      "path": "C:${/}Emulation${/}emulators${/}PPSSPP${/}PPSSPPWindows64.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -2016,11 +2016,11 @@
   {
     "parserType": "Glob",
     "configTitle": "Microsoft XBox - Xemu",
-    "steamCategory": "${XBox}",
+    "SteamCategory": "${XBox}",
     "executableArgs": "-full-screen -dvd_path \"${filepath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}xbox",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}xbox",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "imageProviders": ["SteamGridDB"],
     "titleModifier": "${fuzzyTitle}",
@@ -2039,7 +2039,7 @@
     "disabled": false,
     "advanced": false,
     "executable": {
-      "path": "${srmdir}${/}..${/}..${/}Emulators${/}Xemu${/}xemu.exe",
+      "path": "C:${/}Emulation${/}emulators${/}Xemu${/}xemu.exe",
       "shortcutPassthrough": false,
       "appendArgsToExecutable": true
     },
@@ -2069,11 +2069,11 @@
   {
     "parserType": "Glob",
     "configTitle": "Sony PlayStation - Retroarch - Beetle PSX HW",
-    "steamCategory": "${PS1}",
+    "SteamCategory": "${PS1}",
     "executableArgs": "-L ${os:win|cores|${os:mac|${racores}|${os:linux|${racores}}}}${/}mednafen_psx_hw_libretro.${os:win|dll|${os:mac|dylib|${os:linux|so}}} \"${filePath}\"",
     "executableModifier": "\"${exePath}\"",
-    "romDirectory": "${srmdir}${/}roms${/}psx",
-    "steamDirectory": "${srmdir}${/}steam",
+    "romDirectory": "C:${/}Emulation${/}roms${/}psx",
+    "SteamDirectory": "C:${/}Emulation${/}apps${/}Steam",
     "startInDirectory": "",
     "imageProviders": [
         "SteamGridDB"
@@ -2094,7 +2094,7 @@
     "disabled": true,
     "advanced": false,
     "executable": {
-        "path": "${srmdir}${/}retroarch${/}retroarch.exe",
+        "path": "C:${/}Emulation${/}emulators${/}retroarch${/}retroarch.exe",
         "shortcutPassthrough": false,
         "appendArgsToExecutable": true
     },

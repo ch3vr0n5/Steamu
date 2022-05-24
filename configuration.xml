@@ -18,6 +18,26 @@
 			<TargetBasePath>C:</TargetBasePath>
 			<Source>$pathEmulation</Source>
 		</Junction>
+		<Junction>
+			<Name>apps</Name>
+			<TargetBasePath>C:\Emulation</TargetBasePath>
+			<Source>$pathApps</Source>
+		</Junction>
+		<Junction>
+			<Name>emulators</Name>
+			<TargetBasePath>C:\Emulation</TargetBasePath>
+			<Source>$pathEmulators</Source>
+		</Junction>
+		<Junction>
+			<Name>Steam</Name>
+			<TargetBasePath>$pathApps</TargetBasePath>
+			<Source>$pathSteam</Source>
+		</Junction>
+		<Junction>
+			<Name>shortcuts</Name>
+			<TargetBasePath>C:\Emulation</TargetBasePath>
+			<Source>$pathShortcuts</Source>
+		</Junction>
 	</Program>
 	<Program>
 		<Name>Steam Rom Manager</Name>
@@ -121,30 +141,8 @@
 				<Type>zip</Type>
 			</Extract>
 		</Extra>
-		<Configs>
-		</Configs>
 		<CreateSteamShortcut/>
 		<CreateDesktopShortcut/>
-		<Junction>
-			<Name>roms</Name>
-			<TargetBasePath>$pathRetroarch</TargetBasePath>
-			<Source>$pathRoms</Source>
-		</Junction>
-				<Junction>
-			<Name>saves</Name>
-			<TargetBasePath>$pathRetroarch</TargetBasePath>
-			<Source>$pathSaves\retroarch</Source>
-		</Junction>
-				<Junction>
-			<Name>states</Name>
-			<TargetBasePath>$pathRetroarch</TargetBasePath>
-			<Source>$pathStates\retroarch</Source>
-		</Junction>
-				<Junction>
-			<Name>bios</Name>
-			<TargetBasePath>$pathRetroarch</TargetBasePath>
-			<Source>$pathBios\retroarch</Source>
-		</Junction>
 	</Program>
 	<Program>
 		<Name>Xemu</Name>

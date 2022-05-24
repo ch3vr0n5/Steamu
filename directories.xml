@@ -81,7 +81,7 @@
             <name>bios</name>
         </sub-directory>
         <sub-directory>
-            <name>configs</name>
+            <name>config</name>
         </sub-directory>
         <sub-directory>
             <name>roms</name>
@@ -160,6 +160,14 @@
         <Path>$pathStorage\cemu</Path>
 	    <sub-directory>
             <name>mlc01</name>
+        </sub-directory>
+    </directory>
+
+    <directory>
+        <name>ppsspp</name>
+        <Path>$pathStorage\ppsspp</Path>
+	    <sub-directory>
+            <name>memstick</name>
         </sub-directory>
     </directory>
 
