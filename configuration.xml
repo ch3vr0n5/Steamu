@@ -101,16 +101,6 @@
 		</Extract>
 		<CreateSteamShortcut/>
 		<CreateDesktopShortcut/>
-		<Junction>
-			<Name>ROMs</Name>
-			<TargetBasePath>$pathEs</TargetBasePath>
-			<Source>$pathRoms</Source>
-		</Junction>
-		<Junction>
-			<Name>Emulators</Name>
-			<TargetBasePath>$pathEs</TargetBasePath>
-			<Source>$pathEmulators</Source>
-		</Junction>
 	</Program>
 	<Program>
 		<Name>Retroarch</Name>
