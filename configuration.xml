@@ -13,6 +13,11 @@
 			<ExtractFolder>Steamu-$branch</ExtractFolder>
 			<Type>zip</Type>
 		</Extract>
+		<Junction>
+			<Name>Emulation</Name>
+			<TargetBasePath>C:</TargetBasePath>
+			<Source>$pathEmulation</Source>
+		</Junction>
 	</Program>
 	<Program>
 		<Name>Steam Rom Manager</Name>
