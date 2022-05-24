@@ -123,12 +123,12 @@
 				<Junction>
 			<Name>saves</Name>
 			<TargetBasePath>$pathRetroarch</TargetBasePath>
-			<Source>$pathSaves</Source>
+			<Source>$pathSaves\retroarch</Source>
 		</Junction>
 				<Junction>
 			<Name>states</Name>
 			<TargetBasePath>$pathRetroarch</TargetBasePath>
-			<Source>$pathStates</Source>
+			<Source>$pathStates\retroarch</Source>
 		</Junction>
 				<Junction>
 			<Name>bios</Name>
