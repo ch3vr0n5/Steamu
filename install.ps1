@@ -185,7 +185,7 @@ ERROR: $_
 		$WshShell = New-Object -comObject WScript.Shell
 		$Shortcut = $WshShell.CreateShortcut($DestinationPath)
 		$Shortcut.TargetPath = $SourceExe
-		$Shortcut.Start = $SourcePath
+		$Shortcut.WorkingDirectory = $SourcePath
 		$Shortcut.Save() | Out-Null
 		$stringOutput = "SHORTCUTS: Created shortcut - $DestinationPath"
 		Write-Log $stringOutput $false
