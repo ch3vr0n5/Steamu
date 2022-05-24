@@ -163,7 +163,7 @@ ERROR: $_
 		} 
 }
 
-function New-Shortcut([string]$SourceExe, [string]$DestinationPath){
+function New-Shortcut([string]$SourceExe, [string]$DestinationPath, [string]$SourcePath){
 # https://stackoverflow.com/a/9701907
 	If(Test-Path -Path $DestinationPath -PathType Leaf) {
 		try {
@@ -185,6 +185,7 @@ ERROR: $_
 		$WshShell = New-Object -comObject WScript.Shell
 		$Shortcut = $WshShell.CreateShortcut($DestinationPath)
 		$Shortcut.TargetPath = $SourceExe
+		$Shortcut.Start = $SourcePath
 		$Shortcut.Save() | Out-Null
 		$stringOutput = "SHORTCUTS: Created shortcut - $DestinationPath"
 		Write-Log $stringOutput $false
@@ -953,6 +954,7 @@ Write-Log $stringOutput $true
 				} else { 
 					$ExecutionContext.InvokeCommand.ExpandString($_.exe)
 				}
+			$startIn = "$exePath\$exePathName"
 			$exeFullPath = "$exePath\$exePathName\$exeName"
 			$shortcutDesktopPath = "$pathDesktopShortcuts\$name.lnk"
 			$shortcutSteamPath = "$pathShortcuts\$name.lnk"
@@ -963,12 +965,12 @@ Write-Log $stringOutput $true
 
 			IF ($createShortcutDesktop){
 
-				New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutDesktopPath
+				New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutDesktopPath -SourcePath $startIn
 
 			} 
 			If ($createShortcutSteam) {
 
-				New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutSteamPath
+				New-Shortcut -SourceExe $exeFullPath -DestinationPath $shortcutSteamPath  -SourcePath $startIn
 
 			}
 		}
