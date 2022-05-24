@@ -149,7 +149,7 @@ function New-Download($URL, $TargetFile)
 Function New-Download ([string]$URI, [string]$TargetFile, [string]$Name) {
 
 		Try {
-			$stringOutput = "DOWNLOADS: Downloading $Name - $TargetFile"
+			$stringOutput = "DOWNLOADS: Downloading $Name"
 			Write-Log $stringOutput $True
 			Invoke-WebRequest -URI $URI -OutFile $TargetFile
 			$stringOutput = "DOWNLOADS: $Name Complete - $TargetFile"
@@ -571,11 +571,7 @@ IMPORTANT: We use exact system directory names as defined in our documentation o
 
 #region ------------------------------ Build directory structure
 
-$stringOutput = @"
-Creating Steamu directory structure
-Path: $pathSteamu
-
-"@
+$stringOutput = 'DIRECTORIES: Creating Steamu directory structure'
 Write-Log $stringOutput $true
 
 # foreach logic here to create directories from xml, perhaps where-object parentnode.name = 'Steamu', etc.
@@ -598,10 +594,7 @@ $dirXml.SelectNodes('//sub-directory') | ForEach-Object{
     }
 }
 
-$stringOutput = @"
-Steamu directory structure created.
-
-"@
+$stringOutput = 'DIRECTORIES: Steamu directory structure created.'
 Write-Log $stringOutput $true
 
 #endregion
@@ -609,7 +602,7 @@ Write-Log $stringOutput $true
 #region ------------------------------ Download required files
 IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	if (test-path -path $pathDownloads) {
-		$stringOutput = 'Beginning downloads.'
+		$stringOutput = 'DOWNLOADS: Beginning downloads.'
 		Write-Log $stringOutput $true
 
 # new foreach logic here for downloads from xml, add foreach for extras, select url node
@@ -624,11 +617,11 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 	}
 
-		$stringOutput = 'Downloads complete'
+		$stringOutput = 'DOWNLOADS: Downloads complete'
 		Write-Log $stringOutput $true
 
 	} Else {
-		$stringOutput = "Unable to continue. $pathDownloads does not exist! Press any key to exit."
+		$stringOutput = "DOWNLOADS: Unable to continue. $pathDownloads does not exist! Press any key to exit."
 		Pause-Console $stringOutput
 		exit
 	}
@@ -664,7 +657,7 @@ devSkip: $devSkip
 
 If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
-	$stringOutput = "EXTRACTS: Beginning etraction"
+	$stringOutput = "EXTRACTS: Beginning extraction"
 	Write-Log $stringOutput $true
 
 	$configXml.SelectNodes('//Extract') | ForEach-Object  {
@@ -769,7 +762,7 @@ Write-Log $stringOutput $true
 
 		}
 
-$stringOutput = 'Created Junctions (symlinks).'
+$stringOutput = 'JUNCTIONS: Created Junctions (symlinks).'
 Write-Log $stringOutput $true
 
 #endregion
