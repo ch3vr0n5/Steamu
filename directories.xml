@@ -109,6 +109,14 @@
     </directory>
 
     <directory>
+        <name>states</name>
+        <Path>$pathStates</Path>
+        <sub-directory>
+            <name>retroarch</name>
+        </sub-directory>
+    </directory>
+
+    <directory>
         <name>cemu</name>
         <Path>$pathSaves\cemu</Path>
         <sub-directory>
