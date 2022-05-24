@@ -247,6 +247,17 @@ Function Get-Choice([string]$title,[string]$question,[int]$default,[string[]]$ch
 
 Function New-Junction([string]$Source, [string]$Target, [string]$Name){
 	[bool]$isJunction = $false
+
+	# If a bad junction was created it may leave an extension-less file and will be confused for the target
+	If (Test-Path -Path $Target -PathType Leaf) {
+		Remove-Item -Path $target -Force
+	}
+
+	# make target if it doesn't exist
+	If ((Test-Path -Path $Target) -eq $false) {
+		New-Directory -path $Target
+	}
+
 	$pathLinkType = (Get-Item -Path $target -Force).LinkType
 
 	If ($pathLinkType -eq "Junction"){
