@@ -761,11 +761,11 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 			Extract-Archive -Source $downloadFileLocation -Destination $extractToPath -Name $name
 
-			Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $name
+			Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $name -OverwriteDestination
 				
 		} elseif ($type -eq 'exe') {
 
-			Move-Directory -Source $downloadFileLocation -Destination $moveToPath -Name $name
+			Move-Directory -Source $downloadFileLocation -Destination $moveToPath -Name $name -OverwriteDestination
 
 		} else {
 			$outputString = "EXTRACTS: Extraction type not handled for $Name! Type: $type"
@@ -864,7 +864,7 @@ Write-Log $outputString -ToHost
 			# 	$outputString = "$pathEsData\es_find_rules.xml backed up to es_find_rules-$backupDateTime.xml"
 			# 	Write-Log $outputString
 			# }
-			
+
 			# If (Test-Path -Path "$pathEsData\es_systems.xml" -PathType Leaf) {
 			# 	Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems-$backupDateTime.xml" -Force | Out-Null
 			# 	$outputString = "$pathEsData\es_systems.xml backed up to es_systems-$backupDateTime.xml"
@@ -895,7 +895,7 @@ Write-Log $outputString -ToHost
 						$outputString = "CONFIGS: Overwriting configs for $name"
 						Write-Log $outputString -ToHost
 
-						Move-Directory -Source $copyfromPath -Destination $copyToPath -Name $name
+						Move-Directory -Source $copyfromPath -Destination $copyToPath -Name $name -OverwriteDestination
 						} else {
 							$outputString = "CONFIGS: Unable to overwrite configs for $name. Path does not exist: $copyFromPath"
 							Write-Log $outputString -ToHost
