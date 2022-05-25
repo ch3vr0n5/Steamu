@@ -89,6 +89,22 @@ $cemuVersion = '1.27.0'
 
 #region ------------------------------ Functions
 
+function Write-Log ($stringMessageArg, [switch]$toHost, [switch]$IsError)
+# http://woshub.com/write-output-log-files-powershell/
+{
+	$timeStamp = (Get-Date).toString("yyyy/MM/dd HH:mm:ss")
+	$stringLogMessage = "$timeStamp $stringMessageArg"
+	
+	Add-content $fileLog -value $stringLogMessage
+
+	If ($toHost) {
+		If ($IsError) {
+			Write-Host $stringMessageArg -ForegroundColor Red
+		} else {
+			Write-Host $stringMessageArg
+		}
+	}
+}
 Function Pause-Console ($stringMessageArg)
 # https://stackoverflow.com/a/28237896
 {
