@@ -313,19 +313,7 @@ ERROR: $errorString
 }
 
 Function Write-Space {
-	$space = @"
-
-
-
-
-
-
-
-
-
-
-"@
-	Write-Host $space
+	Clear-Host
 }
 
 Function New-Directory([string]$path) {
