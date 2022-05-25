@@ -69,6 +69,7 @@ $pathBios = "$pathEmulation\bios"
 $pathSaves = "$pathEmulation\saves" # can be custom
 $pathStates = "$pathEmulation\states" # can be custom
 $pathStorage = "$pathEmulation\storage" # can be custom
+$pathConfigEmu = "$pathEmulation\config"
 
 $pathDesktopShortcuts = "$pathHome\Desktop\Emulation"
 
