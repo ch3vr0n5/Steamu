@@ -122,47 +122,6 @@ Function Pause-Console ($stringMessageArg)
     }
 }
 
-function Write-Log ($stringMessageArg, [bool]$toHost)
-# http://woshub.com/write-output-log-files-powershell/
-{
-	$timeStamp = (Get-Date).toString("yyyy/MM/dd HH:mm:ss")
-	$stringLogMessage = "$timeStamp $stringMessageArg"
-	
-	Add-content $fileLog -value $stringLogMessage
-
-	If ($toHost) {
-		Write-Host $stringMessageArg
-	}
-}
-<#
-function New-Download($URL, $TargetFile)
-# https://stackoverflow.com/a/21422517 -- replaces regular invoke-webrequest progress tracking since it severly reduces download speed
-{
-   $uri = New-Object "System.Uri" "$url"
-   $request = [System.Net.HttpWebRequest]::Create($uri)
-   $request.set_Timeout(15000) #15 second timeout
-   $response = $request.GetResponse()
-   $totalLength = [System.Math]::Floor($response.get_ContentLength()/1024)
-   $responseStream = $response.GetResponseStream()
-   $targetStream = New-Object -TypeName System.IO.FileStream -ArgumentList $targetFile, Create
-   $buffer = new-object byte[] 10KB
-   $count = $responseStream.Read($buffer,0,$buffer.length)
-   $downloadedBytes = $count
-   while ($count -gt 0)
-   {
-       $targetStream.Write($buffer, 0, $count)
-       $count = $responseStream.Read($buffer,0,$buffer.length)
-       $downloadedBytes = $downloadedBytes + $count
-       Write-Progress -activity "Downloading file '$($url.split('/') | Select-Object -Last 1)'" -status "Downloaded ($([System.Math]::Floor($downloadedBytes/1024))K of $($totalLength)K): " -PercentComplete ((([System.Math]::Floor($downloadedBytes/1024)) / $totalLength)  * 100)
-   }
-   Write-Progress -activity "Finished downloading file '$($url.split('/') | Select-Object -Last 1)'"
-   $targetStream.Flush()
-   $targetStream.Close()
-   $targetStream.Dispose()
-   $responseStream.Dispose()
-}
-#>
-
 Function New-Download ([string]$URI, [string]$TargetFile, [string]$Name) {
 
 		Try {
