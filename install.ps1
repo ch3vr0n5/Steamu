@@ -371,14 +371,26 @@ If (Test-Path -Path .\directories.xml -PathType Leaf) {
 	Pause-Console $outputString 
 	exit
 }
+
+# Settings
+If (Test-Path -Path .\settings.xml -PathType Leaf) {
+	[xml]$setXml = Get-Content -Path .\settings.xml
+
+	$doFirstTimeSetup = $false
+	$doUpdate = $true
+} else {
+	$doFirstTimeSetup = $true
+	$doUpdate = $false
+}
+
 #endregion
 
 #region ------------------------------ Start Steamu Log FIle
 
 if (Test-Path -path $fileLog -PathType Leaf) {
 	#Clear-Content -path $fileLog
-	$outputString = "$fileLog Cleared Log File"
-	Write-Log $outputString
+	#$outputString = "$fileLog Cleared Log File"
+	#Write-Log $outputString
 
 } else {
 
@@ -409,263 +421,275 @@ else {
 
 #endregion
 
-#region ------------------------------ Gather installation parameters
+#region ------------------------------ Gather installation/update parameters
 
-# Set automated installation parameters
-$doDownload = $true
-$doCustomRomDirectory = $false
-$doRomSubFolders = $true
+#check new xml for changes in versions against old xml HERE
 
-$title = 'Welcome to Steamu!'
-$question = @"
-
-This program is designed to simplify the process of
-downloading, installing and configuring emulation
-to get you retro gaming in a matter of minutes. 
-
-You will have the option to use an entirely automated
-installation using defaults or a customized installation
-for more advanced configurations.
-
-Default installation path for Steamu, Apps and Emulators:
-$pathSteamu
-
-Default path for ROMs, Bios files, saves, states and misc storage:
-$pathEmulation
-
-Default path for shortcuts to Apps and Emulators:
-$pathDesktopShortcuts
-
-Documentation is forthcoming, please be patient.
-
-Enjoy!
-
-"@
-$choices = @('&Continue','&Quit')
-$default = 0
-Write-Space
-$continueInstallation = Get-Choice $title $question $default $choices
-
-If ($continueInstallation -eq 1) {
-	Pause-Console 'Installation cancelled. Press any key to exit.'
-	exit
+If ($doUpdate) {
+	# ask if want to proceed with update, list current custom paths, if any and list applications going to be updated, foreach-object if version mismatch put name in array $doUpdateNames
 }
 
-# ask here to install Steamu, apps, emulators to a different path
+If ($doFirstTimeSetup) {
+# Set automated installation parameters
+	$doDownload = $true
+	$doCustomRomDirectory = $false
+	$doRomSubFolders = $true
 
-$title = 'Installation Selection'
-$question = @"
-
-Would you like to proceed with an automated installation or do you wish to customize your install?
-
-"@
-$default = 0
-$choices = @('&Automated','&Custom')
-Write-Space
-$installChoice = Get-Choice $title $question $default $choices
-
-
-if ($installChoice -eq 0) {
-    Write-Log 'Automated install chosen' $true
-} else {
-    Write-Log 'Custom install chosen' $true
-
-########## choose a custom rom directory
-	$title = 'Custom ROM Directory Selection'
+	$title = 'Steamu'
 	$question = @"
 
-Would you like to choose your own ROM path?
+	This program is designed to simplify the process of
+	downloading, installing and configuring emulation
+	to get you retro gaming in a matter of minutes. 
 
-Default path: $pathRoms
+	You will have the option to use an entirely automated
+	installation using defaults or a customized installation
+	for more advanced configurations.
 
-If you choose yes, you will be prompted to select the proper path.
+	Default installation path for Steamu, Apps and Emulators:
+	$pathSteamu
+
+	Default path for ROMs, Bios files, saves, states and misc storage:
+	$pathEmulation
+
+	Default path for shortcuts to Apps and Emulators:
+	$pathDesktopShortcuts
+
+	Documentation is forthcoming, please be patient.
+
+	Enjoy!
 
 "@
-	$default = 1
-	$choices = @('&Yes','&No')
+	$choices = @('&Continue','&Quit')
+	$default = 0
 	Write-Space
-	$customRomDirectoryChoice = Get-Choice $title $question $default $choices
-	if ($customRomDirectoryChoice -eq 0) {
-    	
-		$doCustomRomDirectory = $true
-		$pathRoms = Get-Folder
+	$continueInstallation = Get-Choice $title $question $default $choices
 
-		# if get-folder is cancelled then revert to default path
-		If ($null -eq $pathRoms) {
-			$outputString = "CUSTOM: No custom rom folder selected. Reverting to default."
-			Write-Log $outputString -ToHost
-			$pathRoms = "$pathEmulation\roms"
+	If ($continueInstallation -eq 1) {
+		Pause-Console 'Installation cancelled. Press any key to exit.'
+		exit
+	}
+
+	# ask here to install Steamu, apps, emulators to a different path
+
+	$title = 'Installation Selection'
+	$question = @"
+
+	Would you like to proceed with an automated installation or do you wish to customize your install?
+
+"@
+	$default = 0
+	$choices = @('&Automated','&Custom')
+	Write-Space
+	$installChoice = Get-Choice $title $question $default $choices
+
+
+	if ($installChoice -eq 0) {
+		Write-Log 'Automated install chosen' $true
+	} else {
+		Write-Log 'Custom install chosen' $true
+
+	########## choose a custom rom directory
+		$title = 'Custom ROM Directory Selection'
+		$question = @"
+
+	Would you like to choose your own ROM path?
+
+	Default path: $pathRoms
+
+	If you choose yes, you will be prompted to select the proper path.
+
+"@
+		$default = 1
+		$choices = @('&Yes','&No')
+		Write-Space
+		$customRomDirectoryChoice = Get-Choice $title $question $default $choices
+		if ($customRomDirectoryChoice -eq 0) {
+			
+			$doCustomRomDirectory = $true
+			$pathRoms = Get-Folder
+
+			# if get-folder is cancelled then revert to default path
+			If ($null -eq $pathRoms) {
+				$outputString = "CUSTOM: No custom rom folder selected. Reverting to default."
+				Write-Log $outputString -ToHost
+				$pathRoms = "$pathEmulation\roms"
+				$doCustomRomDirectory = $false
+			}
+
+			Write-Log @"
+	CUSTOM: Custom ROM directory chosen.
+
+	Path: $pathRoms
+"@ $true
+		} else {
+			Write-Log @"
+	Using default ROM directory.
+
+	Path: $pathRoms
+"@ $true
 			$doCustomRomDirectory = $false
 		}
 
-		Write-Log @"
-CUSTOM: Custom ROM directory chosen.
+		# check to make sure custom path was selected, if it is the same as the default then reset $doCustomRomDirectory
+		If ($pathRoms -eq "$pathEmulation\roms") {
+			$doCustomRomDirectory = $false
+		}
 
-Path: $pathRoms
-"@ $true
-	} else {
-    	Write-Log @"
-Using default ROM directory.
+		# choose if you want to populate your custom rom path only if they chose custom
+		If ($doCustomRomDirectory) {
+			$title = 'Custom ROM Directory Sub-folders'
+			$question = @"
 
-Path: $pathRoms
-"@ $true
-		$doCustomRomDirectory = $false
-	}
+	Would you like ROM system sub-directories created in your custom ROM path?
 
-	# check to make sure custom path was selected, if it is the same as the default then reset $doCustomRomDirectory
-	If ($pathRoms -eq "$pathEmulation\roms") {
-		$doCustomRomDirectory = $false
-	}
+	Custom path: $pathRoms
 
-	# choose if you want to populate your custom rom path only if they chose custom
-	If ($doCustomRomDirectory) {
-		$title = 'Custom ROM Directory Sub-folders'
-		$question = @"
+	This will create properly named directories at the destination for all the supported systems
+	such as amiga, snes, mame, etc.
 
-Would you like ROM system sub-directories created in your custom ROM path?
+	Existing ROMs at the destination won't be moved or deleted.
 
-Custom path: $pathRoms
-
-This will create properly named directories at the destination for all the supported systems
-such as amiga, snes, mame, etc.
-
-Existing ROMs at the destination won't be moved or deleted.
-
-IMPORTANT: We use exact system directory names as defined in our documentation on Github.
-		You may need to move existing roms into properly named system folders in order for them
-		to be seen by the various apps and emulators.
+	IMPORTANT: We use exact system directory names as defined in our documentation on Github.
+			You may need to move existing roms into properly named system folders in order for them
+			to be seen by the various apps and emulators.
 
 "@
-		$default = 0
+			$default = 0
+			$choices = @('&Yes','&No')
+			Write-Space
+			$subFolderChoice = Get-Choice $title $question $default $choices
+			
+			if ($subFolderChoice -eq 0) {
+				Write-Log 'CUSTOM: Yes, ROM sub-directories will be created, if missing.'
+				$doRomSubFolders = $true
+			} else {
+				Write-Log 'CUSTOM: No, ROM sub-directories will NOT be created. You will need to do this manually.'
+				$doRomSubFolders = $false
+			}
+		}
+
+	########## custom saves directory selection
+		$title = 'Custom Saves Directory Selection'
+		$question = @"
+
+	Would you like to choose your own Saves path?
+
+	Default path: $pathSaves
+
+	If you choose yes, you will be prompted to select the proper path.
+
+"@
+		$default = 1
 		$choices = @('&Yes','&No')
 		Write-Space
-		$subFolderChoice = Get-Choice $title $question $default $choices
-		
-		if ($subFolderChoice -eq 0) {
-    		Write-Log 'CUSTOM: Yes, ROM sub-directories will be created, if missing.'
-			$doRomSubFolders = $true
-		} else {
-    		Write-Log 'CUSTOM: No, ROM sub-directories will NOT be created. You will need to do this manually.'
-			$doRomSubFolders = $false
-		}
-	}
+		$customSavesDirectoryChoice = Get-Choice $title $question $default $choices
+		if ($customSavesDirectoryChoice -eq 0) {
+			
+			$doCustomSavesDirectory = $true
+			$pathSaves = Get-Folder
 
-########## custom saves directory selection
-	$title = 'Custom Saves Directory Selection'
+			# if get-folder is cancelled then revert to default path
+			If ($null -eq $pathSaves) {
+				$outputString = "CUSTOM: No custom Saves folder selected. Reverting to default."
+				Write-Log $outputString -ToHost
+				$pathSaves = "$pathEmulation\saves"
+				$doCustomSavesDirectory = $false
+			}
+
+			Write-Log @"
+	CUSTOM: Custom Saves directory chosen.
+
+	Path: $pathSaves
+"@ $true
+		} else {
+			Write-Log @"
+	Using default Saves directory.
+
+	Path: $pathSaves
+"@ $true
+			$doCustomSavesDirectory = $false
+		}
+
+	########## custom states directory selection
+	$title = 'Custom States Directory Selection'
 	$question = @"
 
-Would you like to choose your own Saves path?
+	Would you like to choose your own States path?
+	This folder stores save states if an emulator supports them.
 
-Default path: $pathSaves
+	Default path: $pathStates
 
-If you choose yes, you will be prompted to select the proper path.
+	If you choose yes, you will be prompted to select the proper path.
 
 "@
 	$default = 1
 	$choices = @('&Yes','&No')
 	Write-Space
-	$customSavesDirectoryChoice = Get-Choice $title $question $default $choices
-	if ($customSavesDirectoryChoice -eq 0) {
+	$customStatesDirectoryChoice = Get-Choice $title $question $default $choices
+	if ($customStatesDirectoryChoice -eq 0) {
 		
-		$doCustomSavesDirectory = $true
-		$pathSaves = Get-Folder
+		$doCustomStatesDirectory = $true
+		$pathStates = Get-Folder
 
 		# if get-folder is cancelled then revert to default path
-		If ($null -eq $pathSaves) {
-			$outputString = "CUSTOM: No custom Saves folder selected. Reverting to default."
+		If ($null -eq $pathStates) {
+			$outputString = "CUSTOM: No custom States folder selected. Reverting to default."
 			Write-Log $outputString -ToHost
-			$pathSaves = "$pathEmulation\saves"
-			$doCustomSavesDirectory = $false
+			$pathStates = "$pathEmulation\states"
+			$doCustomStatesDirectory = $false
 		}
 
 		Write-Log @"
-CUSTOM: Custom Saves directory chosen.
+	CUSTOM: Custom States directory chosen.
 
-Path: $pathSaves
+	Path: $pathStates
 "@ $true
 	} else {
 		Write-Log @"
-Using default Saves directory.
+	Using default States directory.
 
-Path: $pathSaves
+	Path: $pathStates
 "@ $true
-		$doCustomSavesDirectory = $false
-	}
-
-########## custom states directory selection
-$title = 'Custom States Directory Selection'
-$question = @"
-
-Would you like to choose your own States path?
-This folder stores save states if an emulator supports them.
-
-Default path: $pathStates
-
-If you choose yes, you will be prompted to select the proper path.
-
-"@
-$default = 1
-$choices = @('&Yes','&No')
-Write-Space
-$customStatesDirectoryChoice = Get-Choice $title $question $default $choices
-if ($customStatesDirectoryChoice -eq 0) {
-	
-	$doCustomStatesDirectory = $true
-	$pathStates = Get-Folder
-
-	# if get-folder is cancelled then revert to default path
-	If ($null -eq $pathStates) {
-		$outputString = "CUSTOM: No custom States folder selected. Reverting to default."
-		Write-Log $outputString -ToHost
-		$pathStates = "$pathEmulation\states"
 		$doCustomStatesDirectory = $false
+		}
+
 	}
-
-	Write-Log @"
-CUSTOM: Custom States directory chosen.
-
-Path: $pathStates
-"@ $true
-} else {
-	Write-Log @"
-Using default States directory.
-
-Path: $pathStates
-"@ $true
-	$doCustomStatesDirectory = $false
-	}
-
 }
 
 #endregion
 
 #region ------------------------------ Build directory structure
 
-$outputString = 'DIRECTORIES: Creating Steamu directory structure'
-Write-Log $outputString -ToHost
+If ($doFirstTimeSetup) {
 
-# foreach logic here to create directories from xml, perhaps where-object parentnode.name = 'Steamu', etc.
+	$outputString = 'DIRECTORIES: Creating Steamu directory structure'
+	Write-Log $outputString -ToHost
 
-$dirXml.SelectNodes('//sub-directory') | ForEach-Object{
-    $basePath = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Path)
-    $name = $_.parentnode.name
-    $subDirectoryName = $_.name
+	# foreach logic here to create directories from xml, perhaps where-object parentnode.name = 'Steamu', etc.
 
-    $fullPath = "$basePath\$subDirectoryName"
+	$dirXml.SelectNodes('//sub-directory') | ForEach-Object{
+		$basePath = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Path)
+		$name = $_.parentnode.name
+		$subDirectoryName = $_.name
 
-    If ($name -ne 'Roms') {
-        New-Directory -Path $fullPath
-        #Write-Host "DIRECTORIES: $name - $fullPath"
-    }
+		$fullPath = "$basePath\$subDirectoryName"
 
-    If (($name -eq 'Roms') -and ($doRomSubFolders)) {
-        New-Directory -Path $fullPath
-        #Write-Host "DIRECTORIES: $name - $fullPath"
-    }
+		If ($name -ne 'Roms') {
+			New-Directory -Path $fullPath
+			#Write-Host "DIRECTORIES: $name - $fullPath"
+		}
+
+		If (($name -eq 'Roms') -and ($doRomSubFolders)) {
+			New-Directory -Path $fullPath
+			#Write-Host "DIRECTORIES: $name - $fullPath"
+		}
+	}
+
+	$outputString = 'DIRECTORIES: Steamu directory structure created.'
+	Write-Log $outputString -ToHost
+
 }
-
-$outputString = 'DIRECTORIES: Steamu directory structure created.'
-Write-Log $outputString -ToHost
 
 #endregion
 
@@ -676,16 +700,17 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 		Write-Log $outputString -ToHost
 
 # new foreach logic here for downloads from xml, add foreach for extras, select url node
-	$configXml.SelectNodes('//Download') | ForEach-Object{
-	    $name = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Name)
-	    $url = $ExecutionContext.InvokeCommand.ExpandString($_.Url)
-	    $saveAs = $ExecutionContext.InvokeCommand.ExpandString($_.SaveAs)
+		$configXml.SelectNodes('//Download') | ForEach-Object{
+			$name = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Name)
+			$url = $ExecutionContext.InvokeCommand.ExpandString($_.Url)
+			$saveAs = $ExecutionContext.InvokeCommand.ExpandString($_.SaveAs)
 
-		$fullTargetPath = "$pathDownloads\$saveAs"
+			$fullTargetPath = "$pathDownloads\$saveAs"
 
-		New-Download -URI $url -TargetFile $fullTargetPath -Name $name
-
-	}
+			If (($doFirstTimeSetup) -or (($doUpdate) -and ($doUpdateNames -contains $name))) {
+					New-Download -URI $url -TargetFile $fullTargetPath -Name $name
+			} 
+		}
 
 		$outputString = 'DOWNLOADS: Downloads complete'
 		Write-Log $outputString -ToHost
@@ -708,6 +733,8 @@ devSkip: $devSkip
 #endregion
 
 ## TODO backup any existing configs
+
+# backup configs listed in xml first
 
 #region ------------------------------ Install all-the-things
 	
@@ -750,28 +777,25 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 		$moveToPath = "$destinationBasePath\$DestinationDirectoryName"
 		
 		If ($type -eq 'zip'){
-
 			If ($directToPath) {
 				$extractToPath = "$pathTemp\$destinationDirectoryName"
 				$copyFromPath = $extractToPath
 				New-Directory -path $extractToPath
 			}
-
 			$copyFromPath += "\*"
-
-			Extract-Archive -Source $downloadFileLocation -Destination $extractToPath -Name $name
-
-			Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $name -OverwriteDestination
+			If (($doFirstTimeSetup) -or (($doUpdate) -and ($doUpdateNames -contains $name))) {
+				Extract-Archive -Source $downloadFileLocation -Destination $extractToPath -Name $name
+				Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $name -OverwriteDestination
+			}
 				
 		} elseif ($type -eq 'exe') {
-
-			Move-Directory -Source $downloadFileLocation -Destination $moveToPath -Name $name -OverwriteDestination
-
+			If (($doFirstTimeSetup) -or (($doUpdate) -and ($doUpdateNames -contains $name))) {
+				Move-Directory -Source $downloadFileLocation -Destination $moveToPath -Name $name -OverwriteDestination
+			}
 		} else {
 			$outputString = "EXTRACTS: Extraction type not handled for $Name! Type: $type"
 			Write-Log $outputString -ToHost
 		}
-
 	}
 
 		$outputString = 'EXTRACTS: Extraction complete!'
@@ -788,6 +812,10 @@ devSkip: $devSkip
 }
 
 #endregion
+
+## TODO restore any existing configs
+
+# restore configs listed in xml first
 
 #region ------------------------------ Set up junctions (symlinks)
 
@@ -888,18 +916,34 @@ Write-Log $outputString -ToHost
 				$copyFromPath = "$pathConfigs\$destinationName"
 				$copyToPath = "$destinationPath\$destinationName"
 				
-				IF ($copyConfigs) {
-					If (Test-Path -Path $copyFromPath) {
-						$copyFromPath += "\*"
+				If ($doFirstTimeSetup) {
+					IF ($copyConfigs) {
+						If (Test-Path -Path $copyFromPath) {
+							$copyFromPath += "\*"
 
-						$outputString = "CONFIGS: Overwriting configs for $name"
-						Write-Log $outputString -ToHost
-
-						Move-Directory -Source $copyfromPath -Destination $copyToPath -Name $name -OverwriteDestination
-						} else {
-							$outputString = "CONFIGS: Unable to overwrite configs for $name. Path does not exist: $copyFromPath"
+							$outputString = "CONFIGS: First time setup. Overwriting configs for $name"
 							Write-Log $outputString -ToHost
-						}
+
+							Move-Directory -Source $copyfromPath -Destination $copyToPath -Name $name -OverwriteDestination
+							} else {
+								$outputString = "CONFIGS: Unable to overwrite configs for $name. Path does not exist: $copyFromPath"
+								Write-Log $outputString -ToHost
+							}
+					}
+				} elseif ($doUpdate) {
+					IF ($copyConfigs) {
+						If (Test-Path -Path $copyFromPath) {
+							$copyFromPath += "\*"
+
+							$outputString = "CONFIGS: Processing updates. Placing any new configs for $name, if any."
+							Write-Log $outputString -ToHost
+
+							Move-Directory -Source $copyfromPath -Destination $copyToPath -Name $name
+							} else {
+								$outputString = "CONFIGS: Unable to place new configs for $name. Path does not exist: $copyFromPath"
+								Write-Log $outputString -ToHost
+							}
+					}
 				}
 			}
 
@@ -972,6 +1016,9 @@ Remove-Item -Path "$pathTemp\*" -Recurse -Force
 $outputString = "DOWNLOADS: Cleaning up download folder..."
 Write-Log $outputString -ToHost
 Remove-Item -Path "$pathDownloads\*" -Recurse -Force
+
+# Write/Update settings.xml
+
 
 ##### FINISH ######
 Write-Space
