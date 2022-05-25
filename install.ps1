@@ -361,13 +361,14 @@ Source archive doesn't exist: $Source
 	}
 }
 
-Function Move-Directory ([string]$Source, [string]$Destination, [string]$Name) {
+Function Move-Directory ([string]$Source, [string]$Destination, [string]$Name, [switch]$OverwriteDestination) {
 	try {
-		$stringOutput = "EXTRACTS: Moving files for $Name"
-		Write-Log $stringOutput $true
-		Copy-Item -Path $Source -Destination $Destination -Force -Recurse | Out-Null
-		$stringOutput = "EXTRACTS: Moved files for $Name - $Source -> $Destination"
-		Write-Log $stringOutput $false
+		If ($OverwriteDestination) {
+			Copy-Item -Path $Source -Destination $Destination -Force -Recurse | Out-Null
+		} else {
+			Copy-Item -Path $Source -Destination $Destination -Recurse | Out-Null
+		}
+		
 	}
 	catch {
 		$errorString = $PSItem.Exception.Message
@@ -789,11 +790,11 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 			Extract-Archive -Source $downloadFileLocation -Destination $extractToPath -Name $name
 
-			Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $name
+			Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $name -OverwriteDestination
 				
 		} elseif ($type -eq 'exe') {
 
-			Move-Directory -Source $downloadFileLocation -Destination $moveToPath -Name $name
+			Move-Directory -Source $downloadFileLocation -Destination $moveToPath -Name $name -OverwriteDestination
 
 		} else {
 			$stringOutput = "EXTRACTS: Extraction type not handled for $Name! Type: $type"
@@ -923,7 +924,7 @@ Write-Log $stringOutput $true
 						$stringOutput = "CONFIGS: Overwriting configs for $name"
 						Write-Log $stringOutput $true
 
-						Move-Directory -Source $copyfromPath -Destination $copyToPath -Name $name
+						Move-Directory -Source $copyfromPath -Destination $copyToPath -Name $name -OverwriteDestination
 						} else {
 							$stringOutput = "CONFIGS: Unable to overwrite configs for $name. Path does not exist: $copyFromPath"
 							Write-Log $stringOutput $true
