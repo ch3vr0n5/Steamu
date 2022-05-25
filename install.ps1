@@ -172,11 +172,11 @@ Function New-Download ([string]$URI, [string]$TargetFile, [string]$Name) {
 			$stringOutput = "DOWNLOADS: $Name Complete - $TargetFile"
 			Write-Log $stringOutput $false
 		} Catch {
-			$stringOutput = @"
+			$errorString = $PSItem.Exception.Message
 DOWNLOADS: An error occured while attempting download: $Name -> $TargetFile
-ERROR: $_
+ERROR: $errorString
 "@
-			Write-Log $stringOutput $true
+			Write-Log $outputString -ToHost -IsError
 		} 
 }
 
@@ -189,11 +189,11 @@ function New-Shortcut([string]$SourceExe, [string]$DestinationPath, [string]$Sou
 			Write-Log $stringOutput $false
 		}
 		catch {
-			$stringOutput = @"
+			$errorString = $PSItem.Exception.Message
 SHORTCUTS: An error occured while attempting to remove shortcut: $DestinationPath
-ERROR: $_
+ERROR: $errorString
 "@
-			Write-Log $stringOutput $true
+			Write-Log $outputString -ToHost -IsError
 		}
 		
 	}
@@ -208,11 +208,11 @@ ERROR: $_
 		Write-Log $stringOutput $false
 	}
 	catch {
-		$stringOutput = @"
+		$errorString = $PSItem.Exception.Message
 SHORTCUTS: An error occured while attempting to create shortcut: $DestinationPath
-ERROR: $_
+ERROR: $errorString
 "@
-		Write-Log $stringOutput $true
+		Write-Log $outputString -ToHost -IsError
 	}
 	
 }
@@ -290,11 +290,11 @@ Function New-Junction([string]$Source, [string]$Target, [string]$Name){
 			$stringOutput = "JUNCTIONS: Already exists, removed: $target"
 			Write-Log $stringOutput $false
 		} Catch {
-			$stringOutput = @"
+			$errorString = $PSItem.Exception.Message
 JUNCTIONS: An error occured while trying to remove junction: $target
-ERROR: $_
+ERROR: $errorString
 "@
-			Write-Log $stringOutput $true
+			Write-Log $outputString -ToHost -IsError
 		}
 		
 	}
@@ -303,11 +303,11 @@ ERROR: $_
 			$stringOutput = "JUNCTIONS: Junction created for $Name - $target -> $source"
 			Write-Log $stringOutput $false
 		} Catch {
-			$stringOutput = @"
+			$errorString = $PSItem.Exception.Message
 JUNCTIONS: An error occured while creating a junction for $Name - $target -> $source
-ERROR: $_
+ERROR: $errorString
 "@
-			Write-Log $stringOutput $true
+			Write-Log $outputString -ToHost -IsError
 		}
 		
 }
@@ -335,11 +335,11 @@ Function New-Directory([string]$path) {
 			$stringOutput = "DIRECTORIES: Created directory: $path"
 			Write-Log $stringOutput $false
 		} Catch {
-			$stringOutput = @"
+			$errorString = $PSItem.Exception.Message
 DIRECTORIES: An error occured while trying to create path: $path
-ERROR: $_
+ERROR: $errorString
 "@
-			Write-Log $stringOutput $true
+			Write-Log $outputString -ToHost -IsError
 		}
 			
 	} else {
@@ -358,18 +358,18 @@ Function Extract-Archive([string]$Source, [string]$Destination, [string]$Name) {
 			Write-Log $stringOutput $false
 		}
 		catch {
-			$stringOutput = @"
+			$errorString = $PSItem.Exception.Message
 EXTRACTS: An error occured while trying to extract archive for $Name
-ERROR: $_
+ERROR: $errorString
 "@
-			Write-Log $stringOutput $true
+			Write-Log $outputString -ToHost -IsError
 		}
 	} else {
 		$stringOutput = @"
 EXTRACTS: An error occured while trying to extract archive for $Name.
 Source archive doesn't exist: $Source
 "@
-			Write-Log $stringOutput $true
+			Write-Log $outputString -ToHost -IsError
 	}
 }
 
@@ -382,11 +382,11 @@ Function Move-Directory ([string]$Source, [string]$Destination, [string]$Name) {
 		Write-Log $stringOutput $false
 	}
 	catch {
-		$stringOutput = @"
+		$errorString = $PSItem.Exception.Message
 EXTRACTS: An error occured while trying to move files for $Name
-$_
+ERROR: $errorString
 "@
-			Write-Log $stringOutput $true
+			Write-Log $outputString -ToHost -IsError
 	}
 }
 
