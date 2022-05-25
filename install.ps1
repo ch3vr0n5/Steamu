@@ -73,7 +73,7 @@ $pathConfigEmu = "$pathEmulation\config"
 
 $pathDesktopShortcuts = "$pathHome\Desktop\Emulation"
 
-$stringOutput = ""
+$outputString = ""
 
 $fileLogName = 'Steamu_log.txt'
 $fileLog = "$pathLogs\$fileLogName"
@@ -125,13 +125,14 @@ Function Pause-Console ($stringMessageArg)
 Function New-Download ([string]$URI, [string]$TargetFile, [string]$Name) {
 
 		Try {
-			$stringOutput = "DOWNLOADS: Downloading $Name"
-			Write-Log $stringOutput $True
+			$outputString = "DOWNLOADS: Downloading $Name"
+			Write-Log $outputString -ToHost
 			Invoke-WebRequest -URI $URI -OutFile $TargetFile
-			$stringOutput = "DOWNLOADS: $Name Complete - $TargetFile"
-			Write-Log $stringOutput $false
+			$outputString = "DOWNLOADS: $Name Complete - $TargetFile"
+			Write-Log $outputString
 		} Catch {
 			$errorString = $PSItem.Exception.Message
+			$outputString = @"
 DOWNLOADS: An error occured while attempting download: $Name -> $TargetFile
 ERROR: $errorString
 "@
@@ -144,11 +145,12 @@ function New-Shortcut([string]$SourceExe, [string]$DestinationPath, [string]$Sou
 	If(Test-Path -Path $DestinationPath -PathType Leaf) {
 		try {
 			Remove-Item -Path $DestinationPath -Force | Out-Null
-			$stringOutput = "SHORTCUTS: Already exists. Removed - $DestinationPath"
-			Write-Log $stringOutput $false
+			$outputString = "SHORTCUTS: Already exists. Removed - $DestinationPath"
+			Write-Log $outputString
 		}
 		catch {
 			$errorString = $PSItem.Exception.Message
+			$outputString = @"
 SHORTCUTS: An error occured while attempting to remove shortcut: $DestinationPath
 ERROR: $errorString
 "@
@@ -163,11 +165,12 @@ ERROR: $errorString
 		$Shortcut.TargetPath = $SourceExe
 		$Shortcut.WorkingDirectory = $SourcePath
 		$Shortcut.Save() | Out-Null
-		$stringOutput = "SHORTCUTS: Created shortcut - $DestinationPath"
-		Write-Log $stringOutput $false
+		$outputString = "SHORTCUTS: Created shortcut - $DestinationPath"
+		Write-Log $outputString
 	}
 	catch {
 		$errorString = $PSItem.Exception.Message
+		$outputString = @"
 SHORTCUTS: An error occured while attempting to create shortcut: $DestinationPath
 ERROR: $errorString
 "@
@@ -246,10 +249,11 @@ Function New-Junction([string]$Source, [string]$Target, [string]$Name){
 	If ($isJunction) {
 		Try {
 			Remove-Item -Path $target -Force -Recurse | Out-Null
-			$stringOutput = "JUNCTIONS: Already exists, removed: $target"
-			Write-Log $stringOutput $false
+			$outputString = "JUNCTIONS: Already exists, removed: $target"
+			Write-Log $outputString
 		} Catch {
 			$errorString = $PSItem.Exception.Message
+			$outputString = @"
 JUNCTIONS: An error occured while trying to remove junction: $target
 ERROR: $errorString
 "@
@@ -259,10 +263,11 @@ ERROR: $errorString
 	}
 		Try {
 			New-Item -ItemType Junction -Path $target -Target $source | Out-Null
-			$stringOutput = "JUNCTIONS: Junction created for $Name - $target -> $source"
-			Write-Log $stringOutput $false
+			$outputString = "JUNCTIONS: Junction created for $Name - $target -> $source"
+			Write-Log $outputString
 		} Catch {
 			$errorString = $PSItem.Exception.Message
+			$outputString = @"
 JUNCTIONS: An error occured while creating a junction for $Name - $target -> $source
 ERROR: $errorString
 "@
@@ -279,10 +284,11 @@ Function New-Directory([string]$path) {
 	If ((Test-Path -Path $path) -eq $false) {
 		Try {
 			New-Item -ItemType "directory" -Path $path | Out-Null
-			$stringOutput = "DIRECTORIES: Created directory: $path"
-			Write-Log $stringOutput $false
+			$outputString = "DIRECTORIES: Created directory: $path"
+			Write-Log $outputString
 		} Catch {
 			$errorString = $PSItem.Exception.Message
+			$outputString = @"
 DIRECTORIES: An error occured while trying to create path: $path
 ERROR: $errorString
 "@
@@ -290,29 +296,30 @@ ERROR: $errorString
 		}
 			
 	} else {
-		$stringOutput = "DIRECTORIES: Already exists: $path"
-		Write-Log $stringOutput $false
+		$outputString = "DIRECTORIES: Already exists: $path"
+		Write-Log $outputString
 	}
 }
 
 Function Extract-Archive([string]$Source, [string]$Destination, [string]$Name) {
 	If (Test-Path -Path $Source -PathType Leaf) {
 		try {
-			$stringOutput = "EXTRACTS: Extracting archive for $Name"
-			Write-Log $stringOutput $true
+			$outputString = "EXTRACTS: Extracting archive for $Name"
+			Write-Log $outputString -ToHost
 			Expand-7Zip -ArchiveFileName $Source -TargetPath $Destination | Out-Null
-			$stringOutput = "EXTRACTS: Extracted archive for $Name - $Source -> $Destination"
-			Write-Log $stringOutput $false
+			$outputString = "EXTRACTS: Extracted archive for $Name - $Source -> $Destination"
+			Write-Log $outputString
 		}
 		catch {
 			$errorString = $PSItem.Exception.Message
+			$outputString = @"
 EXTRACTS: An error occured while trying to extract archive for $Name
 ERROR: $errorString
 "@
 			Write-Log $outputString -ToHost -IsError
 		}
 	} else {
-		$stringOutput = @"
+		$outputString = @"
 EXTRACTS: An error occured while trying to extract archive for $Name.
 Source archive doesn't exist: $Source
 "@
@@ -322,15 +329,20 @@ Source archive doesn't exist: $Source
 
 Function Move-Directory ([string]$Source, [string]$Destination, [string]$Name, [switch]$OverwriteDestination) {
 	try {
+		$outputString = "EXTRACTS: Moving files for $Name"
+		Write-Log $outputString -ToHost
 		If ($OverwriteDestination) {
 			Copy-Item -Path $Source -Destination $Destination -Force -Recurse | Out-Null
 		} else {
 			Copy-Item -Path $Source -Destination $Destination -Recurse | Out-Null
 		}
 		
+		$outputString = "EXTRACTS: Moved files for $Name - $Source -> $Destination"
+		Write-Log $outputString
 	}
 	catch {
 		$errorString = $PSItem.Exception.Message
+		$outputString = @"
 EXTRACTS: An error occured while trying to move files for $Name
 ERROR: $errorString
 "@
@@ -346,8 +358,8 @@ ERROR: $errorString
 If (Test-Path -Path .\configuration.xml -PathType Leaf) {
 	[xml]$configXml = Get-Content -Path .\configuration.xml	
 } else {
-	$stringOutput = "XML: Unable to load configuration.xml"
-	Pause-Console $stringOutput 
+	$outputString = "XML: Unable to load configuration.xml"
+	Pause-Console $outputString 
 	exit
 }
 
@@ -355,8 +367,8 @@ If (Test-Path -Path .\configuration.xml -PathType Leaf) {
 If (Test-Path -Path .\directories.xml -PathType Leaf) {
 	[xml]$dirXml = Get-Content -Path .\directories.xml
 } else {
-	$stringOutput = "XML: Unable to load configuration.xml"
-	Pause-Console $stringOutput 
+	$outputString = "XML: Unable to load configuration.xml"
+	Pause-Console $outputString 
 	exit
 }
 #endregion
@@ -365,8 +377,8 @@ If (Test-Path -Path .\directories.xml -PathType Leaf) {
 
 if (Test-Path -path $fileLog -PathType Leaf) {
 	#Clear-Content -path $fileLog
-	$stringOutput = "$fileLog Cleared Log File"
-	Write-Log $stringOutput $false
+	$outputString = "$fileLog Cleared Log File"
+	Write-Log $outputString
 
 } else {
 
@@ -376,8 +388,8 @@ if (Test-Path -path $fileLog -PathType Leaf) {
 
 	New-Item -path $fileLog -ItemType "file" | Out-Null
 	
-	$stringOutput = "Created Log File at $pathLogs"
-	Write-Log $stringOutput $false
+	$outputString = "Created Log File at $pathLogs"
+	Write-Log $outputString
 
 }
 
@@ -386,13 +398,13 @@ if (Test-Path -path $fileLog -PathType Leaf) {
 #region ------------------------------ Validate CLI parameters
 
 if ( !$gitBranches -contains $branch ) {
-	$stringOutput = "Invalid branch $branch. Valid parameters include: $gitBranches. Press any key to exit."
-	Pause-Console $stringOutput
+	$outputString = "Invalid branch $branch. Valid parameters include: $gitBranches. Press any key to exit."
+	Pause-Console $outputString
 	exit
 }
 else {
-	$stringOutput = "Valid branch: $branch"
-	Write-Log $stringOutput $false
+	$outputString = "Valid branch: $branch"
+	Write-Log $outputString
 }
 
 #endregion
@@ -480,8 +492,8 @@ If you choose yes, you will be prompted to select the proper path.
 
 		# if get-folder is cancelled then revert to default path
 		If ($null -eq $pathRoms) {
-			$stringOutput = "CUSTOM: No custom rom folder selected. Reverting to default."
-			Write-Log $stringOutput $true
+			$outputString = "CUSTOM: No custom rom folder selected. Reverting to default."
+			Write-Log $outputString -ToHost
 			$pathRoms = "$pathEmulation\roms"
 			$doCustomRomDirectory = $false
 		}
@@ -560,8 +572,8 @@ If you choose yes, you will be prompted to select the proper path.
 
 		# if get-folder is cancelled then revert to default path
 		If ($null -eq $pathSaves) {
-			$stringOutput = "CUSTOM: No custom Saves folder selected. Reverting to default."
-			Write-Log $stringOutput $true
+			$outputString = "CUSTOM: No custom Saves folder selected. Reverting to default."
+			Write-Log $outputString -ToHost
 			$pathSaves = "$pathEmulation\saves"
 			$doCustomSavesDirectory = $false
 		}
@@ -603,8 +615,8 @@ if ($customStatesDirectoryChoice -eq 0) {
 
 	# if get-folder is cancelled then revert to default path
 	If ($null -eq $pathStates) {
-		$stringOutput = "CUSTOM: No custom States folder selected. Reverting to default."
-		Write-Log $stringOutput $true
+		$outputString = "CUSTOM: No custom States folder selected. Reverting to default."
+		Write-Log $outputString -ToHost
 		$pathStates = "$pathEmulation\states"
 		$doCustomStatesDirectory = $false
 	}
@@ -629,8 +641,8 @@ Path: $pathStates
 
 #region ------------------------------ Build directory structure
 
-$stringOutput = 'DIRECTORIES: Creating Steamu directory structure'
-Write-Log $stringOutput $true
+$outputString = 'DIRECTORIES: Creating Steamu directory structure'
+Write-Log $outputString -ToHost
 
 # foreach logic here to create directories from xml, perhaps where-object parentnode.name = 'Steamu', etc.
 
@@ -652,16 +664,16 @@ $dirXml.SelectNodes('//sub-directory') | ForEach-Object{
     }
 }
 
-$stringOutput = 'DIRECTORIES: Steamu directory structure created.'
-Write-Log $stringOutput $true
+$outputString = 'DIRECTORIES: Steamu directory structure created.'
+Write-Log $outputString -ToHost
 
 #endregion
 
 #region ------------------------------ Download required files
 IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 	if (test-path -path $pathDownloads) {
-		$stringOutput = 'DOWNLOADS: Beginning downloads.'
-		Write-Log $stringOutput $true
+		$outputString = 'DOWNLOADS: Beginning downloads.'
+		Write-Log $outputString -ToHost
 
 # new foreach logic here for downloads from xml, add foreach for extras, select url node
 	$configXml.SelectNodes('//Download') | ForEach-Object{
@@ -675,22 +687,22 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 	}
 
-		$stringOutput = 'DOWNLOADS: Downloads complete'
-		Write-Log $stringOutput $true
+		$outputString = 'DOWNLOADS: Downloads complete'
+		Write-Log $outputString -ToHost
 
 	} Else {
-		$stringOutput = "DOWNLOADS: Unable to continue. $pathDownloads does not exist! Press any key to exit."
-		Pause-Console $stringOutput
+		$outputString = "DOWNLOADS: Unable to continue. $pathDownloads does not exist! Press any key to exit."
+		Pause-Console $outputString
 		exit
 	}
 } else {
-	$stringOutput = @"
+	$outputString = @"
 Downloads are skipped due to configuration.
 
 doDownload: $doDownload
 devSkip: $devSkip
 "@
-	Write-Log $stringOutput $true
+	Write-Log $outputString -ToHost
 }
 
 #endregion
@@ -700,12 +712,12 @@ devSkip: $devSkip
 #region ------------------------------ Install all-the-things
 	
 	if (Get-Module -ListAvailable -Name '7Zip4PowerShell') {
-		$stringOutput = '7z Powershell Module exists. Skipping.'
-		Write-Log $stringOutput $false
+		$outputString = '7z Powershell Module exists. Skipping.'
+		Write-Log $outputString
 	} else {
 		# install 7z powershell module
-		$stringOutput = 'Installing 7z Powershell Module'
-		Write-Log $stringOutput $true
+		$outputString = 'Installing 7z Powershell Module'
+		Write-Log $outputString -ToHost
 
 		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 		Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser | Out-Null
@@ -715,8 +727,8 @@ devSkip: $devSkip
 
 If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
-	$stringOutput = "EXTRACTS: Beginning extraction"
-	Write-Log $stringOutput $true
+	$outputString = "EXTRACTS: Beginning extraction"
+	Write-Log $outputString -ToHost
 
 	$configXml.SelectNodes('//Extract') | ForEach-Object  {
 		$name = $ExecutionContext.InvokeCommand.ExpandString($_.parentnode.Name)
@@ -749,38 +761,38 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 			Extract-Archive -Source $downloadFileLocation -Destination $extractToPath -Name $name
 
-			Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $name -OverwriteDestination
+			Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $name
 				
 		} elseif ($type -eq 'exe') {
 
-			Move-Directory -Source $downloadFileLocation -Destination $moveToPath -Name $name -OverwriteDestination
+			Move-Directory -Source $downloadFileLocation -Destination $moveToPath -Name $name
 
 		} else {
-			$stringOutput = "EXTRACTS: Extraction type not handled for $Name! Type: $type"
-			Write-Log $stringOutput $True
+			$outputString = "EXTRACTS: Extraction type not handled for $Name! Type: $type"
+			Write-Log $outputString -ToHost
 		}
 
 	}
 
-		$stringOutput = 'EXTRACTS: Extraction complete!'
-		Write-Log $stringOutput $true
+		$outputString = 'EXTRACTS: Extraction complete!'
+		Write-Log $outputString -ToHost
 
 } else {
-	$stringOutput = @"
+	$outputString = @"
 EXTRACTS: Extraction is skipped due to configuration.
 
 doDownload: $doDownload
 devSkip: $devSkip
 "@
-	Write-Log $stringOutput $true
+	Write-Log $outputString -ToHost
 }
 
 #endregion
 
 #region ------------------------------ Set up junctions (symlinks)
 
-$stringOutput = 'JUNCTIONS: Creating Junctions (symlinks)...'
-Write-Log $stringOutput $true
+$outputString = 'JUNCTIONS: Creating Junctions (symlinks)...'
+Write-Log $outputString -ToHost
 
 		# RetroArch links
 
@@ -820,8 +832,8 @@ Write-Log $stringOutput $true
 
 		}
 
-$stringOutput = 'JUNCTIONS: Created Junctions (symlinks).'
-Write-Log $stringOutput $true
+$outputString = 'JUNCTIONS: Created Junctions (symlinks).'
+Write-Log $outputString -ToHost
 
 #endregion
 
@@ -829,41 +841,41 @@ Write-Log $stringOutput $true
 		If ($doDownload) {
 #make backup function
 
-			$stringOutput = "CONFIGS: Backing up existing configs..."
-			Write-Log $stringOutput $true
+			$outputString = "CONFIGS: Backing up existing configs..."
+			Write-Log $outputString -ToHost
 
 			$backupDateTime = $(get-date -f yyyyMMddHHmm)
 
 			#Backup existing configs
 			If (Test-Path -Path "$pathRetroarch\retroarch.cfg" -PathType Leaf) {
 				Rename-Item -Path "$pathRetroarch\retroarch.cfg" -NewName "retroarch-$backupDateTime.cfg" -Force | Out-Null
-				$stringOutput = "$pathRetroarch\retroarch.cfg backed up to retroarch-$backupDateTime.cfg"
-				Write-Log $stringOutput $false
+				$outputString = "$pathRetroarch\retroarch.cfg backed up to retroarch-$backupDateTime.cfg"
+				Write-Log $outputString
 			}
 
 			If (Test-Path -Path "$pathSrmData\userConfigurations.json" -PathType Leaf) {
 				Rename-Item -Path "$pathSrmData\userConfigurations.json" -NewName "userConfigurations-$backupDateTime.json" -Force | Out-Null #need to do something here when these backup files already exist... probably an md5 so if it's the same file ignore it.
-				$stringOutput = "$pathSrmData\userConfigurations.json backed up to userConfigurations-$backupDateTime.json"
-				Write-Log $stringOutput $false
+				$outputString = "$pathSrmData\userConfigurations.json backed up to userConfigurations-$backupDateTime.json"
+				Write-Log $outputString
 			}
 
-			#If (Test-Path -Path "$pathEsData\es_find_rules.xml" -PathType Leaf) {
-			#	Rename-Item -Path "$pathEsData\es_find_rules.xml" -NewName "es_find_rules-$backupDateTime.xml" -Force | Out-Null
-			#	$stringOutput = "$pathEsData\es_find_rules.xml backed up to es_find_rules-$backupDateTime.xml"
-			#	Write-Log $stringOutput $false
-			#}
+			# If (Test-Path -Path "$pathEsData\es_find_rules.xml" -PathType Leaf) {
+			# 	Rename-Item -Path "$pathEsData\es_find_rules.xml" -NewName "es_find_rules-$backupDateTime.xml" -Force | Out-Null
+			# 	$outputString = "$pathEsData\es_find_rules.xml backed up to es_find_rules-$backupDateTime.xml"
+			# 	Write-Log $outputString
+			# }
 			
-			#If (Test-Path -Path "$pathEsData\es_systems.xml" -PathType Leaf) {
-			#	Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems-$backupDateTime.xml" -Force | Out-Null
-			#	$stringOutput = "$pathEsData\es_systems.xml backed up to es_systems-$backupDateTime.xml"
-			#	Write-Log $stringOutput $false
-			#}
+			# If (Test-Path -Path "$pathEsData\es_systems.xml" -PathType Leaf) {
+			# 	Rename-Item -Path "$pathEsData\es_systems.xml" -NewName "es_systems-$backupDateTime.xml" -Force | Out-Null
+			# 	$outputString = "$pathEsData\es_systems.xml backed up to es_systems-$backupDateTime.xml"
+			# 	Write-Log $outputString
+			# }
 
-			$stringOutput = "CONFIGS: Existing configs backed up."
-			Write-Log $stringOutput $true
+			$outputString = "CONFIGS: Existing configs backed up."
+			Write-Log $outputString -ToHost
 
-			$stringOutput = "CONFIGS: Updating existing configs..."
-			Write-Log $stringOutput $true
+			$outputString = "CONFIGS: Updating existing configs..."
+			Write-Log $outputString -ToHost
 
 			# Copy default configs
 			$configXml.SelectNodes('//Program') | ForEach-Object {
@@ -880,19 +892,19 @@ Write-Log $stringOutput $true
 					If (Test-Path -Path $copyFromPath) {
 						$copyFromPath += "\*"
 
-						$stringOutput = "CONFIGS: Overwriting configs for $name"
-						Write-Log $stringOutput $true
+						$outputString = "CONFIGS: Overwriting configs for $name"
+						Write-Log $outputString -ToHost
 
-						Move-Directory -Source $copyfromPath -Destination $copyToPath -Name $name -OverwriteDestination
+						Move-Directory -Source $copyfromPath -Destination $copyToPath -Name $name
 						} else {
-							$stringOutput = "CONFIGS: Unable to overwrite configs for $name. Path does not exist: $copyFromPath"
-							Write-Log $stringOutput $true
+							$outputString = "CONFIGS: Unable to overwrite configs for $name. Path does not exist: $copyFromPath"
+							Write-Log $outputString -ToHost
 						}
 				}
 			}
 
-			$stringOutput = "CONFIGS: Existing configs updated."
-			Write-Log $stringOutput $true
+			$outputString = "CONFIGS: Existing configs updated."
+			Write-Log $outputString -ToHost
 
 		}
 
@@ -902,8 +914,8 @@ Write-Log $stringOutput $true
 
 #region ------------------------------ Set up exe shortcuts
 
-	$stringOutput = "SHORTCUTS: Setting up application shortcuts in $pathDesktopShortcuts..."
-	Write-Log $stringOutput $true
+	$outputString = "SHORTCUTS: Setting up application shortcuts in $pathDesktopShortcuts..."
+	Write-Log $outputString -ToHost
 
 	If ((Test-Path -Path "$pathDesktopShortcuts") -eq $false) {
 		New-Item -Path "$pathDesktopShortcuts" -ItemType "directory" | Out-Null
@@ -941,8 +953,8 @@ Write-Log $stringOutput $true
 			}
 		}
 	} else {
-		$stringOutput = "SHORTCUTS: Unable to create shortcuts. Directory $pathDesktopShortcuts does not exist!"
-		Write-Log $stringOutput $true
+		$outputString = "SHORTCUTS: Unable to create shortcuts. Directory $pathDesktopShortcuts does not exist!"
+		Write-Log $outputString -ToHost
 	}
 
 #endregion
@@ -952,17 +964,17 @@ Write-Log $stringOutput $true
 ## TODO if existing controller configs exist, replace, else, copy new configs
 
 #Clean up temp folder
-$stringOutput = "EXTRACTS: Cleaning up temp folder..."
-Write-Log $stringOutput $True
+$outputString = "EXTRACTS: Cleaning up temp folder..."
+Write-Log $outputString -ToHost
 Remove-Item -Path "$pathTemp\*" -Recurse -Force
 
 #Clean up temp folder
-$stringOutput = "DOWNLOADS: Cleaning up download folder..."
-Write-Log $stringOutput $True
+$outputString = "DOWNLOADS: Cleaning up download folder..."
+Write-Log $outputString -ToHost
 Remove-Item -Path "$pathDownloads\*" -Recurse -Force
 
 ##### FINISH ######
 Write-Space
-$stringOutput = 'All Done =) Press any key to exit.'
-Pause-Console $stringOutput
+$outputString = 'All Done =) Press any key to exit.'
+Pause-Console $outputString
 exit
