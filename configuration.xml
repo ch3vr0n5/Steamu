@@ -3,6 +3,8 @@
 	</Paths>
     <Program>
 		<Name>Steamu</Name>
+		<VariableName>steamu</VariableName>
+		<Version>0.3.0</Version>
 		<BasePath>$pathLocalAppData</BasePath>
 		<DirectoryName>Steamu</DirectoryName>
 		<Download>
@@ -41,6 +43,8 @@
 	</Program>
 	<Program>
 		<Name>Steam Rom Manager</Name>
+		<VariableName>srm</VariableName>
+		<Version>2.3.36</Version>
 		<BasePath>$pathApps</BasePath>
 		<DirectoryName>SteamRomManager</DirectoryName>
 		<Exe>steam_rom_manager.exe</Exe>
@@ -54,39 +58,11 @@
 			<Type>exe</Type>
 		</Extract>
 		<CreateDesktopShortcut/>
-		<Junction>
-			<Name>roms</Name>
-			<TargetBasePath>$pathSrm</TargetBasePath>
-			<Source>$pathRoms</Source>
-		</Junction>
-		<Junction>
-			<Name>steam</Name>
-			<TargetBasePath>$pathSrm</TargetBasePath>
-			<Source>$pathSteam</Source>
-		</Junction>
-		<Junction>
-			<Name>retroarch</Name>
-			<TargetBasePath>$pathSrm</TargetBasePath>
-			<Source>$pathRetroarch</Source>
-		</Junction>
-		<Junction>
-			<Name>emulationstation</Name>
-			<TargetBasePath>$pathSrm</TargetBasePath>
-			<Source>$pathEs</Source>
-		</Junction>
-		<Junction>
-			<Name>cemu</Name>
-			<TargetBasePath>$pathSrm</TargetBasePath>
-			<Source>$pathCemu</Source>
-		</Junction>
-		<Junction>
-			<Name>shortcuts</Name>
-			<TargetBasePath>$pathSrm</TargetBasePath>
-			<Source>$pathShortcuts</Source>
-		</Junction>
 	</Program>
 	<Program>
 		<Name>Emulation Station DE</Name>
+		<VariableName>es</VariableName>
+		<Version>1.2.3</Version>
 		<BasePath>$pathApps</BasePath>
 		<DirectoryName>EmulationStation</DirectoryName>
 		<Exe>emulationstation.exe</Exe>
@@ -104,6 +80,8 @@
 	</Program>
 	<Program>
 		<Name>Retroarch</Name>
+		<VariableName>retroarch</VariableName>
+		<Version>1.10.3</Version>
 		<BasePath>$pathEmulators</BasePath>
 		<DirectoryName>Retroarch</DirectoryName>
 		<Exe>retroarch.exe</Exe>
@@ -136,6 +114,8 @@
 	</Program>
 	<Program>
 		<Name>Xemu</Name>
+		<VariableName>xemu</VariableName>
+		<Version>0.7.21</Version>
 		<BasePath>$pathEmulators</BasePath>
 		<DirectoryName>Xemu</DirectoryName>
 		<Exe>xemu.exe</Exe>
@@ -153,6 +133,8 @@
 	</Program>
 	<Program>
 		<Name>PPSSPP</Name>
+		<VariableName>ppsspp</VariableName>
+		<Version>1_12_3</Version>
 		<BasePath>$pathEmulators</BasePath>
 		<DirectoryName>PPSSPP</DirectoryName>
 		<Exe Arch='x86'>PPSSPPWindows.exe</Exe>
@@ -172,6 +154,8 @@
 	</Program>
 	<Program>
 		<Name>RPCS3</Name>
+		<VariableName>rpcs3</VariableName>
+		<Version>0.0.22-13652</Version>
 		<BasePath>$pathEmulators</BasePath>
 		<DirectoryName>RPCS3</DirectoryName>
 		<Exe>rpcs3.exe</Exe>
@@ -189,6 +173,8 @@
 	</Program>
 	<Program>
 		<Name>PCSX2</Name>
+		<VariableName>pcsx2</VariableName>
+		<Version>1.6.0</Version>
 		<BasePath>$pathEmulators</BasePath>
 		<DirectoryName>PCSX2</DirectoryName>
 		<Exe>pcsx2.exe</Exe>
@@ -210,6 +196,8 @@
 	</Program>
 	<Program>
 		<Name>Cemu</Name>
+		<VariableName>cemu</VariableName>
+		<Version>1.27.0b</Version>
 		<BasePath>$pathEmulators</BasePath>
 		<DirectoryName>Cemu</DirectoryName>
 		<Exe>Cemu.exe</Exe>
@@ -227,6 +215,8 @@
 	</Program>
 	<Program>
 		<Name>Yuzu</Name>
+		<VariableName>yuzu</VariableName>
+		<Version>1030</Version>
 		<BasePath>$pathEmulators</BasePath>
 		<DirectoryName>Yuzu</DirectoryName>
 		<Exe>yuzu.exe</Exe>
@@ -240,15 +230,5 @@
 		</Extract>
 		<CreateSteamShortcut/>
 		<CreateDesktopShortcut/>
-		<Junction>
-			<Name>mlc01</Name>
-			<TargetBasePath>$pathCemu</TargetBasePath>
-			<Source>$pathStorage\cemu\mlc01</Source>
-		</Junction>
-		<Junction>
-			<Name>roms</Name>
-			<TargetBasePath>$pathCemu</TargetBasePath>
-			<Source>$pathRoms\wiiu</Source>
-		</Junction>
 	</Program>
 </Settings>

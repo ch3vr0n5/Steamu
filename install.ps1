@@ -78,14 +78,6 @@ $outputString = ""
 $fileLogName = 'Steamu_log.txt'
 $fileLog = "$pathLogs\$fileLogName"
 
-# dependency version
-
-$retroarchVersion = '1.10.3'
-$srmVersion = '2.3.36'
-$ppssppVersion = '1_12_3'
-$pcsx2Version = '1.6.0'
-$cemuVersion = '1.27.0'
-
 #endregion
 
 #region ------------------------------ Functions
@@ -382,6 +374,23 @@ If (Test-Path -Path .\settings.xml -PathType Leaf) {
 	$doFirstTimeSetup = $true
 	$doUpdate = $false
 }
+
+
+# dependency version
+
+$configXml.SelectNodes('//Program') | ForEach-Object {
+	New-Variable $_.
+}
+
+$retroarchVersion = $configXml.SelectSingleNode("//Program[.name = 'Retroarch']").Version
+$srmVersion = '2.3.36'
+$ppssppVersion = '1_12_3'
+$pcsx2Version = '1.6.0'
+$cemuVersion = '1.27.0'
+$esVersion = '1.2.3'
+$xemuVersion = '0.7.21'
+$rpcs3Version = '0.0.22-13652'
+$yuzuVersion = '1030'
 
 #endregion
 
@@ -1018,7 +1027,39 @@ Write-Log $outputString -ToHost
 Remove-Item -Path "$pathDownloads\*" -Recurse -Force
 
 # Write/Update settings.xml
+$pathSetXml = "$pathSteamu\userSettings.xml"
+$testPath = Test-Path -Path $pathSetXml -PathType Leaf 
+If ((!$testPath) -and (!$error.count)) {
+	$setXmlWriter = New-Object System.XML.XmlTextWriter($pathSetXml,$null)
+	$setXmlWriter.Formatting = 'Indented'
+	$setXmlWriter.Indented = 1
+	$setXmlWriter.IndentChar = "`t"
+	$setXmlWriter.WriteStartDocument()
+	$setXmlWriter.WriteStartElement('UserSettings')
 
+	$setXmlWriter.WriteStartElement('Path')
+	$setXmlWriter.WriteElementString('Roms',"$pathRoms")
+	$setXmlWriter.WriteElementString('Saves',"$pathSaves")
+	$setXmlWriter.WriteElementString('States',"$pathStates")
+	$setXmlWriter.WriterEndElement()
+
+	$configXml.SelectNodes('//Version') | ForEach-Object {
+		$name = $_.parentnode.name
+		$version = $_.InnerText
+
+		$setXmlWriter.WriteStartElement('Program')
+		$setXmlWriter.WriteElementString('Name',"$name")
+		$setXmlWriter.WriteElementString('Version',"$version")
+		$setXmlWriter.WriteEndElement()
+	}
+
+	$setXmlWriter.WriteEndElement()
+	$setXmlWriter.WriteEndDocument()
+	$setXmlWriter.Flush()
+	$setXmlWriter.Close()
+} else {
+	# update version numbers and add missing nodes if $error.count = 0? 
+}
 
 ##### FINISH ######
 Write-Space
