@@ -197,7 +197,7 @@
 	<Program>
 		<Name>Cemu</Name>
 		<VariableName>cemu</VariableName>
-		<Version>1.27.0b</Version>
+		<Version>1.27.0</Version>
 		<BasePath>$pathEmulators</BasePath>
 		<DirectoryName>Cemu</DirectoryName>
 		<Exe>Cemu.exe</Exe>

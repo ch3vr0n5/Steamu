@@ -16,7 +16,8 @@ param (
 #endregion
 
 #region ------------------------------ Overrides
-
+# clear errors
+$error.Clear()
 # Turn off download progress bar otherwise downloads take SIGNIFICANTLY longer
 $ProgressPreference = 'SilentlyContinue'
 
@@ -98,7 +99,7 @@ function Write-Log ($stringMessageArg, [switch]$toHost, [switch]$IsError)
 		}
 	}
 }
-Function Pause-Console ($stringMessageArg)
+Function Suspend-Console ($stringMessageArg)
 # https://stackoverflow.com/a/28237896
 {
     # Check if running Powershell ISE
@@ -109,7 +110,7 @@ Function Pause-Console ($stringMessageArg)
     }
     else
     {
-        Write-Log $stringMessageArg $true
+        Write-Log $stringMessageArg -ToHost
         $x = $host.ui.RawUI.ReadKey("NoEcho,IncludeKeyDown")
     }
 }
@@ -269,7 +270,7 @@ ERROR: $errorString
 }
 
 Function Write-Space {
-	Clear-Host
+	#Clear-Host
 }
 
 Function New-Directory([string]$path) {
@@ -293,7 +294,7 @@ ERROR: $errorString
 	}
 }
 
-Function Extract-Archive([string]$Source, [string]$Destination, [string]$Name) {
+Function Expand-Archive ([string]$Source, [string]$Destination, [string]$Name) {
 	If (Test-Path -Path $Source -PathType Leaf) {
 		try {
 			$outputString = "EXTRACTS: Extracting archive for $Name"
@@ -351,7 +352,7 @@ If (Test-Path -Path .\configuration.xml -PathType Leaf) {
 	[xml]$configXml = Get-Content -Path .\configuration.xml	
 } else {
 	$outputString = "XML: Unable to load configuration.xml"
-	Pause-Console $outputString 
+	Suspend-Console $outputString 
 	exit
 }
 
@@ -360,13 +361,13 @@ If (Test-Path -Path .\directories.xml -PathType Leaf) {
 	[xml]$dirXml = Get-Content -Path .\directories.xml
 } else {
 	$outputString = "XML: Unable to load configuration.xml"
-	Pause-Console $outputString 
+	Suspend-Console $outputString 
 	exit
 }
 
 # Settings
-If (Test-Path -Path .\settings.xml -PathType Leaf) {
-	[xml]$setXml = Get-Content -Path .\settings.xml
+If (Test-Path -Path "$pathSteamu\userSettings.xml" -PathType Leaf) {
+	[xml]$setXml = Get-Content -Path "$pathSteamu\userSettings.xml"
 
 	$doFirstTimeSetup = $false
 	$doUpdate = $true
@@ -376,21 +377,69 @@ If (Test-Path -Path .\settings.xml -PathType Leaf) {
 }
 
 
-# dependency version
+# version numbers from configuration.xml
 
 $configXml.SelectNodes('//Program') | ForEach-Object {
-	New-Variable $_.
+	$variablePrefix = $_.VariableName
+	$variableVersion = $variablePrefix + 'Version'
+	$versionNumber = $_.Version
+	if ($variableVersion) {
+		Set-Variable -Name $VariableVersion -Value $versionNumber
+	} else {
+		New-Variable -Name $VariableVersion -Value $versionNumber
+	}	
 }
 
-$retroarchVersion = $configXml.SelectSingleNode("//Program[.name = 'Retroarch']").Version
-$srmVersion = '2.3.36'
-$ppssppVersion = '1_12_3'
-$pcsx2Version = '1.6.0'
-$cemuVersion = '1.27.0'
-$esVersion = '1.2.3'
-$xemuVersion = '0.7.21'
-$rpcs3Version = '0.0.22-13652'
-$yuzuVersion = '1030'
+# load paths from userSettings.xml
+If ($setXml) {
+	$pathRoms = $setXml.SelectSingleNode('//Roms').InnerText
+	$pathSaves = $setXml.SelectSingleNode('//Saves').InnerText
+	$pathStates = $setXml.SelectSingleNode('//States').InnerText
+}
+
+# reset to default if the paths are for some reason null
+If (!$pathRoms) {
+	$pathRoms = "$pathEmulation\roms"
+}
+If (!$pathSaves) {
+	$pathSaves = "$pathEmulation\saves"
+}
+If (!$pathStates) {
+	$pathStates = "$pathEmulation\states"
+}
+
+
+# version numbers from userSettings.xml
+#If ($setXml) {
+# $setXml.SelectNodes('//Program') | ForEach-Object {
+# 	$name = $_.Name
+# 	$variablePrefix = $configXml.SelectSingleNode("//Program[Name = $name]").VariableName
+# 	$variableVersion = $variablePrefix + 'VersionOld'
+# 	$versionNumber = $_.Version
+# 	if ($variableVersion) {
+# 		Set-Variable -Name $VariableVersion -Value $versionNumber
+# 	} else {
+# 		New-Variable -Name $VariableVersion -Value $versionNumber
+# 	}
+# }
+#}
+
+# check for updateable programs
+If ($setXml) {
+	$doUpdateNames = @()
+	$configXml.SelectNodes('//Program') | ForEach-Object {
+		$name = $_.Name
+		$version = $_.Version
+		$setCheck = $setXml.SelectSingleNode("//Program[Name = '$name']")
+		$versionOld = $setXml.SelectSingleNode("//Program[Name = '$name']").Version
+
+		If (!$setCheck) {
+			$doUpdateNames += $name
+		} elseif (($versionOld) -and ($versionOld -ne $version)) {
+			$doUpdateNames += $name
+		}
+	}
+}
 
 #endregion
 
@@ -420,7 +469,7 @@ if (Test-Path -path $fileLog -PathType Leaf) {
 
 if ( !$gitBranches -contains $branch ) {
 	$outputString = "Invalid branch $branch. Valid parameters include: $gitBranches. Press any key to exit."
-	Pause-Console $outputString
+	Suspend-Console $outputString
 	exit
 }
 else {
@@ -435,7 +484,75 @@ else {
 #check new xml for changes in versions against old xml HERE
 
 If ($doUpdate) {
-	# ask if want to proceed with update, list current custom paths, if any and list applications going to be updated, foreach-object if version mismatch put name in array $doUpdateNames
+	If (!$doUpdateNames) {
+		$updateString = @"
+	No programs found to be updateable. You may choose a Clean installation
+	or exit.
+"@
+	} else {
+		$updateString = @"
+	The following programs where found to be updatable:
+	$doUpdateNames
+"@
+	}
+
+	$title = 'Steamu'
+	$question = @"
+
+	Existing installation detected. We will attempt to detect any needed
+	updates and apply them. 
+	
+	You also have the option to continue as if this were a new install. This
+	will allow you to choose new paths or make changes to custom options.
+
+	Default installation path for Steamu, Apps and Emulators:
+	$pathSteamu
+
+	Default path for ROMs, Bios files, saves, states and misc storage:
+	$pathEmulation
+
+	Default path for shortcuts to Apps and Emulators:
+	$pathDesktopShortcuts
+
+	The following paths are customizable and have been loaded from User Settings as follows:
+	Roms: $pathRoms
+	Saves: $pathSaves
+	States: $pathStates
+
+	$updateString
+"@
+	If (!$doUpdateNames) {
+		$choices = @('&Clean Installation','&Quit')
+		$default = 1
+		Write-Space
+		$updateInstallation = Get-Choice $title $question $default $choices
+	
+		If ($updateInstallation -eq 1) {
+			Suspend-Console 'Installation cancelled. Press any key to exit.'
+			exit
+		} else {
+			Suspend-Console 'Performing Clean Installation. Press any key to continue.'
+			$doUpdate = $false
+			$doFirstTimeSetup = $true
+			#Remove-Item -Recurse -Force -Path $pathSteamu
+		}
+	} else {
+		$choices = @('&Update','&Clean Installation','&Quit')
+		$default = 0
+		Write-Space
+		$updateInstallation = Get-Choice $title $question $default $choices
+	
+		If ($updateInstallation -eq 2) {
+			Suspend-Console 'Installation cancelled. Press any key to exit.'
+			exit
+		} elseif ($updateInstallation -eq 1) {
+			$doUpdate = $false
+			$doFirstTimeSetup = $true
+		} else {
+			Suspend-Console 'Performing update. Press any key to continue.'
+		}
+	}
+
 }
 
 If ($doFirstTimeSetup) {
@@ -475,7 +592,7 @@ If ($doFirstTimeSetup) {
 	$continueInstallation = Get-Choice $title $question $default $choices
 
 	If ($continueInstallation -eq 1) {
-		Pause-Console 'Installation cancelled. Press any key to exit.'
+		Suspend-Console 'Installation cancelled. Press any key to exit.'
 		exit
 	}
 
@@ -726,7 +843,7 @@ IF (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 
 	} Else {
 		$outputString = "DOWNLOADS: Unable to continue. $pathDownloads does not exist! Press any key to exit."
-		Pause-Console $outputString
+		Suspend-Console $outputString
 		exit
 	}
 } else {
@@ -793,7 +910,7 @@ If (($doDownload -eq $true) -and ($devSkip -eq $false)) {
 			}
 			$copyFromPath += "\*"
 			If (($doFirstTimeSetup) -or (($doUpdate) -and ($doUpdateNames -contains $name))) {
-				Extract-Archive -Source $downloadFileLocation -Destination $extractToPath -Name $name
+				Expand-Archive -Source $downloadFileLocation -Destination $extractToPath -Name $name
 				Move-Directory -Source $copyFromPath -Destination $moveToPath -Name $name -OverwriteDestination
 			}
 				
@@ -1026,13 +1143,13 @@ $outputString = "DOWNLOADS: Cleaning up download folder..."
 Write-Log $outputString -ToHost
 Remove-Item -Path "$pathDownloads\*" -Recurse -Force
 
-# Write/Update settings.xml
+# Write/Update userSettings.xml
 $pathSetXml = "$pathSteamu\userSettings.xml"
 $testPath = Test-Path -Path $pathSetXml -PathType Leaf 
 If ((!$testPath) -and (!$error.count)) {
 	$setXmlWriter = New-Object System.XML.XmlTextWriter($pathSetXml,$null)
 	$setXmlWriter.Formatting = 'Indented'
-	$setXmlWriter.Indented = 1
+	$setXmlWriter.Indentation = 1
 	$setXmlWriter.IndentChar = "`t"
 	$setXmlWriter.WriteStartDocument()
 	$setXmlWriter.WriteStartElement('UserSettings')
@@ -1041,7 +1158,7 @@ If ((!$testPath) -and (!$error.count)) {
 	$setXmlWriter.WriteElementString('Roms',"$pathRoms")
 	$setXmlWriter.WriteElementString('Saves',"$pathSaves")
 	$setXmlWriter.WriteElementString('States',"$pathStates")
-	$setXmlWriter.WriterEndElement()
+	$setXmlWriter.WriteEndElement()
 
 	$configXml.SelectNodes('//Version') | ForEach-Object {
 		$name = $_.parentnode.name
@@ -1057,12 +1174,30 @@ If ((!$testPath) -and (!$error.count)) {
 	$setXmlWriter.WriteEndDocument()
 	$setXmlWriter.Flush()
 	$setXmlWriter.Close()
-} else {
-	# update version numbers and add missing nodes if $error.count = 0? 
+} elseif (($testPath) -and (!$error.count)) {
+	$configXml.SelectNodes('//Program') | ForEach-Object {
+		$name = $_.Name
+		$version = $_.Version
+		$setCheck = $setXml.SelectSingleNode("//Program[Name = '$name']")
+		$versionOld = $setXml.SelectSingleNode("//Program[Name = '$name']").Version
+
+		If (!$setCheck) {
+			$element = $setXml.userSettings.Program[0].Clone()
+			$element.Name = $name
+			$element.Version = $version
+			$setXml.DocumentElement.AppendChild($element)
+		}
+
+		If (($versionOld) -and ($versionOld -ne $version)) {
+			$_.Version = $version
+		}
+	}
+	$setXml.Save()
 }
 
 ##### FINISH ######
 Write-Space
+$error.Clear()
 $outputString = 'All Done =) Press any key to exit.'
-Pause-Console $outputString
+Suspend-Console $outputString
 exit
