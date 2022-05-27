@@ -188,11 +188,7 @@
 		</Extract>
 		<CreateSteamShortcut/>
 		<CreateDesktopShortcut/>
-		<Junction>
-			<Name>bios</Name>
-			<TargetBasePath>$pathPcsx2</TargetBasePath>
-			<Source>$pathBios\pcsx2</Source>
-		</Junction>
+		<CopyConfigs/>
 	</Program>
 	<Program>
 		<Name>Cemu</Name>

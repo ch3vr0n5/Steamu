@@ -114,6 +114,9 @@
         <sub-directory>
             <name>retroarch</name>
         </sub-directory>
+        <sub-directory>
+            <name>pcsx2</name>
+        </sub-directory>
     </directory>
 
     <directory>
@@ -153,6 +156,9 @@
         <sub-directory>
             <name>xemu</name>
         </sub-directory>
+        <sub-directory>
+            <name>pcsx2</name>
+        </sub-directory>
     </directory>
 
     <directory>
@@ -160,6 +166,17 @@
         <Path>$pathStorage\cemu</Path>
 	    <sub-directory>
             <name>mlc01</name>
+        </sub-directory>
+    </directory>
+
+    <directory>
+        <name>pcsx2</name>
+        <Path>$pathStorage\pcsx2</Path>
+	    <sub-directory>
+            <name>memcards</name>
+        </sub-directory>
+        <sub-directory>
+            <name>snapshots</name>
         </sub-directory>
     </directory>
 
