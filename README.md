@@ -36,13 +36,13 @@ PLEASE NOTE: Emulators listed below with an asterisk* have not yet been configur
 | Nintendo 64               | Retroarch Mupen64plus core           | .7z .bin .n64 .ndd u1 .v64 .z64 .zip                                 |
 | Nintendo GameCube         | Dolphin Standalone*                  | .ciso .dol .elf .gcm .gcz .iso .nkit .iso .rvz .wad .wia .wbfs       |
 | Nintendo Wii              | Dolphin Standalone*                  | .ciso .dol .elf .gcm .gcz .iso .json .nkit .iso .rvz .wad .wia .wbfs |
-| Nintendo Wii U            | Cemu*                                | .rpx .wud .wux .elf .iso .wad                                        |
+| Nintendo Wii U            | Cemu                                 | .rpx .wud .wux .elf .iso .wad                                        |
 | Nintendo Switch           | Yuzu*                                | .kp .nca .nro .nso .nsp .xci                                         |
 | Super Nintendo            | Retroarch Snes9x Current core        | .7z .bs .fig .sfc .smc .swx .zip                                     |
 | Super Nintendo Widescreen | Retroarch bsnes hd beta Current core | .7z .bs .fig .sfc .smc .swx .zip                                     |
 | PrimeHacks                | Dolphin PrimeHacks*                  | .ciso .dol .elf .gcm .gcz .iso .json .nkit .iso .rvz .wad .wia .wbfs |
 | Playstation               | DuckStation*                         | .cue .chd .ecm .iso .m3u .mds .pbp                                   |
-| Playstation 2             | RPCSX2*                              | .bin chd .cso .dump .gz .img .iso .mdf .nrg                          |
+| Playstation 2             | PCSX2                                | .bin chd .cso .dump .gz .img .iso .mdf .nrg                          |
 | Playstation 3             | RPCS3*                               | /PS3_GAME/USRDIR/eboot.bin                                           |
 | PSP                       | PPSSPP & PPSSPP Retroarch core       | .7z .elf .cso .iso .pbp .prx                                         |
 | Sega 32X                  | Retroarch PicoDrive core             | .7z .32x .bin .zip                                                   |
