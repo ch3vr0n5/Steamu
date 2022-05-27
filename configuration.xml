@@ -79,6 +79,24 @@
 		<CreateDesktopShortcut/>
 	</Program>
 	<Program>
+		<Name>Playnite</Name>
+		<VariableName>playnite</Playnite>
+		<Version>918</Version>
+		<BasePath>$pathEmulators</BasePath>
+		<DirectoryName>Playnite</DirectoryName>
+		<Exe>playnite.exe</Exe>
+		<Download>
+			<Url>https://github.com/JosefNemec/Playnite/releases/download/9.18/Playnite918.zip</Url>
+			<SaveAs>playnite.zip</SaveAs>
+		</Download>
+		<Extract>
+			<ExtractFolder>Playnite</ExtractFolder>
+			<Type>zip</Type>
+		</Extract>
+		<CreateDesktopShortcut/>
+		<CreateSteamShortcut/>
+	</Program>
+	<Program>
 		<Name>Retroarch</Name>
 		<VariableName>retroarch</VariableName>
 		<Version>1.10.3</Version>
